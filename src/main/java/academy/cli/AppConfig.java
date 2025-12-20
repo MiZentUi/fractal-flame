@@ -21,7 +21,6 @@ public class AppConfig {
     private double gamma;
     private int symmetryLevel;
 
-
     @JsonDeserialize(contentUsing = FunctionDeserializer.class)
     private List<Function> functions;
 
@@ -29,7 +28,17 @@ public class AppConfig {
 
     public AppConfig() {}
 
-    public AppConfig(Size size, int iterationCount, Path outputPath, int threads, long seed, boolean gammaCorrection, double gamma, int symmetryLevel, List<Function> functions, List<AffineTransformation.Params> affineParams) {
+    public AppConfig(
+            Size size,
+            int iterationCount,
+            Path outputPath,
+            int threads,
+            long seed,
+            boolean gammaCorrection,
+            double gamma,
+            int symmetryLevel,
+            List<Function> functions,
+            List<AffineTransformation.Params> affineParams) {
         this.size = size;
         this.iterationCount = iterationCount;
         this.outputPath = outputPath;

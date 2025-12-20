@@ -1,13 +1,13 @@
 package academy.utils;
 
 import academy.model.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 
 public class ImageWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageWriter.class);
@@ -31,14 +31,13 @@ public class ImageWriter {
         var bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (pixels[i][j] != null){
+                if (pixels[i][j] != null) {
                     bufferedImage.setRGB(j, i, pixels[i][j].toRGB());
                 }
             }
         }
-        var file = new File(outputPath.toUri());
         try {
-            ImageIO.write(bufferedImage, "png", file);
+            ImageIO.write(bufferedImage, "png", Files.newOutputStream(outputPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

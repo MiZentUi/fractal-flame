@@ -24,8 +24,8 @@ public class AffineTransformation {
     }
 
     public Point transform(Point point) {
-        double new_x = params.a() * point.x + params.b * point.y + params.c();
-        double new_y = params.d() * point.x + params.e() * point.y + params.f();
+        double new_x = params.a() * point.x() + params.b * point.y() + params.c();
+        double new_y = params.d() * point.x() + params.e() * point.y() + params.f();
         return new Point(new_x, new_y);
     }
 

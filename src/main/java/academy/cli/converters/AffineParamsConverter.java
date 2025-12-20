@@ -1,9 +1,9 @@
 package academy.cli.converters;
 
 import academy.model.AffineTransformation;
-import picocli.CommandLine;
 import java.util.ArrayList;
 import java.util.List;
+import picocli.CommandLine;
 
 public class AffineParamsConverter implements CommandLine.ITypeConverter<List<AffineTransformation.Params>> {
 

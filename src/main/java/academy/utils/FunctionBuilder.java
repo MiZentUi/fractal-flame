@@ -10,7 +10,6 @@ import academy.model.functions.PolarFunction;
 import academy.model.functions.SinusoidalFunction;
 import academy.model.functions.SphericalFunction;
 import academy.model.functions.SwirlFunction;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,10 @@ public class FunctionBuilder {
     public Function build() {
         try {
             return registry.get(name).getConstructor(Double.class).newInstance(weight);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchMethodException
+                | InstantiationException
+                | IllegalAccessException
+                | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

@@ -1,24 +1,14 @@
 package academy.utils;
 
 import academy.cli.AppConfig;
-import academy.model.AffineTransformation;
 import academy.model.Image;
-import academy.model.Pixel;
-import academy.model.Point;
-import academy.model.functions.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Generator {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Generator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
 
     private Image image;
     private final AppConfig config;

@@ -6,14 +6,14 @@ import academy.model.Image;
 import academy.model.Pixel;
 import academy.model.Point;
 import academy.model.functions.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Render implements Runnable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Render.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Render.class);
 
     private final Random random;
     private final int iterationsCount;
@@ -27,7 +27,8 @@ public class Render implements Runnable {
         this.iterationsCount = iterationsCount;
         functions = config.getFunctions();
         AffineTransformation.setSeed(config.getSeed());
-        affineTransformations = config.getAffineParams().stream().map(AffineTransformation::new).toList();
+        affineTransformations =
+                config.getAffineParams().stream().map(AffineTransformation::new).toList();
         random = new Random(config.getSeed() + Thread.currentThread().threadId());
         symmetryLevel = config.getSymmetryLevel();
     }
@@ -51,9 +52,10 @@ public class Render implements Runnable {
         var color = Pixel.genColor(random);
 
         for (int i = -20; i < iterationsCount; i++) {
-//            synchronized (System.out) {
-//                System.out.print('\r' + String.format("[Thread: %d] Generating: %.2f%%", this.hashCode(), (double) i / (iterationsCount + 20) * 100));
-//            }
+            //            synchronized (System.out) {
+            //                System.out.print('\r' + String.format("[Thread: %d] Generating: %.2f%%", this.hashCode(),
+            // (double) i / (iterationsCount + 20) * 100));
+            //            }
 
             var currentAffine = getRandomAffine();
             point = getRandomFunction().transform(currentAffine.transform(point));
@@ -61,13 +63,13 @@ public class Render implements Runnable {
             for (int j = 0; j < symmetryLevel; j++) {
                 double angle = j * theta;
 
-                double x_rot = point.x * Math.cos(angle) - point.y * Math.sin(angle);
-                double y_rot = point.x * Math.sin(angle) + point.y * Math.cos(angle);
+                double x_rot = point.x() * Math.cos(angle) - point.y() * Math.sin(angle);
+                double y_rot = point.x() * Math.sin(angle) + point.y() * Math.cos(angle);
 
                 point = new Point(x_rot, y_rot);
 
-                int x = width - (int) ((x_max - point.x) / (x_max - x_min) * width);
-                int y = height - (int) ((y_max - point.y) / (y_max - y_min) * height);
+                int x = width - (int) ((x_max - point.x()) / (x_max - x_min) * width);
+                int y = height - (int) ((y_max - point.y()) / (y_max - y_min) * height);
 
                 color.add(currentAffine.getColor()).multiply(0.5);
 

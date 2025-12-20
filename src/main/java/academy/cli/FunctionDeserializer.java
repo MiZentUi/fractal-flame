@@ -30,7 +30,8 @@ public class FunctionDeserializer extends StdDeserializer<Function> {
     }
 
     @Override
-    public Function deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public Function deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException, JacksonException {
         var node = jsonParser.getCodec().readTree(jsonParser);
         String name = ((TextNode) node.get("name")).asText();
         double weight = ((DoubleNode) node.get("weight")).doubleValue();

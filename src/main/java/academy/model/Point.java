@@ -1,8 +1,8 @@
 package academy.model;
 
 public class Point {
-    public double x;
-    public double y;
+    private double x;
+    private double y;
 
     public Point(double x, double y) {
         this.x = x;
@@ -26,6 +26,14 @@ public class Point {
         return this;
     }
 
+    public double x() {
+        return x;
+    }
+
+    public double y() {
+        return y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -43,9 +51,6 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Point{" +
-            "x=" + x +
-            ", y=" + y +
-            '}';
+        return "Point{" + "x=" + x + ", y=" + y + '}';
     }
 }

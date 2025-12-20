@@ -4,38 +4,38 @@ import java.util.Random;
 import java.util.concurrent.atomic.LongAdder;
 
 public class Pixel {
-    public int red;
-    public int green;
-    public int blue;
-    public int alpha;
-    public LongAdder counter;
+    public LongAdder red = new LongAdder();
+    public LongAdder green = new LongAdder();
+    public LongAdder blue = new LongAdder();
+    public LongAdder alpha = new LongAdder();
+    public LongAdder counter = new LongAdder();
     public double normal;
 
     public Pixel(Pixel pixel) {
         if (pixel != null) {
-            this.red = pixel.red;
-            this.green = pixel.green;
-            this.blue = pixel.blue;
-            this.alpha = pixel.alpha;
+            this.red.add(pixel.red.sum());
+            this.green.add(pixel.green.sum());
+            this.blue.add(pixel.blue.sum());
+            this.alpha.add(pixel.alpha.sum());
         }
         counter = new LongAdder();
         normal = 0;
     }
 
     public Pixel(int red, int green, int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        alpha = 255;
+        this.red.add(red);
+        this.green.add(green);
+        this.blue.add(blue);
+        alpha.add(255);
         counter = new LongAdder();
         normal = 0;
     }
 
     public Pixel(int red, int green, int blue, int alpha) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.alpha = alpha;
+        this.red.add(red);
+        this.green.add(green);
+        this.blue.add(blue);
+        this.alpha.add(alpha);
     }
 
     public static Pixel add(Pixel pixel1, Pixel pixel2) {
@@ -43,33 +43,32 @@ public class Pixel {
             return pixel2;
         }
         var pixel = new Pixel(pixel1);
-        pixel.counter = pixel1.counter;
+        pixel.counter.add(pixel1.counter.sum());
         return pixel.add(pixel2);
-    }
-
-    public static Pixel unite(Pixel pixel1, Pixel pixel2) {
-        var pixel = add(pixel1, pixel2);
-        return pixel1 != null && pixel2 != null ? pixel.multiply(0.5) : pixel;
     }
 
     public Pixel add(Pixel pixel) {
         if (pixel != null) {
-            red += pixel.red;
-            blue += pixel.blue;
-            green += pixel.green;
+            this.red.add(pixel.red.sum());
+            this.green.add(pixel.green.sum());
+            this.blue.add(pixel.blue.sum());
             counter.add(pixel.counter.sum());
         }
         return this;
     }
 
     public Pixel multiply(double num) {
-        red = (int) Math.round(red * num);
-        green = (int) Math.round(green * num);
-        blue = (int) Math.round(blue * num);
+        red.add(Math.round(red.sum() * (num - 1)));
+        green.add(Math.round(green.sum() * (num - 1)));
+        blue.add(Math.round(blue.sum() * (num - 1)));
         return this;
     }
 
     public int toRGB() {
+        int alpha = Math.toIntExact(this.alpha.sum());
+        int red = Math.toIntExact(this.red.sum());
+        int green = Math.toIntExact(this.green.sum());
+        int blue = Math.toIntExact(this.blue.sum());
         return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 

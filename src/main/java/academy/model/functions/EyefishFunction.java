@@ -13,7 +13,7 @@ public class EyefishFunction extends Function {
 
     @Override
     protected Point F(Point point) {
-        double r = Math.sqrt(point.x * point.x + point.y * point.y);
+        double r = Math.sqrt(point.x() * point.x() + point.y() * point.y());
         return new Point(point).multiply(2 / (r - 1));
     }
 }
