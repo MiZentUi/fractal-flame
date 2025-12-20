@@ -18,4 +18,17 @@ public abstract class Function {
     }
 
     protected abstract Point F(Point point);
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Function function = (Function) o;
+        return Double.compare(width, function.width) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.hashCode(width);
+    }
 }
