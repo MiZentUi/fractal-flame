@@ -43,14 +43,14 @@ public class BenchmarkTest {
         assertThat(end - begin).isLessThan(singleDuration);
     }
 
-//    @Test
-//    void threads_8() {
-//        // Act
-//        long begin = System.currentTimeMillis();
-//        app.execute("-t", "8");
-//        long end = System.currentTimeMillis();
-//
-//        // Assert
-//        assertThat(end - begin).isLessThan(singleDuration);
-//    }
+    @Test
+    void threads_8() {
+        // Act
+        long begin = System.currentTimeMillis();
+        app.execute("-t", "8");
+        long end = System.currentTimeMillis();
+
+        // Assert
+        assertThat(end - begin).isLessThan(singleDuration);
+    }
 }

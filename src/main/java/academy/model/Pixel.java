@@ -1,13 +1,14 @@
 package academy.model;
 
 import java.util.Random;
+import java.util.concurrent.atomic.LongAdder;
 
 public class Pixel {
     public int red;
     public int green;
     public int blue;
     public int alpha;
-    public int counter;
+    public LongAdder counter;
     public double normal;
 
     public Pixel(Pixel pixel) {
@@ -17,7 +18,7 @@ public class Pixel {
             this.blue = pixel.blue;
             this.alpha = pixel.alpha;
         }
-        counter = 0;
+        counter = new LongAdder();
         normal = 0;
     }
 
@@ -26,7 +27,7 @@ public class Pixel {
         this.green = green;
         this.blue = blue;
         alpha = 255;
-        counter = 0;
+        counter = new LongAdder();
         normal = 0;
     }
 
@@ -56,7 +57,7 @@ public class Pixel {
             red += pixel.red;
             blue += pixel.blue;
             green += pixel.green;
-            counter += pixel.counter;
+            counter.add(pixel.counter.sum());
         }
         return this;
     }

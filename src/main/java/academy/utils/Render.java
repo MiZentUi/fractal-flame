@@ -51,9 +51,9 @@ public class Render implements Runnable {
         var color = Pixel.genColor(random);
 
         for (int i = -20; i < iterationsCount; i++) {
-            synchronized (System.out) {
-                System.out.print('\r' + String.format("[Thread: %d] Generating: %.2f%%", this.hashCode(), (double) i / (iterationsCount + 20) * 100));
-            }
+//            synchronized (System.out) {
+//                System.out.print('\r' + String.format("[Thread: %d] Generating: %.2f%%", this.hashCode(), (double) i / (iterationsCount + 20) * 100));
+//            }
 
             var currentAffine = getRandomAffine();
             point = getRandomFunction().transform(currentAffine.transform(point));
@@ -77,7 +77,7 @@ public class Render implements Runnable {
                         pixel.counter = pixels[y][x].counter;
                     }
                     pixels[y][x] = pixel;
-                    pixels[y][x].counter++;
+                    pixels[y][x].counter.increment();
                 }
             }
         }

@@ -34,14 +34,11 @@ public class Generator {
     public void render() {
         LOGGER.info("Start render...");
 
-        var images = new Image[config.getThreads()];
-        for (int i = 0; i < config.getThreads(); i++) {
-            images[i] = new Image(config.getSize());
-        }
+        image = new Image(config.getSize());
 
         try (var executor = Executors.newFixedThreadPool(config.getThreads())) {
             for (int i = 0; i < config.getThreads(); i++) {
-                executor.execute(new Render(images[i], config, config.getIterationCount() / config.getThreads()));
+                executor.execute(new Render(image, config, config.getIterationCount() / config.getThreads()));
             }
             executor.shutdown();
             try {
@@ -56,31 +53,6 @@ public class Generator {
 
             LOGGER.info("Render complete!");
             System.out.println("Render complete!");
-
-            LOGGER.info("Start merging!");
-
-            if (config.getThreads() == 1) {
-                image = images[0];
-                return;
-            }
-
-            image = new Image(config.getSize());
-
-            for (var current_image : images) {
-                for (int i = 0; i < this.image.getWidth(); i++) {
-                    for (int j = 0; j < this.image.getHeight(); j++) {
-                        image.getPixels()[j][i] = Pixel.add(current_image.getPixel(i, j), image.getPixel(i, j));
-                    }
-                }
-            }
-
-            for (var row : image.getPixels()) {
-                for (var pixel : row) {
-                    if (pixel != null) {
-                        pixel.multiply(1.0 / config.getThreads());
-                    }
-                }
-            }
         }
     }
 
@@ -95,7 +67,7 @@ public class Generator {
         for (var row : pixels) {
             for (var pixel : row) {
                 if (pixel != null) {
-                    pixel.normal = Math.log10(pixel.counter);
+                    pixel.normal = Math.log10(pixel.counter.sum());
                     if (pixel.normal > max) {
                         max = pixel.normal;
                     }
