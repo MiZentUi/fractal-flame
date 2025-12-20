@@ -48,6 +48,9 @@ Run Black Box Tests:
   needs:
     - job: Build
       artifacts: true
+  before_script:
+    - apt-get update -y
+    - apt-get install -y xxd
   script:
     - ./tests/run.sh tests/cases target/project-1.0.jar
 
