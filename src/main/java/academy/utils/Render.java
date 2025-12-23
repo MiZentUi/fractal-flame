@@ -26,10 +26,10 @@ public class Render implements Runnable {
         this.image = image;
         this.iterationsCount = iterationsCount;
         functions = config.getFunctions();
-        AffineTransformation.setSeed(config.getSeed());
-        affineTransformations =
-                config.getAffineParams().stream().map(AffineTransformation::new).toList();
-        random = new Random(config.getSeed() + Thread.currentThread().threadId());
+        random = new Random(config.getSeed());
+        affineTransformations = config.getAffineParams().stream()
+                .map(params -> new AffineTransformation(params, random))
+                .toList();
         symmetryLevel = config.getSymmetryLevel();
     }
 
@@ -52,11 +52,6 @@ public class Render implements Runnable {
         var color = Pixel.genColor(random);
 
         for (int i = -20; i < iterationsCount; i++) {
-            //            synchronized (System.out) {
-            //                System.out.print('\r' + String.format("[Thread: %d] Generating: %.2f%%", this.hashCode(),
-            // (double) i / (iterationsCount + 20) * 100));
-            //            }
-
             var currentAffine = getRandomAffine();
             point = getRandomFunction().transform(currentAffine.transform(point));
 
@@ -75,10 +70,12 @@ public class Render implements Runnable {
 
                 if (i >= 0 && 0 < x && x < width && 0 < y && y < height) {
                     var pixel = new Pixel(color);
-                    if (pixels[y][x] != null) {
-                        pixel.counter = pixels[y][x].counter;
+                    synchronized (image) {
+                        if (pixels[y][x] != null) {
+                            pixel.counter = pixels[y][x].counter;
+                        }
+                        pixels[y][x] = pixel;
                     }
-                    pixels[y][x] = pixel;
                     pixels[y][x].counter.increment();
                 }
             }

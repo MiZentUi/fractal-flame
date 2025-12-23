@@ -14,9 +14,13 @@ public class FunctionsConverter implements CommandLine.ITypeConverter<List<Funct
             var functions = new ArrayList<Function>();
             for (var i : s.split(",")) {
                 var func_item = i.split(":");
+                var width = Double.parseDouble(func_item[1]);
+                if (width <= 0) {
+                    throw new CommandLine.TypeConversionException("Width should be positive!");
+                }
                 functions.add(new FunctionBuilder()
                         .byName(func_item[0])
-                        .withWeight(Double.parseDouble(func_item[1]))
+                        .withWeight(width)
                         .build());
             }
             return functions;

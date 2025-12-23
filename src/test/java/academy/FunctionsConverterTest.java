@@ -1,7 +1,7 @@
 package academy;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import academy.cli.converters.FunctionsConverter;
 import academy.model.functions.PolarFunction;
@@ -51,14 +51,7 @@ public class FunctionsConverterTest {
         // Arrange
         var functionsString = "swirl:";
 
-        // Act
-        try {
-            converter.convert(functionsString);
-        } catch (CommandLine.TypeConversionException exception) {
-            return;
-        }
-
-        // Assert
-        fail();
+        // Act and assert
+        assertThrows(CommandLine.TypeConversionException.class, () -> converter.convert(functionsString));
     }
 }

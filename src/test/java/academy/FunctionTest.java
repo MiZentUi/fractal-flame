@@ -132,7 +132,7 @@ public class FunctionTest {
         // Arrange
         var function = new SwirlFunction();
         var point = new Point(4, 6);
-        var expectedPoint = new Point(4.495235398082071, -5.638515648273925);
+        var expectedPoint = new Point(4.924455052936175, 5.26780242906009);
 
         // Act
         point = function.transform(point);

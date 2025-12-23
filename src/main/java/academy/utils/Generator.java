@@ -24,6 +24,10 @@ public class Generator {
     public void render() {
         LOGGER.info("Start render...");
 
+        if (config.getSymmetryLevel() < 1) {
+            throw new RuntimeException("Symmetry level should be greater than 0!");
+        }
+
         image = new Image(config.getSize());
 
         try (var executor = Executors.newFixedThreadPool(config.getThreads())) {
@@ -39,8 +43,6 @@ public class Generator {
                 executor.shutdownNow();
                 Thread.currentThread().interrupt();
             }
-            System.out.println();
-
             LOGGER.info("Render complete!");
             System.out.println("Render complete!");
         }

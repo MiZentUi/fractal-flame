@@ -2,7 +2,6 @@ package academy;
 
 import academy.cli.AppConfig;
 import academy.cli.Options;
-import academy.model.AffineTransformation;
 import academy.utils.Generator;
 import academy.utils.ImageWriter;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -36,8 +35,6 @@ public class Application implements Runnable {
     public void run() {
         var config = loadConfig();
         LOGGER.atInfo().addKeyValue("config", config).log("Config content");
-
-        AffineTransformation.setSeed(config.getSeed());
 
         var generator = new Generator(config);
         var writer = new ImageWriter(config.getOutputPath());

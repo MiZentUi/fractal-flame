@@ -1,7 +1,7 @@
 package academy;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import academy.cli.converters.AffineParamsConverter;
 import academy.model.AffineTransformation;
@@ -52,14 +52,7 @@ public class AffineParamsConverterTest {
         // Arrange
         var affineParamsString = "0.1,0.2,0.3,0.4,0.5";
 
-        // Act
-        try {
-            converter.convert(affineParamsString);
-        } catch (CommandLine.TypeConversionException exception) {
-            return;
-        }
-
-        // Assert
-        fail();
+        // Act and assert
+        assertThrows(CommandLine.TypeConversionException.class, () -> converter.convert(affineParamsString));
     }
 }
