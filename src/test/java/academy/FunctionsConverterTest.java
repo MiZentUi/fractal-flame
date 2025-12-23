@@ -24,13 +24,9 @@ public class FunctionsConverterTest {
     void zero() throws Exception {
         // Arrange
         var functionsString = "swirl:0,polar:0";
-        var expected = List.of(new SwirlFunction(0.0), new PolarFunction(0.0));
 
-        // Act
-        var functions = converter.convert(functionsString);
-
-        // Assert
-        assertThat(functions).isEqualTo(expected);
+        // Act and assert
+        assertThrows(CommandLine.TypeConversionException.class, () -> converter.convert(functionsString));
     }
 
     @Test
