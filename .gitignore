@@ -24,4 +24,5 @@ dependency-reduced-pom.xml
 hs_err_pid*
 
 *.png
+!images/*.png
 performance_results.csv
