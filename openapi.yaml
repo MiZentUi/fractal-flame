@@ -1,0 +1,453 @@
+openapi: "3.2.0"
+info:
+  title: API Gateway
+  description: API Gateway OpenAPI Specification
+  version: "1.0"
+servers:
+  - url: https://localhost:8080/api/v1
+tags:
+  - name: Users
+  - name: Fractals
+  - name: Images
+
+paths:
+  /users/signin:
+    post:
+      tags:
+        - Users
+      summary: User registration
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/auth"
+        "400":
+          $ref: "#/components/responses/bad"
+        "409":
+          description: User already exists
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: User login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/auth"
+        "400":
+          $ref: "#/components/responses/bad"
+        "404":
+          description: User not found
+
+  /users/refresh:
+    post:
+      tags:
+        - Users
+      summary: User login
+      operationId: login
+      security:
+        - RefreshTokenCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/auth"
+        "400":
+          $ref: "#/components/responses/bad"
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get user info
+      operationId: getUser
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/bad"
+
+  /users/{id}:
+    patch:
+      tags:
+        - Users
+      summary: Change user details
+      operationId: patchUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequest"
+      responses:
+        "200":
+          description: New user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/bad"
+
+  /fractals:
+    get:
+      tags:
+        - Fractals
+      summary: Get all fractals
+      operationId: getFractals
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+        - in: query
+          description: Sort by [create]
+          name: sort
+          schema:
+            type: string
+            example: create
+        - in: query
+          description: Order by [ask, desc]
+          name: Order
+          schema:
+            type: string
+            example: desc
+        - in: query
+          name: userid
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Fractals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FractalResponse"
+        "400":
+          $ref: "#/components/responses/bad"
+  /fractals/{id}:
+    get:
+      tags:
+        - Fractals
+      summary: Get all fractals
+      operationId: getFractals
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Fractals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FractalResponse"
+        "400":
+          $ref: "#/components/responses/bad"
+  /fractals/gen:
+    post:
+      tags:
+        - Fractals
+      summary: Start generation task
+      operationId: generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FractalRequest"
+      responses:
+        "200":
+          description: Task state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskState"
+        "400":
+          $ref: "#/components/responses/bad"
+  /fractals/gen/{id}/events:
+    get:
+      tags:
+        - Fractals
+      summary: Subscribe to task events
+      operationId: subscribeToTask
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task event stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              itemSchema:
+                $ref: "#/components/schemas/TaskState"
+        "400":
+          $ref: "#/components/responses/bad"
+
+  /images/{name}:
+    get:
+      tags:
+        - Images
+      summary: Get image
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/bad"
+        "404":
+          description: Image not found
+
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          format: password
+          example: password123
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          format: password
+          example: password123
+        image:
+          type: string
+          description: Base64 encoded user image
+          format: byte
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+          example: username
+        image:
+          type: string
+          description: Base64 encoded user image
+          format: byte
+
+    FractalRequest:
+      type: object
+      properties:
+        width:
+          type: integer
+          example: 1920
+        height:
+          type: integer
+          example: 1080
+        iteration_count:
+          type: integer
+          example: 10000000
+        symmetry_level:
+          type: integer
+          example: 16
+        gamma:
+          type: number
+          format: double
+          example: 1.4
+        functions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: sinusoidal
+              weight:
+                type: number
+                format: double
+                example: 1.0
+        affine_params:
+          type: array
+          items:
+            type: object
+            properties:
+              color:
+                type: string
+                pattern: "^#[a-fA-F0-9]{6}$"
+                example: "#ff3203"
+              a:
+                type: number
+                format: double
+                example: 0.3
+              b:
+                type: number
+                format: double
+                example: 0.4
+              c:
+                type: number
+                format: double
+                example: 0.1
+              d:
+                type: number
+                format: double
+                example: 0.2
+              e:
+                type: number
+                format: double
+                example: 1
+              f:
+                type: number
+                format: double
+                example: 1
+
+    FractalResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+        iteration_count:
+          type: integer
+        symmetry_level:
+          type: integer
+        gamma:
+          type: number
+          format: double
+        functions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              weight:
+                type: number
+                format: double
+        affine_params:
+          type: array
+          items:
+            type: object
+            properties:
+              color:
+                type: string
+                pattern: "^#[a-fA-F0-9]{6}$"
+              a:
+                type: number
+                format: double
+              b:
+                type: number
+                format: double
+              c:
+                type: number
+                format: double
+              d:
+                type: number
+                format: double
+              e:
+                type: number
+                format: double
+              f:
+                type: number
+                format: double
+        image:
+          type: string
+          description: Path to image
+
+    TaskState:
+      type: object
+      properties:
+        id:
+          type: number
+        progress:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        fractal_id:
+          type: integer
+        preview:
+          type: string
+          description: Path to priview image
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    RefreshTokenCookie:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+
+  responses:
+    auth:
+      description: Auth response with token
+      headers:
+        Set-Cookie:
+          description: Refresh token
+          schema:
+            example: refresh_token=xyz; HttpOnly; Secure; Path=/refresh
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+    bad:
+      description: Bad request
