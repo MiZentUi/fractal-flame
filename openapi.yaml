@@ -56,7 +56,7 @@ paths:
       tags:
         - Users
       summary: User login
-      operationId: login
+      operationId: refresh
       security:
         - RefreshTokenCookie: []
       requestBody:
@@ -162,7 +162,7 @@ paths:
       tags:
         - Fractals
       summary: Get fractal by id
-      operationId: getFractals
+      operationId: getFractal
       parameters:
         - in: path
           name: id
@@ -218,7 +218,7 @@ paths:
             text/event-stream:
               schema:
                 type: object
-                required: data
+                required: [data]
                 properties:
                   data:
                     $ref: "#/components/schemas/TaskState"
