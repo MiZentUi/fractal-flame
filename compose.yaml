@@ -1,0 +1,21 @@
+services:
+  db-generator:
+    image: postgres:18-alpine
+    ports:
+      - 5432:5432
+    env_file:
+      .env
+    environment:
+      POSTGRES_DB: generator
+    restart: unless-stopped
+    volumes:
+      - db-generator-data:/var/lib/postgresql
+    healthcheck:
+      test: "pg_isready -U ${POSTGRES_USER} -d generator"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db-generator-data:

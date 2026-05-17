@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: generator
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL:localhost:5432}/generator
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yaml
+
+app:
+  generator:
+    count: 3
+    threads: 4
+    max-width: 2000
+    max-height: 2000
+    max-iterations: 100000000
