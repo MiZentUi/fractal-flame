@@ -1,0 +1,35 @@
+package com.fractalflame.generator.mapper;
+
+import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
+
+import com.fractalflame.generator.entity.AffineParams;
+import com.fractalflame.generator.model.AffineTransformation;
+import com.fractalflame.generator.model.Pixel;
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface AffineMapper {
+    @Mapping(target = "color", source = "color", qualifiedByName = "colorToPixel")
+    @Mapping(target = "params.a", source = "a")
+    @Mapping(target = "params.b", source = "b")
+    @Mapping(target = "params.c", source = "c")
+    @Mapping(target = "params.d", source = "d")
+    @Mapping(target = "params.e", source = "e")
+    @Mapping(target = "params.f", source = "f")
+    AffineTransformation toAffineTransformation(AffineParams affineParams);
+
+    List<AffineTransformation> toAffineTransformationList(List<AffineParams> affineParams);
+
+    @Named("colorToPixel")
+    default Pixel colotToPixel(String hexColor) {
+        int hex = Integer.parseInt(hexColor.substring(1), 16);
+        int r = (hex >> 16) & 0xFF;
+        int g = (hex >> 8) & 0xFF;
+        int b = hex & 0xFF;
+        return new Pixel(r, g, b);
+    }
+}
