@@ -132,13 +132,18 @@ paths:
             type: integer
             example: 1
         - in: query
+          name: count
+          schema:
+            type: integer
+            example: 10
+        - in: query
           description: Sort by [create]
           name: sort
           schema:
             type: string
             example: create
         - in: query
-          description: Order by [ask, desc]
+          description: Order by [asc, desc]
           name: Order
           schema:
             type: string
@@ -155,8 +160,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FractalResponse"
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
   /fractals/{id}:
     get:
       tags:
@@ -176,8 +181,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FractalResponse"
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
   /fractals/gen:
     post:
       tags:
@@ -197,8 +202,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TaskState"
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
   /fractals/gen/{id}/events:
     get:
       tags:
@@ -222,9 +227,29 @@ paths:
                 properties:
                   data:
                     $ref: "#/components/schemas/TaskState"
-
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
+  /fractals/functions:
+    get:
+      tags:
+        - Fractals
+      summary: Get fractal functions names
+      operationId: getFunctions
+      responses:
+        "200":
+          description: Fractal functions names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - spherical
+                  - sinusoidal
+                  - linear
+        default:
+          $ref: "#/components/responses/default"
 
   /images/{name}:
     get:
@@ -407,6 +432,9 @@ components:
               f:
                 type: number
                 format: double
+        created:
+          type: string
+          format: date-time
         image:
           type: string
           description: Path to image
@@ -426,6 +454,16 @@ components:
         preview:
           type: string
           description: Path to priview image
+
+    ApiStatusResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        status:
+          type: string
+        message:
+          type: string
 
   securitySchemes:
     BearerAuth:
@@ -454,3 +492,10 @@ components:
                 type: string
     bad:
       description: Bad request
+
+    default:
+      description: Status response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiStatusResponse"
