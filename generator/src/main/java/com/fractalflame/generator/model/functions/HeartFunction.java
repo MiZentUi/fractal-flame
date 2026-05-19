@@ -18,4 +18,9 @@ public class HeartFunction extends FunctionModel {
         double newY = -1 * r * Math.cos(r * Math.atan(point.y() / point.x()));
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "heart";
+    }
 }

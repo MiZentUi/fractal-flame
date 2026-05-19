@@ -18,4 +18,9 @@ public class HorseshoeFunction extends FunctionModel {
         double newY = 2 * point.x() * point.y() / r;
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "horseshoe";
+    }
 }

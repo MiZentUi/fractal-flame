@@ -17,4 +17,9 @@ public class SinusoidalFunction extends FunctionModel {
         double newY = Math.sin(point.y());
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "sinusoidal";
+    }
 }

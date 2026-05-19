@@ -1,30 +1,40 @@
 package com.fractalflame.generator.mapper;
 
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fractalflame.generator.entity.Function;
 import com.fractalflame.generator.model.functions.FunctionModel;
+import com.fractalflame.generator.utils.FunctionBuilder;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class FunctionMapper {
-
-    @Qualifier("functionsByName")
-    private final Map<String, FunctionModel> functions;
-
     public FunctionModel toFunctionModel(Function function) {
-        var functionModel = functions.get(function.getName());
-        functionModel.setWidth(function.getWeight());
-        return functionModel;
+        return FunctionBuilder.build(function.getName(), function.getWeight());
     }
 
     public List<FunctionModel> toFunctionModelList(List<Function> functions) {
-        return functions.stream().map(f -> toFunctionModel(f)).toList();
+        return functions.stream().map(this::toFunctionModel).toList();
+    }
+
+    public com.fractalflame.generator.proto.Function toProtoFunction(Function function) {
+        return com.fractalflame.generator.proto.Function.newBuilder()
+                .setName(function.getName())
+                .setWeight(function.getWeight())
+                .build();
+    }
+
+    public List<com.fractalflame.generator.proto.Function> toProtoFunctionList(List<Function> functions) {
+        return functions.stream().map(this::toProtoFunction).toList();
+    }
+
+    public Function fromProtoFunction(com.fractalflame.generator.proto.Function function) {
+        return Function.builder()
+                .name(function.getName())
+                .weight(function.getWeight())
+                .build();
     }
 }

@@ -15,4 +15,9 @@ public class LinearFunction extends FunctionModel {
     protected Point f(Point point) {
         return point;
     }
+
+    @Override
+    public String getName() {
+        return "linear";
+    }
 }

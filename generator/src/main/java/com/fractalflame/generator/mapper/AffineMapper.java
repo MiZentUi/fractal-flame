@@ -13,6 +13,7 @@ import com.fractalflame.generator.model.Pixel;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AffineMapper {
+
     @Mapping(target = "color", source = "color", qualifiedByName = "colorToPixel")
     @Mapping(target = "params.a", source = "a")
     @Mapping(target = "params.b", source = "b")
@@ -24,8 +25,14 @@ public interface AffineMapper {
 
     List<AffineTransformation> toAffineTransformationList(List<AffineParams> affineParams);
 
+    com.fractalflame.generator.proto.AffineParams toProtoAffineParams(AffineParams affineParams);
+
+    List<com.fractalflame.generator.proto.AffineParams> toProtoAffineParamsList(List<AffineParams> affineParams);
+
+    AffineParams fromProtoAffineParams(com.fractalflame.generator.proto.AffineParams affineParams);
+
     @Named("colorToPixel")
-    default Pixel colotToPixel(String hexColor) {
+    default Pixel colorToPixel(String hexColor) {
         int hex = Integer.parseInt(hexColor.substring(1), 16);
         int r = (hex >> 16) & 0xFF;
         int g = (hex >> 8) & 0xFF;

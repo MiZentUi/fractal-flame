@@ -19,4 +19,9 @@ public class DiscFunction extends FunctionModel {
         double newY = a * Math.cos(Math.PI * r) / Math.PI;
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "disc";
+    }
 }

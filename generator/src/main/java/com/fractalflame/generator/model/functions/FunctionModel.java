@@ -2,24 +2,27 @@ package com.fractalflame.generator.model.functions;
 
 import com.fractalflame.generator.model.Point;
 
-public abstract class FunctionModel {
-    double width;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    protected FunctionModel(Double weight) {
-        this.width = weight;
-    }
+@Getter
+@AllArgsConstructor
+public abstract class FunctionModel {
+    double weight;
 
     public Point transform(Point point) {
         return f(point);
     }
 
-    public void setWidth(double width) {
-        this.width = width;
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
-    public double getWidth() {
-        return width;
+    public double getWeight() {
+        return weight;
     }
+
+    public abstract String getName();
 
     protected abstract Point f(Point point);
 
@@ -29,11 +32,11 @@ public abstract class FunctionModel {
             return false;
 
         FunctionModel function = (FunctionModel) o;
-        return Double.compare(width, function.width) == 0;
+        return Double.compare(weight, function.weight) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Double.hashCode(width);
+        return Double.hashCode(weight);
     }
 }
