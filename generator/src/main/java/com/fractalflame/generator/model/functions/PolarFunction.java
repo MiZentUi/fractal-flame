@@ -18,4 +18,9 @@ public class PolarFunction extends FunctionModel {
         double newY = r - 1;
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "polar";
+    }
 }

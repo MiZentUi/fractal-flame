@@ -6,6 +6,7 @@ CREATE TABLE fractals
 (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT,
+    created TIMESTAMP NOT NULL,
     width INTEGER NOT NULL,
     height INTEGER NOT NULL,
     iteration_count INTEGER NOT NULL,

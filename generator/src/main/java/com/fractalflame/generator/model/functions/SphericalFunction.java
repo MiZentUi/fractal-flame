@@ -18,4 +18,9 @@ public class SphericalFunction extends FunctionModel {
         double newY = point.y() / rSq;
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "spherical";
+    }
 }

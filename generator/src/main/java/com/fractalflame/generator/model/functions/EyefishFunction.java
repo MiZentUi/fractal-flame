@@ -16,4 +16,9 @@ public class EyefishFunction extends FunctionModel {
         double r = Math.sqrt(point.x() * point.x() + point.y() * point.y());
         return new Point(point).multiply(2 / (r - 1));
     }
+
+    @Override
+    public String getName() {
+        return "eyefish";
+    }
 }

@@ -1,16 +1,17 @@
 spring:
   application:
     name: generator
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: jdbc:postgresql://${POSTGRES_URL:localhost:5432}/generator
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
   liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/master.yaml
+    enabled: false
 
 app:
   generator:
@@ -19,7 +20,6 @@ app:
     max-width: 2000
     max-height: 2000
     max-iterations: 100000000
-  jwt-signing-key: ${JWT_SIGNING_KEY}
 
 server:
   ssl:

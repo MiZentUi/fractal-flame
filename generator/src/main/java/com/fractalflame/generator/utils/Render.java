@@ -82,15 +82,15 @@ public class Render implements Runnable {
     }
 
     private FunctionModel getRandomFunction() {
-        double sum = functions.stream().mapToDouble(FunctionModel::getWidth).sum();
+        double sum = functions.stream().mapToDouble(FunctionModel::getWeight).sum();
         double n = 0;
         double rNum = random.nextDouble(sum);
         for (var function : functions) {
-            n += function.getWidth();
+            n += function.getWeight();
             if (n >= rNum) {
                 return function;
             }
         }
-        return functions.stream().max(Comparator.comparing(FunctionModel::getWidth)).orElseGet(functions::getFirst);
+        return functions.stream().max(Comparator.comparing(FunctionModel::getWeight)).orElseGet(functions::getFirst);
     }
 }

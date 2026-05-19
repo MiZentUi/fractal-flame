@@ -18,4 +18,9 @@ public class SwirlFunction extends FunctionModel {
         double newY = point.x() * Math.cos(rSq) + point.y() * Math.sin(rSq);
         return new Point(newX, newY);
     }
+
+    @Override
+    public String getName() {
+        return "swirl";
+    }
 }
