@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.grpc.server.service.GrpcService;
 import com.fractalflame.generator.exception.EntityNotFoundException;
 import com.fractalflame.generator.mapper.FractalMapper;
+import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.proto.FractalRequest;
 import com.fractalflame.generator.proto.FractalResponse;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsImplBase;
@@ -34,6 +35,7 @@ public class FractalsService extends FractalsImplBase {
     private final AffineParamsRepository affineParamsRepository;
     private final FractalMapper fractalMapper;
     private final JwtService jwtService;
+    private final GeneratationService generatationService;
 
     @Override
     @Transactional
@@ -101,12 +103,11 @@ public class FractalsService extends FractalsImplBase {
             affineParamsRepository.save(p);
         });
 
-        responseObserver.onNext(TaskState.newBuilder()
-                .setId(1)
-                .setProgress(0)
-                .setFractalId(3)
-                .setPreview("")
-                .build());
+        var task = new GenerationTask(fractal);
+
+        generatationService.addTask(task);
+
+        responseObserver.onNext(task.toTaskState());
         responseObserver.onCompleted();
     }
 }

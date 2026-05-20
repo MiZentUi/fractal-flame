@@ -16,11 +16,12 @@ spring:
 app:
   generator:
     count: 3
-    threads: 4
+    threads: 3
     max-width: 2000
     max-height: 2000
     max-iterations: 100000000
-
-server:
-  ssl:
-    enabled: false
+  jwt-signing-key: ${JWT_SIGNING_KEY}
+  s3:
+    url: ${MINIO_URL:http://localhost:9000}
+    access-key: ${MINIO_ROOT_USER}
+    secret-key: ${MINIO_ROOT_PASSWORD}

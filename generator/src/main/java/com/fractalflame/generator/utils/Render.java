@@ -1,7 +1,7 @@
 package com.fractalflame.generator.utils;
 
 import com.fractalflame.generator.model.AffineTransformation;
-import com.fractalflame.generator.model.Image;
+import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.model.Pixel;
 import com.fractalflame.generator.model.Point;
 import com.fractalflame.generator.model.functions.FunctionModel;
@@ -17,8 +17,10 @@ import java.util.Random;
 @AllArgsConstructor
 public class Render implements Runnable {
     private final Random random = new Random(System.currentTimeMillis());
-    private final Image image;
+    private final GenerationTask task;
     private final int iterationsCount;
+    private final int maxIterations;
+    private final int threadsCount;
     private final int symmetryLevel;
     private final List<FunctionModel> functions;
     private final List<AffineTransformation> affineTransformations;
@@ -28,6 +30,8 @@ public class Render implements Runnable {
         synchronized (log) {
             log.info("[Thread: {}] Start generation...", this.hashCode());
         }
+
+        var image = task.getImage();
 
         var width = image.getWidth();
         var height = image.getHeight();
@@ -69,6 +73,11 @@ public class Render implements Runnable {
                     }
                     pixels[y][x].getCounter().increment();
                 }
+            }
+
+            var progress = (double) iterationsCount / maxIterations / threadsCount;
+            if (Math.abs(progress - (double) (iterationsCount - 1) / maxIterations / threadsCount) > 0.01) {
+                task.addProgress(progress * 9.0 / 10);
             }
         }
 
