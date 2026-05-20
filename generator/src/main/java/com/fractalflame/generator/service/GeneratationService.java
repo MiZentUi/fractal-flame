@@ -50,7 +50,7 @@ public class GeneratationService {
                             fractalsRepository.save(fractal);
                         }
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupted();
+                        Thread.currentThread().interrupt();
                         throw new GeneratorException(e);
                     }
                 }
@@ -66,7 +66,7 @@ public class GeneratationService {
                 workers.shutdownNow();
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupted();
+            Thread.currentThread().interrupt();
             throw new GeneratorException(e);
         }
     }
