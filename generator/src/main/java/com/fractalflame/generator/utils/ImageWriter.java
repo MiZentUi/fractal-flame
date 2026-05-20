@@ -2,28 +2,17 @@ package com.fractalflame.generator.utils;
 
 import com.fractalflame.generator.model.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Base64;
+
 import javax.imageio.ImageIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ImageWriter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageWriter.class);
-
-    private Path outputPath;
-
-    public ImageWriter(Path outputPath) {
-        this.outputPath = outputPath;
+    private ImageWriter() {
     }
 
-    public void setOutputPath(Path outputPath) {
-        this.outputPath = outputPath;
-    }
-
-    public void write(Image image) {
-        LOGGER.info("Writing file...");
+    public static byte[] toByteArray(Image image) {
         int width = image.getWidth();
         int height = image.getHeight();
         var pixels = image.getPixels();
@@ -36,9 +25,15 @@ public class ImageWriter {
             }
         }
         try {
-            ImageIO.write(bufferedImage, "png", Files.newOutputStream(outputPath));
+            var byteStream = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", byteStream);
+            return byteStream.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String toBase64(Image image) {
+        return Base64.getEncoder().encodeToString(toByteArray(image));
     }
 }

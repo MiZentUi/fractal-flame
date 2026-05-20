@@ -3,32 +3,26 @@ package com.fractalflame.generator.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@ConfigurationProperties(prefix = "app.generator")
+@ConfigurationProperties(prefix = "app.s3")
 @Validated
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GeneratorProperties {
+public class S3ClientProperties {
 
-    @Min(1)
-    private Integer count;
+    @NotEmpty
+    private String accessKey;
 
-    @Min(1)
-    private Integer threads;
+    @NotEmpty
+    private String secretKey;
 
-    @Min(1)
-    private Integer maxWidth;
-
-    @Min(1)
-    private Integer maxHeight;
-
-    @Min(1)
-    private Integer maxIterations;
+    @NotEmpty
+    private String url;
 }

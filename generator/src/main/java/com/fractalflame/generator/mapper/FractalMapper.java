@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.ReportingPolicy;
 
 import com.fractalflame.generator.entity.Fractal;
 import com.fractalflame.generator.proto.FractalRequest;
@@ -16,7 +17,7 @@ import com.fractalflame.generator.proto.FractalResponse;
 import com.google.protobuf.Timestamp;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { AffineMapper.class,
-        FunctionMapper.class }, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+        FunctionMapper.class }, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FractalMapper {
     @Mapping(target = "functionsList", source = "functions")
     @Mapping(target = "affineParamsList", source = "affineParams")

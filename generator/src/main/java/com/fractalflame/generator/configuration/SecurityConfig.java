@@ -5,10 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.grpc.server.GlobalServerInterceptor;
 import org.springframework.grpc.server.security.AuthenticationProcessInterceptor;
 import org.springframework.grpc.server.security.GrpcSecurity;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {

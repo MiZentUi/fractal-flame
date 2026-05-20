@@ -1,9 +1,9 @@
 package com.fractalflame.generator.utils;
 
-import com.fractalflame.generator.entity.Fractal;
 import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.AffineMapper;
 import com.fractalflame.generator.mapper.FunctionMapper;
+import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.model.Image;
 import com.fractalflame.generator.properties.GeneratorProperties;
 
@@ -13,31 +13,46 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class Generator {
     private final GeneratorProperties properties;
     private final FunctionMapper functionMapper;
     private final AffineMapper affineMapper;
-    private Image image;
 
-    public Image getImage() {
-        return image;
-    }
-
-    public void render(Fractal fractal) {
+    public void process(GenerationTask task) {
         log.info("Start render...");
+
+        var fractal = task.getFractal();
+
+        if (fractal.getWidth() > properties.getMaxWidth()) {
+            throw new FractalParametersException("WRONG_WIDTH",
+                    String.format("Fractal width shouldn't be greater than %s!", properties.getMaxWidth()));
+        }
+
+        if (fractal.getHeight() > properties.getMaxHeight()) {
+            throw new FractalParametersException("WRONG_HEIGHT",
+                    String.format("Fractal height shouldn't be greater than %s!", properties.getMaxHeight()));
+        }
+
+        if (fractal.getIterationCount() > properties.getMaxIterations()) {
+            throw new FractalParametersException("WRONG_ITERATION_COUNT",
+                    String.format("Iterations shouldn't be greater than %s!", properties.getMaxIterations()));
+        }
 
         if (fractal.getSymmetryLevel() < 1) {
             throw new FractalParametersException("WRONG_SYMMETRY_LEVEL", "Symmetry level should be greater than 0!");
         }
 
-        image = new Image(fractal.getWidth(), fractal.getHeight());
-
         try (var executor = Executors.newFixedThreadPool(properties.getThreads())) {
             for (int i = 0; i < properties.getThreads(); i++) {
-                executor.execute(new Render(image,
+                executor.execute(new Render(task,
                         fractal.getIterationCount() / properties.getThreads(),
+                        fractal.getIterationCount(),
+                        properties.getThreads(),
                         fractal.getSymmetryLevel(),
                         functionMapper.toFunctionModelList(fractal.getFunctions()),
                         affineMapper.toAffineTransformationList(fractal.getAffineParams())));
@@ -54,10 +69,12 @@ public class Generator {
             log.info("Render complete!");
         }
 
-        correction(fractal.getGamma());
+        task.sendUpdate();
+        correction(task.getImage(), fractal.getGamma());
+        task.done();
     }
 
-    private void correction(Double gamma) {
+    private void correction(Image image, Double gamma) {
         log.info("Start correction...");
 
         var pixels = image.getPixels();

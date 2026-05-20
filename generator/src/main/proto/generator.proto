@@ -11,9 +11,11 @@ service Fractals {
   rpc GetAll(FractalsRequest) returns (FractalsResponse) {}
   rpc GetById(IdRequest) returns (FractalResponse) {}
   rpc Generation(FractalRequest) returns (TaskState) {}
-  // TODO
-  // rpc SubscribeToTask(IdRequest) returns (/*TaskStream*/) {}
   rpc GetFunctions(google.protobuf.Empty) returns (FunctionsResponse) {}
+}
+
+service Images {
+  rpc GetImage(ImageRequest) returns (ImageResponse) {}
 }
 
 message FractalsRequest {
@@ -75,10 +77,17 @@ message AffineParams {
 }
 
 message TaskState {
-  int64 id = 1;
+  int64 fractal_id = 1;
   double progress = 2;
-  int64 fractal_id = 3;
-  string preview = 4;
+  string preview = 3;
+}
+
+message ImageRequest {
+  string name = 1;
+}
+
+message ImageResponse {
+  bytes image = 1;
 }
 
 enum Order {

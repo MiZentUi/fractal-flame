@@ -6,12 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 import com.fractalflame.generator.entity.AffineParams;
 import com.fractalflame.generator.model.AffineTransformation;
 import com.fractalflame.generator.model.Pixel;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AffineMapper {
 
     @Mapping(target = "color", source = "color", qualifiedByName = "colorToPixel")
