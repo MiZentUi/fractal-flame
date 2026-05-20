@@ -442,15 +442,13 @@ components:
     TaskState:
       type: object
       properties:
-        id:
-          type: number
+        fractal_id:
+          type: integer
         progress:
           type: number
           format: double
           minimum: 0
           maximum: 1
-        fractal_id:
-          type: integer
         preview:
           type: string
           description: Path to priview image
