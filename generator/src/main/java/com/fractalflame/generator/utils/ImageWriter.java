@@ -1,5 +1,6 @@
 package com.fractalflame.generator.utils;
 
+import com.fractalflame.generator.exception.ImageException;
 import com.fractalflame.generator.model.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +30,7 @@ public class ImageWriter {
             ImageIO.write(bufferedImage, "png", byteStream);
             return byteStream.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ImageException(e);
         }
     }
 

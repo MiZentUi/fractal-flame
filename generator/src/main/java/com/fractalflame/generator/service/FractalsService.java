@@ -66,7 +66,7 @@ public class FractalsService extends FractalsImplBase {
     public void getById(IdRequest request, StreamObserver<FractalResponse> responseObserver) {
         try {
             responseObserver.onNext(fractalMapper.toFractalResponse(fractalsRepository.findById(request.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("FRACTAL_NOT_FOUND",
+                    .orElseThrow(() -> new EntityNotFoundException(
                             String.format("Fractal with id = %s not found!", request.getId())))));
         } catch (Exception e) {
             responseObserver.onError(e);

@@ -1,8 +1,8 @@
 package com.fractalflame.generator.exception;
 
-public class FractalParametersException extends CodeException {
+public class FractalParametersException extends RuntimeException {
 
-    public FractalParametersException(String code, String message) {
-        super(code, message);
+    public FractalParametersException(String message) {
+        super(message);
     }
 }
