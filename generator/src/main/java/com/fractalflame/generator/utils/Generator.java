@@ -24,27 +24,27 @@ public class Generator {
     private final AffineMapper affineMapper;
 
     public void process(GenerationTask task) {
-        log.info("Start render...");
-
         var fractal = task.getFractal();
 
+        log.atInfo().addKeyValue("fractal_id", fractal.getId()).log("Start render...");
+
         if (fractal.getWidth() > properties.getMaxWidth()) {
-            throw new FractalParametersException("WRONG_WIDTH",
+            throw new FractalParametersException(
                     String.format("Fractal width shouldn't be greater than %s!", properties.getMaxWidth()));
         }
 
         if (fractal.getHeight() > properties.getMaxHeight()) {
-            throw new FractalParametersException("WRONG_HEIGHT",
+            throw new FractalParametersException(
                     String.format("Fractal height shouldn't be greater than %s!", properties.getMaxHeight()));
         }
 
         if (fractal.getIterationCount() > properties.getMaxIterations()) {
-            throw new FractalParametersException("WRONG_ITERATION_COUNT",
+            throw new FractalParametersException(
                     String.format("Iterations shouldn't be greater than %s!", properties.getMaxIterations()));
         }
 
         if (fractal.getSymmetryLevel() < 1) {
-            throw new FractalParametersException("WRONG_SYMMETRY_LEVEL", "Symmetry level should be greater than 0!");
+            throw new FractalParametersException("Symmetry level should be greater than 0!");
         }
 
         try (var executor = Executors.newFixedThreadPool(properties.getThreads())) {
@@ -66,7 +66,7 @@ public class Generator {
                 executor.shutdownNow();
                 Thread.currentThread().interrupt();
             }
-            log.info("Render complete!");
+            log.atInfo().addKeyValue("fractal_id", fractal.getId()).log("Render complete!");
         }
 
         task.sendUpdate();

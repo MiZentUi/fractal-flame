@@ -1,5 +1,6 @@
 package com.fractalflame.generator.utils;
 
+import com.fractalflame.generator.exception.FunctionException;
 import com.fractalflame.generator.model.functions.DiscFunction;
 import com.fractalflame.generator.model.functions.EyefishFunction;
 import com.fractalflame.generator.model.functions.FunctionModel;
@@ -47,7 +48,7 @@ public class FunctionBuilder {
                 | InstantiationException
                 | IllegalAccessException
                 | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new FunctionException(e);
         }
     }
 }

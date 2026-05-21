@@ -23,7 +23,11 @@ public class GenerationTask {
     }
 
     public synchronized void addProgress(Double value) {
-        log.atInfo().addKeyValue("progress", progress).log("add progress");
+        log.atInfo()
+                .addKeyValue("progress", progress)
+                .addKeyValue("fractal_id", fractal.getId())
+                .log("add progress");
+
         progress += value;
         if (Math.abs(progress - 1) >= 0.01) {
             progress = 1.0;
@@ -39,7 +43,7 @@ public class GenerationTask {
     }
 
     public synchronized void sendUpdate() {
-        log.info("send task update");
+        log.atInfo().addKeyValue("fractal_id", fractal.getId()).log("send task update");
     }
 
     public synchronized TaskState toTaskState() {

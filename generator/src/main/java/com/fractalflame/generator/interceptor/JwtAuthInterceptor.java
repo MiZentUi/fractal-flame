@@ -6,7 +6,6 @@ import org.springframework.grpc.server.GlobalServerInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import com.fractalflame.generator.model.User;
 import com.fractalflame.generator.service.JwtService;
@@ -20,7 +19,6 @@ import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 import io.grpc.Status;
 
-@Component
 @GlobalServerInterceptor
 @RequiredArgsConstructor
 public class JwtAuthInterceptor implements ServerInterceptor {

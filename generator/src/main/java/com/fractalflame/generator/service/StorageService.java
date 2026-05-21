@@ -2,7 +2,7 @@ package com.fractalflame.generator.service;
 
 import org.springframework.stereotype.Service;
 
-import com.fractalflame.generator.exception.StorageException;
+import com.fractalflame.generator.exception.BlobNotFoundException;
 import com.fractalflame.generator.model.Image;
 import com.fractalflame.generator.utils.ImageWriter;
 
@@ -52,7 +52,7 @@ public class StorageService {
         try (var stream = s3Client.getObject(request)) {
             return stream.readAllBytes();
         } catch (Exception e) {
-            throw new StorageException("IMAGE_NOT_FOUND", String.format("Image with name %s not found!", filename));
+            throw new BlobNotFoundException(String.format("Image with name %s not found!", filename));
         }
     }
 }

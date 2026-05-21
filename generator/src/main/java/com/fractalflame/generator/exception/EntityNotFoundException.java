@@ -1,8 +1,8 @@
 package com.fractalflame.generator.exception;
 
-public class EntityNotFoundException extends CodeException {
+public class EntityNotFoundException extends RuntimeException {
 
-    public EntityNotFoundException(String code, String message) {
-        super(code, message);
+    public EntityNotFoundException(String message) {
+        super(message);
     }
 }
