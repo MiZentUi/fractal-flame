@@ -84,24 +84,25 @@ public class Generator {
         for (var row : pixels) {
             for (var pixel : row) {
                 if (pixel != null) {
-                    pixel.setNormal(Math.min(Math.log10(pixel.getCounter().sum()), max));
+                    pixel.setNormal(Math.log10(pixel.getCounter().sum()));
+                    max = Math.max(pixel.getNormal(), max);
                 }
             }
         }
 
-        if (max > 0) {
-            for (var row : pixels) {
-                for (var pixel : row) {
-                    if (pixel != null) {
-                        var normal = pixel.getNormal();
-                        normal /= max;
-                        pixel.setNormal(normal);
-                        pixel.multiply(Math.pow(normal, 1.0 / gamma));
-                    }
+        if (max <= 0) {
+            return;
+        }
+
+        for (var row : pixels) {
+            for (var pixel : row) {
+                if (pixel != null) {
+                    var normal = pixel.getNormal();
+                    normal /= max;
+                    pixel.setNormal(normal);
+                    pixel.multiply(Math.pow(normal, 1.0 / gamma));
                 }
             }
         }
-
-        log.info("Correction complete!");
     }
 }
