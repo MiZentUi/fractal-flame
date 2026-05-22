@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.fractalflame.generator.proto";
+option java_outer_classname = "GeneratorProto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service Fractals {
+  rpc GetAll(FractalsRequest) returns (FractalsResponse) {}
+  rpc GetById(IdRequest) returns (FractalResponse) {}
+  rpc Generation(FractalRequest) returns (TaskState) {}
+  rpc GetFunctions(google.protobuf.Empty) returns (FunctionsResponse) {}
+}
+
+service Images {
+  rpc GetImage(ImageRequest) returns (ImageResponse) {}
+}
+
+message FractalsRequest {
+  optional int32 page = 1;
+  optional int32 count = 2;
+  optional string sort = 3;
+  optional Order order = 4;
+  optional int64 user_id = 5;
+}
+
+message FractalsResponse {
+  repeated FractalResponse fractals = 1;
+}
+
+message IdRequest {
+  int64 id = 1;
+}
+
+message FractalRequest {
+  int32 width = 1;
+  int32 height = 2;
+  int32 iteration_count = 3;
+  int32 symmetry_level = 4;
+  double gamma = 5;
+  repeated Function functions = 6;
+  repeated AffineParams affine_params = 7;
+}
+
+message FunctionsResponse {
+  repeated string names = 1;
+}
+
+message FractalResponse {
+  int64 id = 1;
+  optional int64 user_id = 2;
+  int32 width = 3;
+  int32 height = 4;
+  int32 iteration_count = 5;
+  int32 symmetry_level = 6;
+  double gamma = 7;
+  repeated Function functions = 8;
+  repeated AffineParams affine_params = 9;
+  google.protobuf.Timestamp created = 10;
+  string image = 11;
+}
+
+message Function {
+  string name = 1;
+  double weight = 2;
+}
+
+message AffineParams {
+  string color = 1;
+  double a = 2;
+  double b = 3;
+  double c = 4;
+  double d = 5;
+  double e = 6;
+  double f = 7;
+}
+
+message TaskState {
+  int64 fractal_id = 1;
+  double progress = 2;
+  string preview = 3;
+}
+
+message ImageRequest {
+  string name = 1;
+}
+
+message ImageResponse {
+  bytes image = 1;
+}
+
+enum Order {
+  ASC = 0;
+  DESC = 1;
+}

@@ -1,0 +1,108 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.5'
+	id 'org.openapi.generator' version '7.21.0'
+}
+
+group = 'com.fractalflame'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springGrpcVersion', "1.0.3")
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'io.grpc:grpc-services'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+	implementation 'org.springframework.grpc:spring-grpc-client-spring-boot-starter'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.10'
+	implementation 'org.mapstruct:mapstruct:1.6.3'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.grpc:spring-grpc-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.grpc:spring-grpc-dependencies:${springGrpcVersion}"
+	}
+}
+
+protobuf {
+	protoc {
+		artifact = 'com.google.protobuf:protoc'
+	}
+	plugins {
+		grpc {
+			artifact = 'io.grpc:protoc-gen-grpc-java'
+		}
+	}
+	generateProtoTasks {
+		all()*.plugins {
+			grpc {
+				option '@generated=omit'
+			}
+		}
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "$buildDir/generated/src/main/java"
+            srcDirs += "$buildDir/generated/sources/proto/main/grpc"
+        }
+    }
+}
+
+tasks.compileJava {
+	dependsOn(tasks.generateProto)
+	dependsOn(tasks.openApiGenerate)
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "../openapi.yaml"
+	outputDir = "$buildDir/generated"
+	ignoreFileOverride = "$projectDir/.openapi-generator-ignore"
+	importMappings = [
+        "Nullable": "org.jspecify.annotations.Nullable"
+    ]
+	configOptions = [
+		library                             : "spring-boot",
+		invokerPackage                      : "com.fractalflame.gateway",
+        apiPackage                          : "com.fractalflame.gateway.api",
+        modelPackage                        : "com.fractalflame.gateway.model",
+        configPackage                       : "com.fractalflame.gateway.configuration",
+        basePackage                         : "com.fractalflame.gateway",
+        interfaceOnly                       : "false",
+		openApiNullable						: "true",
+        additionalModelTypeAnnotations      : "@lombok.Getter\n@lombok.Setter\n@lombok.Builder(toBuilder = true)\n@lombok.NoArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+        useTags                             : "true"
+    ]
+}
