@@ -103,6 +103,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
       requestBody:
         required: true
         content:
@@ -152,6 +153,7 @@ paths:
           name: userid
           schema:
             type: integer
+            format: int64
             example: 1
       responses:
         "200":
@@ -159,7 +161,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FractalResponse"
+                type: array
+                items:
+                  $ref: "#/components/schemas/FractalResponse"
         default:
           $ref: "#/components/responses/default"
   /fractals/{id}:
@@ -174,6 +178,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
       responses:
         "200":
           description: Fractals
@@ -216,6 +221,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
       responses:
         "200":
           description: Task event stream
@@ -223,7 +229,6 @@ paths:
             text/event-stream:
               schema:
                 type: object
-                required: [data]
                 properties:
                   data:
                     $ref: "#/components/schemas/TaskState"
@@ -256,6 +261,7 @@ paths:
       tags:
         - Images
       summary: Get image
+      operationId: getImage
       parameters:
         - in: path
           name: name
@@ -307,6 +313,7 @@ components:
       properties:
         id:
           type: integer
+          format: int64
         username:
           type: string
           example: username
@@ -337,54 +344,21 @@ components:
         functions:
           type: array
           items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: sinusoidal
-              weight:
-                type: number
-                format: double
-                example: 1.0
+            $ref: "#/components/schemas/Function"
         affine_params:
           type: array
           items:
-            type: object
-            properties:
-              color:
-                type: string
-                pattern: "^#[a-fA-F0-9]{6}$"
-                example: "#ff3203"
-              a:
-                type: number
-                format: double
-                example: 0.3
-              b:
-                type: number
-                format: double
-                example: 0.4
-              c:
-                type: number
-                format: double
-                example: 0.1
-              d:
-                type: number
-                format: double
-                example: 0.2
-              e:
-                type: number
-                format: double
-                example: 1
-              f:
-                type: number
-                format: double
-                example: 1
+            $ref: "#/components/schemas/AffineParams"
 
     FractalResponse:
       type: object
       properties:
         id:
           type: integer
+          format: int64
+        user_id:
+          type: integer
+          format: int64
         width:
           type: integer
         height:
@@ -399,39 +373,11 @@ components:
         functions:
           type: array
           items:
-            type: object
-            properties:
-              name:
-                type: string
-              weight:
-                type: number
-                format: double
+            $ref: "#/components/schemas/Function"
         affine_params:
           type: array
           items:
-            type: object
-            properties:
-              color:
-                type: string
-                pattern: "^#[a-fA-F0-9]{6}$"
-              a:
-                type: number
-                format: double
-              b:
-                type: number
-                format: double
-              c:
-                type: number
-                format: double
-              d:
-                type: number
-                format: double
-              e:
-                type: number
-                format: double
-              f:
-                type: number
-                format: double
+            $ref: "#/components/schemas/AffineParams"
         created:
           type: string
           format: date-time
@@ -439,11 +385,55 @@ components:
           type: string
           description: Path to image
 
+    Function:
+      type: object
+      properties:
+        name:
+          type: string
+          example: sinusoidal
+        weight:
+          type: number
+          format: double
+          example: 1.0
+
+    AffineParams:
+      type: object
+      properties:
+        color:
+          type: string
+          pattern: "^#[a-fA-F0-9]{6}$"
+          example: "#ff3203"
+        a:
+          type: number
+          format: double
+          example: 0.3
+        b:
+          type: number
+          format: double
+          example: 0.4
+        c:
+          type: number
+          format: double
+          example: 0.1
+        d:
+          type: number
+          format: double
+          example: 0.2
+        e:
+          type: number
+          format: double
+          example: 1
+        f:
+          type: number
+          format: double
+          example: 1
+
     TaskState:
       type: object
       properties:
         fractal_id:
           type: integer
+          format: int64
         progress:
           type: number
           format: double
