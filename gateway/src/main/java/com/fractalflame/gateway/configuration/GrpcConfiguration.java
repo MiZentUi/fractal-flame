@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.grpc.client.GrpcChannelFactory;
 
+import com.fractalflame.gateway.interceptor.AuthInterceptor;
 import com.fractalflame.generator.proto.FractalsGrpc;
 import com.fractalflame.generator.proto.ImagesGrpc;
 
@@ -11,7 +12,7 @@ import com.fractalflame.generator.proto.ImagesGrpc;
 public class GrpcConfiguration {
 
     @Bean
-    FractalsGrpc.FractalsBlockingStub fractalsStub(GrpcChannelFactory channels) {
+    FractalsGrpc.FractalsBlockingStub fractalsStub(GrpcChannelFactory channels, AuthInterceptor authInterceptor) {
         return FractalsGrpc.newBlockingStub(channels.createChannel("local"));
     }
 

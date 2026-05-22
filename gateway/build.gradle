@@ -32,6 +32,11 @@ dependencies {
 	implementation 'org.springframework.grpc:spring-grpc-client-spring-boot-starter'
 	implementation 'org.openapitools:jackson-databind-nullable:0.2.10'
 	implementation 'org.mapstruct:mapstruct:1.6.3'
+
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.13.0'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+	
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
@@ -102,7 +107,7 @@ openApiGenerate {
         basePackage                         : "com.fractalflame.gateway",
         interfaceOnly                       : "false",
 		openApiNullable						: "true",
-        additionalModelTypeAnnotations      : "@lombok.Getter\n@lombok.Setter\n@lombok.Builder(toBuilder = true)\n@lombok.NoArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+        additionalModelTypeAnnotations      : "@lombok.Getter\n@lombok.Setter\n@lombok.Builder(toBuilder = true)\n@lombok.NoArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)\n@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)",
         useTags                             : "true"
     ]
 }
