@@ -11,6 +11,7 @@ service Fractals {
   rpc GetAll(FractalsRequest) returns (FractalsResponse) {}
   rpc GetById(IdRequest) returns (FractalResponse) {}
   rpc Generation(FractalRequest) returns (TaskState) {}
+  rpc SubscribeToTask(IdRequest) returns (stream TaskState) {}
   rpc GetFunctions(google.protobuf.Empty) returns (FunctionsResponse) {}
 }
 

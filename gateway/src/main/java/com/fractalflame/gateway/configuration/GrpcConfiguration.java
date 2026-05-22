@@ -12,8 +12,14 @@ import com.fractalflame.generator.proto.ImagesGrpc;
 public class GrpcConfiguration {
 
     @Bean
-    FractalsGrpc.FractalsBlockingStub fractalsStub(GrpcChannelFactory channels, AuthInterceptor authInterceptor) {
+    FractalsGrpc.FractalsBlockingStub fractalsBlockingStub(GrpcChannelFactory channels,
+            AuthInterceptor authInterceptor) {
         return FractalsGrpc.newBlockingStub(channels.createChannel("local"));
+    }
+
+    @Bean
+    FractalsGrpc.FractalsStub fractalsStub(GrpcChannelFactory channels, AuthInterceptor authInterceptor) {
+        return FractalsGrpc.newStub(channels.createChannel("local"));
     }
 
     @Bean

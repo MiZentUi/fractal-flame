@@ -1,9 +1,7 @@
 package com.fractalflame.generator.utils;
 
-import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.AffineMapper;
 import com.fractalflame.generator.mapper.FunctionMapper;
-import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.model.Image;
 import com.fractalflame.generator.properties.GeneratorProperties;
 
@@ -32,8 +30,6 @@ public class Generator {
             for (int i = 0; i < properties.getThreads(); i++) {
                 executor.execute(new Render(task,
                         fractal.getIterationCount() / properties.getThreads(),
-                        fractal.getIterationCount(),
-                        properties.getThreads(),
                         fractal.getSymmetryLevel(),
                         functionMapper.toFunctionModelList(fractal.getFunctions()),
                         affineMapper.toAffineTransformationList(fractal.getAffineParams())));
@@ -50,9 +46,7 @@ public class Generator {
             log.atInfo().addKeyValue("fractal_id", fractal.getId()).log("Render complete!");
         }
 
-        task.sendUpdate();
         correction(task.getImage(), fractal.getGamma());
-        task.done();
     }
 
     private void correction(Image image, Double gamma) {
