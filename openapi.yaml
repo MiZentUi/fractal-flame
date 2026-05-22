@@ -194,6 +194,8 @@ paths:
         - Fractals
       summary: Start generation task
       operationId: generation
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -214,6 +216,7 @@ paths:
       tags:
         - Fractals
       summary: Subscribe to task events
+      x-internal: true
       operationId: subscribeToTask
       parameters:
         - in: path
@@ -276,10 +279,8 @@ paths:
               schema:
                 type: string
                 format: binary
-        "400":
-          $ref: "#/components/responses/bad"
-        "404":
-          description: Image not found
+        default:
+          $ref: "#/components/responses/default"
 
 components:
   schemas:
