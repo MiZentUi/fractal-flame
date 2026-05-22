@@ -19,7 +19,6 @@ import com.google.protobuf.Timestamp;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { AffineMapper.class,
         FunctionMapper.class }, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FractalMapper {
-
     @Mapping(target = "functionsList", source = "functions")
     @Mapping(target = "affineParamsList", source = "affineParams")
     @Mapping(target = "created", source = "created", qualifiedByName = "toTimestamp")
