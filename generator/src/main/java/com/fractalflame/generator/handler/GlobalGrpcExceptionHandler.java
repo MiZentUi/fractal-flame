@@ -12,6 +12,7 @@ import com.google.rpc.Status;
 
 import io.grpc.StatusException;
 import io.grpc.protobuf.StatusProto;
+import jakarta.validation.ValidationException;
 
 @Component
 public class GlobalGrpcExceptionHandler implements GrpcExceptionHandler {
@@ -21,6 +22,7 @@ public class GlobalGrpcExceptionHandler implements GrpcExceptionHandler {
         var code = switch (exception) {
             case EntityNotFoundException e -> Code.NOT_FOUND;
             case BlobNotFoundException e -> Code.NOT_FOUND;
+            case ValidationException e -> Code.INVALID_ARGUMENT;
             case FractalParametersException e -> Code.INVALID_ARGUMENT;
             default -> Code.INTERNAL;
         };
