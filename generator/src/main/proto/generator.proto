@@ -50,16 +50,15 @@ message FunctionsResponse {
 
 message FractalResponse {
   int64 id = 1;
-  optional int64 user_id = 2;
-  int32 width = 3;
-  int32 height = 4;
-  int32 iteration_count = 5;
-  int32 symmetry_level = 6;
-  double gamma = 7;
-  repeated Function functions = 8;
-  repeated AffineParams affine_params = 9;
-  google.protobuf.Timestamp created = 10;
-  string image = 11;
+  int32 width = 2;
+  int32 height = 3;
+  int32 iteration_count = 4;
+  int32 symmetry_level = 5;
+  double gamma = 6;
+  repeated Function functions = 7;
+  repeated AffineParams affine_params = 8;
+  google.protobuf.Timestamp created = 9;
+  string image = 10;
 }
 
 message Function {
