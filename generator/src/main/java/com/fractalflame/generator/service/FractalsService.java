@@ -6,7 +6,6 @@ import org.springframework.grpc.server.service.GrpcService;
 import com.fractalflame.generator.exception.EntityNotFoundException;
 import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.FractalMapper;
-import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.properties.GeneratorProperties;
 import com.fractalflame.generator.proto.FractalRequest;
 import com.fractalflame.generator.proto.FractalResponse;
@@ -15,6 +14,7 @@ import com.fractalflame.generator.repository.AffineParamsRepository;
 import com.fractalflame.generator.repository.FractalsRepository;
 import com.fractalflame.generator.repository.FunctionsRepository;
 import com.fractalflame.generator.utils.FunctionBuilder;
+import com.fractalflame.generator.utils.GenerationTask;
 import com.google.protobuf.Empty;
 import com.fractalflame.generator.proto.FractalsRequest;
 import com.fractalflame.generator.proto.FractalsResponse;
@@ -93,17 +93,20 @@ public class FractalsService extends FractalsImplBase {
 
         if (fractal.getWidth() > generatorProperties.getMaxWidth()) {
             throw new FractalParametersException(
-                    String.format("Fractal width shouldn't be greater than %s!", generatorProperties.getMaxWidth()));
+                    String.format("Fractal width shouldn't be greater than %s!",
+                            generatorProperties.getMaxWidth()));
         }
 
         if (fractal.getHeight() > generatorProperties.getMaxHeight()) {
             throw new FractalParametersException(
-                    String.format("Fractal height shouldn't be greater than %s!", generatorProperties.getMaxHeight()));
+                    String.format("Fractal height shouldn't be greater than %s!",
+                            generatorProperties.getMaxHeight()));
         }
 
         if (fractal.getIterationCount() > generatorProperties.getMaxIterations()) {
             throw new FractalParametersException(
-                    String.format("Iterations shouldn't be greater than %s!", generatorProperties.getMaxIterations()));
+                    String.format("Iterations shouldn't be greater than %s!",
+                            generatorProperties.getMaxIterations()));
         }
 
         if (fractal.getSymmetryLevel() < 1) {
@@ -141,5 +144,10 @@ public class FractalsService extends FractalsImplBase {
 
         responseObserver.onNext(task.toTaskState());
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void subscribeToTask(IdRequest request, StreamObserver<TaskState> responseObserver) {
+        generatationService.subscribeToTask(request.getId(), responseObserver);
     }
 }

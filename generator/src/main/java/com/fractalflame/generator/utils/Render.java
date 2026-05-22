@@ -1,7 +1,6 @@
 package com.fractalflame.generator.utils;
 
 import com.fractalflame.generator.model.AffineTransformation;
-import com.fractalflame.generator.model.GenerationTask;
 import com.fractalflame.generator.model.Pixel;
 import com.fractalflame.generator.model.Point;
 import com.fractalflame.generator.model.functions.FunctionModel;
@@ -19,8 +18,6 @@ public class Render implements Runnable {
     private final Random random = new Random(System.currentTimeMillis());
     private final GenerationTask task;
     private final int iterationsCount;
-    private final int maxIterations;
-    private final int threadsCount;
     private final int symmetryLevel;
     private final List<FunctionModel> functions;
     private final List<AffineTransformation> affineTransformations;
@@ -46,7 +43,9 @@ public class Render implements Runnable {
         var point = new Point(random.nextDouble(xMin, xMax), random.nextDouble(yMin, yMax));
         var color = Pixel.genColor(random);
 
-        for (int i = -20; i < iterationsCount; i++) {
+        long iterationsDelta = -20;
+
+        for (int i = -20; i < iterationsCount; i++, iterationsDelta++) {
             var currentAffine = getRandomAffine();
             point = getRandomFunction().transform(currentAffine.transform(point));
 
@@ -75,11 +74,13 @@ public class Render implements Runnable {
                 }
             }
 
-            var progress = (double) iterationsCount / maxIterations / threadsCount;
-            if (Math.abs(progress - (double) (iterationsCount - 1) / maxIterations / threadsCount) > 0.01) {
-                task.addProgress(progress * 9.0 / 10);
+            if (iterationsDelta >= 1000) {
+                task.addIterations(iterationsDelta);
+                iterationsDelta = 0;
             }
         }
+
+        task.addIterations(iterationsDelta);
 
         synchronized (log) {
             log.info("[Thread: {}] Generation complete!", this.hashCode());

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.fractalflame.generator.exception.BlobNotFoundException;
 import com.fractalflame.generator.exception.EntityNotFoundException;
 import com.fractalflame.generator.exception.FractalParametersException;
+import com.fractalflame.generator.exception.TaskNotFoundException;
 import com.google.rpc.Code;
 import com.google.rpc.Status;
 
@@ -22,6 +23,7 @@ public class GlobalGrpcExceptionHandler implements GrpcExceptionHandler {
         var code = switch (exception) {
             case EntityNotFoundException e -> Code.NOT_FOUND;
             case BlobNotFoundException e -> Code.NOT_FOUND;
+            case TaskNotFoundException e -> Code.NOT_FOUND;
             case ValidationException e -> Code.INVALID_ARGUMENT;
             case FractalParametersException e -> Code.INVALID_ARGUMENT;
             default -> Code.INTERNAL;
