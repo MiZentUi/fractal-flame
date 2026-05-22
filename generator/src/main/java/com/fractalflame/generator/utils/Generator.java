@@ -28,25 +28,6 @@ public class Generator {
 
         log.atInfo().addKeyValue("fractal_id", fractal.getId()).log("Start render...");
 
-        if (fractal.getWidth() > properties.getMaxWidth()) {
-            throw new FractalParametersException(
-                    String.format("Fractal width shouldn't be greater than %s!", properties.getMaxWidth()));
-        }
-
-        if (fractal.getHeight() > properties.getMaxHeight()) {
-            throw new FractalParametersException(
-                    String.format("Fractal height shouldn't be greater than %s!", properties.getMaxHeight()));
-        }
-
-        if (fractal.getIterationCount() > properties.getMaxIterations()) {
-            throw new FractalParametersException(
-                    String.format("Iterations shouldn't be greater than %s!", properties.getMaxIterations()));
-        }
-
-        if (fractal.getSymmetryLevel() < 1) {
-            throw new FractalParametersException("Symmetry level should be greater than 0!");
-        }
-
         try (var executor = Executors.newFixedThreadPool(properties.getThreads())) {
             for (int i = 0; i < properties.getThreads(); i++) {
                 executor.execute(new Render(task,
