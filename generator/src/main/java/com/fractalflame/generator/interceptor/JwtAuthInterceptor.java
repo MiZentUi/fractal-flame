@@ -6,6 +6,7 @@ import org.springframework.grpc.server.GlobalServerInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import com.fractalflame.generator.model.User;
 import com.fractalflame.generator.service.JwtService;
@@ -19,6 +20,7 @@ import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 import io.grpc.Status;
 
+@Component
 @GlobalServerInterceptor
 @RequiredArgsConstructor
 public class JwtAuthInterceptor implements ServerInterceptor {
@@ -28,9 +30,9 @@ public class JwtAuthInterceptor implements ServerInterceptor {
     public <ReqT, RespT> Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers,
             ServerCallHandler<ReqT, RespT> next) {
 
-        Metadata.Key<String> authHeaderLey = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+        Metadata.Key<String> authHeaderKey = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
 
-        String authHeader = headers.get(authHeaderLey);
+        String authHeader = headers.get(authHeaderKey);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return next.startCall(call, headers);
@@ -39,6 +41,8 @@ public class JwtAuthInterceptor implements ServerInterceptor {
         try {
 
             String token = authHeader.substring(7);
+
+            jwtService.validateToken(token);
 
             var claims = jwtService.extractClaims(token);
 

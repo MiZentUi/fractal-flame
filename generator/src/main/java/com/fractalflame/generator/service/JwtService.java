@@ -1,5 +1,8 @@
 package com.fractalflame.generator.service;
 
+import java.util.Date;
+import java.util.function.Function;
+
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +25,23 @@ public class JwtService {
     public Claims extractClaims(String token) {
         return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token)
                 .getPayload();
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
+        final Claims claims = extractClaims(token);
+        return claimsResolvers.apply(claims);
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    public boolean validateToken(String token) {
+        return isTokenExpired(token);
     }
 
     private SecretKey getSigningKey() {

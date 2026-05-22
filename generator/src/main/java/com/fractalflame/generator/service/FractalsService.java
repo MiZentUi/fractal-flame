@@ -4,8 +4,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.grpc.server.service.GrpcService;
 import com.fractalflame.generator.exception.EntityNotFoundException;
+import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.FractalMapper;
 import com.fractalflame.generator.model.GenerationTask;
+import com.fractalflame.generator.properties.GeneratorProperties;
 import com.fractalflame.generator.proto.FractalRequest;
 import com.fractalflame.generator.proto.FractalResponse;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsImplBase;
@@ -36,6 +38,7 @@ public class FractalsService extends FractalsImplBase {
     private final FractalMapper fractalMapper;
     private final JwtService jwtService;
     private final GeneratationService generatationService;
+    private final GeneratorProperties generatorProperties;
 
     @Override
     @Transactional
@@ -86,7 +89,36 @@ public class FractalsService extends FractalsImplBase {
     @Override
     @Transactional
     public void generation(FractalRequest request, StreamObserver<TaskState> responseObserver) {
-        var fractal = fractalsRepository.save(fractalMapper.fromFractalRequest(request));
+        var fractal = fractalMapper.fromFractalRequest(request);
+
+        if (fractal.getWidth() > generatorProperties.getMaxWidth()) {
+            throw new FractalParametersException(
+                    String.format("Fractal width shouldn't be greater than %s!", generatorProperties.getMaxWidth()));
+        }
+
+        if (fractal.getHeight() > generatorProperties.getMaxHeight()) {
+            throw new FractalParametersException(
+                    String.format("Fractal height shouldn't be greater than %s!", generatorProperties.getMaxHeight()));
+        }
+
+        if (fractal.getIterationCount() > generatorProperties.getMaxIterations()) {
+            throw new FractalParametersException(
+                    String.format("Iterations shouldn't be greater than %s!", generatorProperties.getMaxIterations()));
+        }
+
+        if (fractal.getSymmetryLevel() < 1) {
+            throw new FractalParametersException("Symmetry level should be greater than 0!");
+        }
+
+        if (fractal.getFunctions().isEmpty()) {
+            throw new FractalParametersException("Required almost one function!");
+        }
+
+        if (fractal.getAffineParams().isEmpty()) {
+            throw new FractalParametersException("Required almost one affine params!");
+        }
+
+        fractalsRepository.save(fractal);
 
         var user = jwtService.getCurrentUser();
         if (user != null) {
