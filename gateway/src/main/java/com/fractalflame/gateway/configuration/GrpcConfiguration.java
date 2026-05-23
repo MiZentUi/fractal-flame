@@ -14,16 +14,16 @@ public class GrpcConfiguration {
     @Bean
     FractalsGrpc.FractalsBlockingStub fractalsBlockingStub(GrpcChannelFactory channels,
             AuthInterceptor authInterceptor) {
-        return FractalsGrpc.newBlockingStub(channels.createChannel("local"));
+        return FractalsGrpc.newBlockingStub(channels.createChannel("generator"));
     }
 
     @Bean
     FractalsGrpc.FractalsStub fractalsStub(GrpcChannelFactory channels, AuthInterceptor authInterceptor) {
-        return FractalsGrpc.newStub(channels.createChannel("local"));
+        return FractalsGrpc.newStub(channels.createChannel("generator"));
     }
 
     @Bean
     ImagesGrpc.ImagesBlockingStub imagesStub(GrpcChannelFactory channels) {
-        return ImagesGrpc.newBlockingStub(channels.createChannel("local"));
+        return ImagesGrpc.newBlockingStub(channels.createChannel("generator"));
     }
 }

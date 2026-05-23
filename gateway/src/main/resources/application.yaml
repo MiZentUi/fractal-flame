@@ -4,8 +4,8 @@ spring:
   grpc:
     client:
       channels:
-        local:
-          address: 0.0.0.0:9090
+        generator:
+          address: ${GENERATOR_URL:0.0.0.0:9090}
   jackson:
     property-naming-strategy: SNAKE_CASE
 

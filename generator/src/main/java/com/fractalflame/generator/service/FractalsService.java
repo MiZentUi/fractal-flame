@@ -1,8 +1,11 @@
 package com.fractalflame.generator.service;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.grpc.server.service.GrpcService;
+
+import com.fractalflame.generator.entity.Fractal;
 import com.fractalflame.generator.exception.EntityNotFoundException;
 import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.FractalMapper;
@@ -48,14 +51,22 @@ public class FractalsService extends FractalsImplBase {
             if (request.hasOrder() && request.getOrder() == Order.DESC) {
                 sort = sort.descending();
             }
-            var page = request.hasPage() ? request.getPage() : 1;
-            var count = request.hasCount() ? request.getCount() : 10;
-            var pageRequest = PageRequest.of(page - 1, count, sort);
-            var fractals = request.hasUserId() ? fractalsRepository.findAllByUserId(request.getUserId(), pageRequest)
-                    : fractalsRepository.findAll(pageRequest);
+
+            Iterable<Fractal> fractals;
+            if (request.hasCount()) {
+                var page = request.hasPage() ? request.getPage() : 1;
+                var pageRequest = PageRequest.of(page - 1, request.getCount(), sort);
+                fractals = request.hasUserId()
+                        ? fractalsRepository.findAllByUserId(request.getUserId(), pageRequest)
+                        : fractalsRepository.findAll(pageRequest);
+            } else {
+                fractals = request.hasUserId()
+                        ? fractalsRepository.findAllByUserId(request.getUserId(), sort)
+                        : fractalsRepository.findAll(sort);
+            }
 
             responseObserver.onNext(FractalsResponse.newBuilder()
-                    .addAllFractals(fractalMapper.toFractalResponseList(fractals.toList()))
+                    .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
                     .build());
         } catch (Exception e) {
             responseObserver.onError(e);

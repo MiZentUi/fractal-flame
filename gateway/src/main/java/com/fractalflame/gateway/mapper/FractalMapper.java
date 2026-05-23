@@ -16,11 +16,14 @@ import org.mapstruct.ReportingPolicy;
 import com.fractalflame.gateway.model.FractalRequest;
 import com.fractalflame.gateway.model.FractalResponse;
 import com.fractalflame.generator.proto.FractalsRequest;
+import com.fractalflame.generator.proto.Order;
 import com.google.protobuf.Timestamp;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { FunctionMapper.class,
         AffineParamsMapper.class }, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FractalMapper {
+
+    @Mapping(target = "order", source = "order", qualifiedByName = "orderEnum")
     FractalsRequest toFractalsRequest(Integer page, Integer count, String sort, String order, Long userId);
 
     @Mapping(target = "functions", source = "functionsList")
@@ -37,5 +40,13 @@ public interface FractalMapper {
     @Named("fromTimestamp")
     default OffsetDateTime fromTimestamp(Timestamp timestamp) {
         return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()).atOffset(ZoneOffset.UTC);
+    }
+
+    @Named("orderEnum")
+    default Order fromTimestamp(String order) {
+        if (order == null) {
+            return null;
+        }
+        return Order.valueOf(order.toUpperCase());
     }
 }
