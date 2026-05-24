@@ -1,4 +1,4 @@
-module github.com/ekuzm/fractal-flame/iam
+module github.com/mizentui/fractal-flame/iam
 
 go 1.26.1
 
