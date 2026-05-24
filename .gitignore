@@ -29,3 +29,5 @@ performance_results.csv
 logs
 .env
 .vscode
+
+*/bin
