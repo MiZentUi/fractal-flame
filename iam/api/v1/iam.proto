@@ -11,8 +11,8 @@ service IAMService {
   rpc Login(AuthRequest) returns (LoginResponse);
   rpc Refresh(RefreshRequest) returns (RefreshResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc GetImage(GetImageRequest) returns (GetImageResponse);
 }
 
 message AuthRequest {
@@ -60,8 +60,18 @@ message ListUsersResponse {
 
 message UpdateUserRequest {
   google.protobuf.StringValue username = 1;
+  google.protobuf.StringValue password = 2;
+  google.protobuf.StringValue image = 3;
 }
 
 message UpdateUserResponse {
   User user = 1;
+}
+
+message GetImageRequest {
+  string image = 1;
+}
+
+message GetImageResponse {
+  bytes image = 1;
 }

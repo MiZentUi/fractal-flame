@@ -23,8 +23,8 @@ const (
 	IAMService_Login_FullMethodName      = "/iam.v1.IAMService/Login"
 	IAMService_Refresh_FullMethodName    = "/iam.v1.IAMService/Refresh"
 	IAMService_GetUser_FullMethodName    = "/iam.v1.IAMService/GetUser"
-	IAMService_ListUsers_FullMethodName  = "/iam.v1.IAMService/ListUsers"
 	IAMService_UpdateUser_FullMethodName = "/iam.v1.IAMService/UpdateUser"
+	IAMService_GetImage_FullMethodName   = "/iam.v1.IAMService/GetImage"
 )
 
 // IAMServiceClient is the client API for IAMService service.
@@ -35,8 +35,8 @@ type IAMServiceClient interface {
 	Login(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*RefreshResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error)
 }
 
 type iAMServiceClient struct {
@@ -87,20 +87,20 @@ func (c *iAMServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts
 	return out, nil
 }
 
-func (c *iAMServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error) {
+func (c *iAMServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListUsersResponse)
-	err := c.cc.Invoke(ctx, IAMService_ListUsers_FullMethodName, in, out, cOpts...)
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, IAMService_UpdateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *iAMServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+func (c *iAMServiceClient) GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*GetImageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, IAMService_UpdateUser_FullMethodName, in, out, cOpts...)
+	out := new(GetImageResponse)
+	err := c.cc.Invoke(ctx, IAMService_GetImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +115,8 @@ type IAMServiceServer interface {
 	Login(context.Context, *AuthRequest) (*LoginResponse, error)
 	Refresh(context.Context, *RefreshRequest) (*RefreshResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	GetImage(context.Context, *GetImageRequest) (*GetImageResponse, error)
 }
 
 // UnimplementedIAMServiceServer should be embedded to have
@@ -138,11 +138,11 @@ func (UnimplementedIAMServiceServer) Refresh(context.Context, *RefreshRequest) (
 func (UnimplementedIAMServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedIAMServiceServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
-}
 func (UnimplementedIAMServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedIAMServiceServer) GetImage(context.Context, *GetImageRequest) (*GetImageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetImage not implemented")
 }
 func (UnimplementedIAMServiceServer) testEmbeddedByValue() {}
 
@@ -236,24 +236,6 @@ func _IAMService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IAMService_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUsersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IAMServiceServer).ListUsers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IAMService_ListUsers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IAMServiceServer).ListUsers(ctx, req.(*ListUsersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _IAMService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserRequest)
 	if err := dec(in); err != nil {
@@ -268,6 +250,24 @@ func _IAMService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IAMServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IAMService_GetImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IAMServiceServer).GetImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IAMService_GetImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IAMServiceServer).GetImage(ctx, req.(*GetImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -296,12 +296,12 @@ var IAMService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IAMService_GetUser_Handler,
 		},
 		{
-			MethodName: "ListUsers",
-			Handler:    _IAMService_ListUsers_Handler,
-		},
-		{
 			MethodName: "UpdateUser",
 			Handler:    _IAMService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "GetImage",
+			Handler:    _IAMService_GetImage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

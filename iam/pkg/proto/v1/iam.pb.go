@@ -497,6 +497,8 @@ func (x *ListUsersResponse) GetUsers() []*User {
 type UpdateUserRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Username      *wrapperspb.StringValue `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password      *wrapperspb.StringValue `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Image         *wrapperspb.StringValue `protobuf:"bytes,3,opt,name=image,proto3" json:"image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -534,6 +536,20 @@ func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
 func (x *UpdateUserRequest) GetUsername() *wrapperspb.StringValue {
 	if x != nil {
 		return x.Username
+	}
+	return nil
+}
+
+func (x *UpdateUserRequest) GetPassword() *wrapperspb.StringValue {
+	if x != nil {
+		return x.Password
+	}
+	return nil
+}
+
+func (x *UpdateUserRequest) GetImage() *wrapperspb.StringValue {
+	if x != nil {
+		return x.Image
 	}
 	return nil
 }
@@ -582,6 +598,94 @@ func (x *UpdateUserResponse) GetUser() *User {
 	return nil
 }
 
+type GetImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Image         string                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImageRequest) Reset() {
+	*x = GetImageRequest{}
+	mi := &file_v1_iam_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImageRequest) ProtoMessage() {}
+
+func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_iam_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImageRequest.ProtoReflect.Descriptor instead.
+func (*GetImageRequest) Descriptor() ([]byte, []int) {
+	return file_v1_iam_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetImageRequest) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
+type GetImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Image         []byte                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImageResponse) Reset() {
+	*x = GetImageResponse{}
+	mi := &file_v1_iam_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImageResponse) ProtoMessage() {}
+
+func (x *GetImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_iam_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImageResponse.ProtoReflect.Descriptor instead.
+func (*GetImageResponse) Descriptor() ([]byte, []int) {
+	return file_v1_iam_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetImageResponse) GetImage() []byte {
+	if x != nil {
+		return x.Image
+	}
+	return nil
+}
+
 var File_v1_iam_proto protoreflect.FileDescriptor
 
 const file_v1_iam_proto_rawDesc = "" +
@@ -610,20 +714,26 @@ const file_v1_iam_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"\x12\n" +
 	"\x10ListUsersRequest\"7\n" +
 	"\x11ListUsersResponse\x12\"\n" +
-	"\x05users\x18\x01 \x03(\v2\f.iam.v1.UserR\x05users\"M\n" +
+	"\x05users\x18\x01 \x03(\v2\f.iam.v1.UserR\x05users\"\xbb\x01\n" +
 	"\x11UpdateUserRequest\x128\n" +
-	"\busername\x18\x01 \x01(\v2\x1c.google.protobuf.StringValueR\busername\"6\n" +
+	"\busername\x18\x01 \x01(\v2\x1c.google.protobuf.StringValueR\busername\x128\n" +
+	"\bpassword\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueR\bpassword\x122\n" +
+	"\x05image\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\x05image\"6\n" +
 	"\x12UpdateUserResponse\x12 \n" +
-	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user2\xfb\x02\n" +
+	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"'\n" +
+	"\x0fGetImageRequest\x12\x14\n" +
+	"\x05image\x18\x01 \x01(\tR\x05image\"(\n" +
+	"\x10GetImageResponse\x12\x14\n" +
+	"\x05image\x18\x01 \x01(\fR\x05image2\xf8\x02\n" +
 	"\n" +
 	"IAMService\x129\n" +
 	"\bRegister\x12\x13.iam.v1.AuthRequest\x1a\x18.iam.v1.RegisterResponse\x123\n" +
 	"\x05Login\x12\x13.iam.v1.AuthRequest\x1a\x15.iam.v1.LoginResponse\x12:\n" +
 	"\aRefresh\x12\x16.iam.v1.RefreshRequest\x1a\x17.iam.v1.RefreshResponse\x12:\n" +
-	"\aGetUser\x12\x16.iam.v1.GetUserRequest\x1a\x17.iam.v1.GetUserResponse\x12@\n" +
-	"\tListUsers\x12\x18.iam.v1.ListUsersRequest\x1a\x19.iam.v1.ListUsersResponse\x12C\n" +
+	"\aGetUser\x12\x16.iam.v1.GetUserRequest\x1a\x17.iam.v1.GetUserResponse\x12C\n" +
 	"\n" +
-	"UpdateUser\x12\x19.iam.v1.UpdateUserRequest\x1a\x1a.iam.v1.UpdateUserResponseB;Z9github.com/ekuzm/fractal-flame/iam/pkg/proto/iam/v1;iamv1b\x06proto3"
+	"UpdateUser\x12\x19.iam.v1.UpdateUserRequest\x1a\x1a.iam.v1.UpdateUserResponse\x12=\n" +
+	"\bGetImage\x12\x17.iam.v1.GetImageRequest\x1a\x18.iam.v1.GetImageResponseB;Z9github.com/ekuzm/fractal-flame/iam/pkg/proto/iam/v1;iamv1b\x06proto3"
 
 var (
 	file_v1_iam_proto_rawDescOnce sync.Once
@@ -637,7 +747,7 @@ func file_v1_iam_proto_rawDescGZIP() []byte {
 	return file_v1_iam_proto_rawDescData
 }
 
-var file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_v1_iam_proto_goTypes = []any{
 	(*AuthRequest)(nil),            // 0: iam.v1.AuthRequest
 	(*RegisterResponse)(nil),       // 1: iam.v1.RegisterResponse
@@ -651,30 +761,34 @@ var file_v1_iam_proto_goTypes = []any{
 	(*ListUsersResponse)(nil),      // 9: iam.v1.ListUsersResponse
 	(*UpdateUserRequest)(nil),      // 10: iam.v1.UpdateUserRequest
 	(*UpdateUserResponse)(nil),     // 11: iam.v1.UpdateUserResponse
-	(*wrapperspb.StringValue)(nil), // 12: google.protobuf.StringValue
+	(*GetImageRequest)(nil),        // 12: iam.v1.GetImageRequest
+	(*GetImageResponse)(nil),       // 13: iam.v1.GetImageResponse
+	(*wrapperspb.StringValue)(nil), // 14: google.protobuf.StringValue
 }
 var file_v1_iam_proto_depIdxs = []int32{
 	6,  // 0: iam.v1.GetUserResponse.user:type_name -> iam.v1.User
 	6,  // 1: iam.v1.ListUsersResponse.users:type_name -> iam.v1.User
-	12, // 2: iam.v1.UpdateUserRequest.username:type_name -> google.protobuf.StringValue
-	6,  // 3: iam.v1.UpdateUserResponse.user:type_name -> iam.v1.User
-	0,  // 4: iam.v1.IAMService.Register:input_type -> iam.v1.AuthRequest
-	0,  // 5: iam.v1.IAMService.Login:input_type -> iam.v1.AuthRequest
-	3,  // 6: iam.v1.IAMService.Refresh:input_type -> iam.v1.RefreshRequest
-	5,  // 7: iam.v1.IAMService.GetUser:input_type -> iam.v1.GetUserRequest
-	8,  // 8: iam.v1.IAMService.ListUsers:input_type -> iam.v1.ListUsersRequest
-	10, // 9: iam.v1.IAMService.UpdateUser:input_type -> iam.v1.UpdateUserRequest
-	1,  // 10: iam.v1.IAMService.Register:output_type -> iam.v1.RegisterResponse
-	2,  // 11: iam.v1.IAMService.Login:output_type -> iam.v1.LoginResponse
-	4,  // 12: iam.v1.IAMService.Refresh:output_type -> iam.v1.RefreshResponse
-	7,  // 13: iam.v1.IAMService.GetUser:output_type -> iam.v1.GetUserResponse
-	9,  // 14: iam.v1.IAMService.ListUsers:output_type -> iam.v1.ListUsersResponse
-	11, // 15: iam.v1.IAMService.UpdateUser:output_type -> iam.v1.UpdateUserResponse
-	10, // [10:16] is the sub-list for method output_type
-	4,  // [4:10] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	14, // 2: iam.v1.UpdateUserRequest.username:type_name -> google.protobuf.StringValue
+	14, // 3: iam.v1.UpdateUserRequest.password:type_name -> google.protobuf.StringValue
+	14, // 4: iam.v1.UpdateUserRequest.image:type_name -> google.protobuf.StringValue
+	6,  // 5: iam.v1.UpdateUserResponse.user:type_name -> iam.v1.User
+	0,  // 6: iam.v1.IAMService.Register:input_type -> iam.v1.AuthRequest
+	0,  // 7: iam.v1.IAMService.Login:input_type -> iam.v1.AuthRequest
+	3,  // 8: iam.v1.IAMService.Refresh:input_type -> iam.v1.RefreshRequest
+	5,  // 9: iam.v1.IAMService.GetUser:input_type -> iam.v1.GetUserRequest
+	10, // 10: iam.v1.IAMService.UpdateUser:input_type -> iam.v1.UpdateUserRequest
+	12, // 11: iam.v1.IAMService.GetImage:input_type -> iam.v1.GetImageRequest
+	1,  // 12: iam.v1.IAMService.Register:output_type -> iam.v1.RegisterResponse
+	2,  // 13: iam.v1.IAMService.Login:output_type -> iam.v1.LoginResponse
+	4,  // 14: iam.v1.IAMService.Refresh:output_type -> iam.v1.RefreshResponse
+	7,  // 15: iam.v1.IAMService.GetUser:output_type -> iam.v1.GetUserResponse
+	11, // 16: iam.v1.IAMService.UpdateUser:output_type -> iam.v1.UpdateUserResponse
+	13, // 17: iam.v1.IAMService.GetImage:output_type -> iam.v1.GetImageResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_v1_iam_proto_init() }
@@ -688,7 +802,7 @@ func file_v1_iam_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_iam_proto_rawDesc), len(file_v1_iam_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
