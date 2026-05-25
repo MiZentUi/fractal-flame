@@ -7,8 +7,8 @@ vars:
   GOFUMPT_VERSION: "v0.9.2"
   BUF_VERSION: "v1.68.3"
   EASYP_VERSION: "v0.16.6"
-  PROTOC_GEN_GO_VERSION: "v1.36.10"
-  PROTOC_GEN_GO_GRPC_VERSION: "v1.6.0"
+  PROTOC_GEN_GO_VERSION: "v1.36.11"
+  PROTOC_GEN_GO_GRPC_VERSION: "v1.6.2"
 
   BIN_DIR: "{{.ROOT_DIR}}/bin"
   GOLANGCI: "{{.BIN_DIR}}/golangci-lint"
@@ -99,7 +99,7 @@ tasks:
 
   generate:code:
     desc: "Generating code from ProtoBuf declaration"
-    dir: ./proto
+    dir: ./api
     deps: [install:easyp, install:protoc-gen-go, install:protoc-gen-go-grpc]
     cmds:
       - cmd: echo "Generating code..."
