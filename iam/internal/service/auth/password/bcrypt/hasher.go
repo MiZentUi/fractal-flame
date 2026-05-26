@@ -27,7 +27,7 @@ func (h *hasher) HashAndSalt(password string) (string, error) {
 func (h *hasher) ComparePasswords(hash, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	if err != nil {
-		slog.Error("Failed, password and password hash not equal", "err", err)
+		slog.Warn("Failed, invalid credentials", "err", err)
 
 		return err
 	}
