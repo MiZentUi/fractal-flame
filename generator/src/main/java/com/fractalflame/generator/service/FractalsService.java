@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.grpc.server.service.GrpcService;
 
-import com.fractalflame.generator.entity.Fractal;
 import com.fractalflame.generator.exception.EntityNotFoundException;
 import com.fractalflame.generator.exception.FractalParametersException;
 import com.fractalflame.generator.mapper.FractalMapper;
@@ -18,11 +17,14 @@ import com.fractalflame.generator.repository.FractalsRepository;
 import com.fractalflame.generator.repository.FunctionsRepository;
 import com.fractalflame.generator.utils.FunctionBuilder;
 import com.fractalflame.generator.utils.GenerationTask;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
 import com.fractalflame.generator.proto.FractalsRequest;
 import com.fractalflame.generator.proto.FractalsResponse;
 import com.fractalflame.generator.proto.FunctionsResponse;
 import com.fractalflame.generator.proto.IdRequest;
+import com.fractalflame.generator.proto.ImageRequest;
+import com.fractalflame.generator.proto.ImageResponse;
 import com.fractalflame.generator.proto.Order;
 import com.fractalflame.generator.proto.TaskState;
 
@@ -38,9 +40,10 @@ public class FractalsService extends FractalsImplBase {
     private final FractalsRepository fractalsRepository;
     private final FunctionsRepository functionsRepository;
     private final AffineParamsRepository affineParamsRepository;
-    private final FractalMapper fractalMapper;
-    private final JwtService jwtService;
     private final GeneratationService generatationService;
+    private final JwtService jwtService;
+    private final StorageService storageService;
+    private final FractalMapper fractalMapper;
     private final GeneratorProperties generatorProperties;
 
     @Override
@@ -52,22 +55,27 @@ public class FractalsService extends FractalsImplBase {
                 sort = sort.descending();
             }
 
-            Iterable<Fractal> fractals;
             if (request.hasCount()) {
                 var page = request.hasPage() ? request.getPage() : 1;
                 var pageRequest = PageRequest.of(page - 1, request.getCount(), sort);
-                fractals = request.hasUserId()
+                var fractals = request.hasUserId()
                         ? fractalsRepository.findAllByUserId(request.getUserId(), pageRequest)
                         : fractalsRepository.findAll(pageRequest);
+                responseObserver.onNext(FractalsResponse.newBuilder()
+                        .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
+                        .setPage(page)
+                        .setPageCount(fractals.getTotalPages())
+                        .build());
             } else {
-                fractals = request.hasUserId()
+                var fractals = request.hasUserId()
                         ? fractalsRepository.findAllByUserId(request.getUserId(), sort)
                         : fractalsRepository.findAll(sort);
+                responseObserver.onNext(FractalsResponse.newBuilder()
+                        .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
+                        .setPage(1)
+                        .setPageCount(1)
+                        .build());
             }
-
-            responseObserver.onNext(FractalsResponse.newBuilder()
-                    .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
-                    .build());
         } catch (Exception e) {
             responseObserver.onError(e);
             return;
@@ -160,5 +168,14 @@ public class FractalsService extends FractalsImplBase {
     @Override
     public void subscribeToTask(IdRequest request, StreamObserver<TaskState> responseObserver) {
         generatationService.subscribeToTask(request.getId(), responseObserver);
+    }
+
+    @Override
+    public void getImage(ImageRequest request, StreamObserver<ImageResponse> responseObserver) {
+        var response = ImageResponse.newBuilder()
+                .setImage(ByteString.copyFrom(storageService.getImageBytes(request.getName())))
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }
