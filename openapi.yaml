@@ -8,7 +8,6 @@ servers:
 tags:
   - name: Users
   - name: Fractals
-  - name: Images
 
 paths:
   /users/signin:
@@ -26,10 +25,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/auth"
-        "400":
-          $ref: "#/components/responses/bad"
-        "409":
-          description: User already exists
+        default:
+          $ref: "#/components/responses/default"
 
   /users/login:
     post:
@@ -46,10 +43,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/auth"
-        "400":
-          $ref: "#/components/responses/bad"
-        "404":
-          description: User not found
+        default:
+          $ref: "#/components/responses/default"
 
   /users/refresh:
     post:
@@ -68,17 +63,22 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/auth"
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
 
-  /users:
+  /users/{id}:
     get:
       tags:
         - Users
       summary: Get user info
       operationId: getUser
-      security:
-        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         "200":
           description: Current user info
@@ -86,10 +86,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/bad"
-
-  /users/{id}:
+        default:
+          $ref: "#/components/responses/default"
     patch:
       tags:
         - Users
@@ -117,8 +115,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/bad"
+        default:
+          $ref: "#/components/responses/default"
+
+  /users/images/{name}:
+    get:
+      tags:
+        - Users
+      summary: Get user image
+      operationId: getUserImage
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: "#/components/responses/default"
 
   /fractals:
     get:
@@ -161,11 +182,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/FractalResponse"
+                $ref: "#/components/schemas/FractalsResponse"
         default:
           $ref: "#/components/responses/default"
+
   /fractals/{id}:
     get:
       tags:
@@ -188,6 +208,7 @@ paths:
                 $ref: "#/components/schemas/FractalResponse"
         default:
           $ref: "#/components/responses/default"
+
   /fractals/gen:
     post:
       tags:
@@ -211,6 +232,7 @@ paths:
                 $ref: "#/components/schemas/TaskState"
         default:
           $ref: "#/components/responses/default"
+
   /fractals/gen/{id}/events:
     get:
       tags:
@@ -237,6 +259,7 @@ paths:
                     $ref: "#/components/schemas/TaskState"
         default:
           $ref: "#/components/responses/default"
+
   /fractals/functions:
     get:
       tags:
@@ -259,12 +282,12 @@ paths:
         default:
           $ref: "#/components/responses/default"
 
-  /images/{name}:
+  /fractals/images/{name}:
     get:
       tags:
-        - Images
-      summary: Get image
-      operationId: getImage
+        - Fractals
+      summary: Get fractal image
+      operationId: getFractalImage
       parameters:
         - in: path
           name: name
@@ -385,6 +408,18 @@ components:
         image:
           type: string
           description: Path to image
+
+    FractalsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FractalResponse"
+        page:
+          type: integer
+        page_count:
+          type: integer
 
     Function:
       type: object

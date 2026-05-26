@@ -3,6 +3,7 @@ package com.fractalflame.gateway.controller;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.fractalflame.gateway.api.FractalsApi;
 import com.fractalflame.gateway.model.FractalRequest;
 import com.fractalflame.gateway.model.FractalResponse;
+import com.fractalflame.gateway.model.FractalsResponse;
 import com.fractalflame.gateway.model.TaskState;
 import com.fractalflame.gateway.service.FractalsService;
 
@@ -27,8 +29,7 @@ public class FractalsController implements FractalsApi {
     private final FractalsService service;
 
     @Override
-    public ResponseEntity<List<FractalResponse>> getFractals(@Valid @Nullable Integer page,
-            @Valid @Nullable Integer count,
+    public ResponseEntity<FractalsResponse> getFractals(@Valid @Nullable Integer page, @Valid @Nullable Integer count,
             @Valid @Nullable String sort, @Valid @Nullable String order, @Valid @Nullable Long userid) {
         return ResponseEntity.ok(service.getAll(page, count, sort, order, userid));
     }
@@ -53,5 +54,10 @@ public class FractalsController implements FractalsApi {
     @Override
     public ResponseEntity<List<String>> getFunctions() {
         return ResponseEntity.ok(service.getFunctions());
+    }
+
+    @Override
+    public ResponseEntity<Resource> getFractalImage(String name) {
+        return ResponseEntity.ok(service.getImageByName(name));
     }
 }
