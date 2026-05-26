@@ -25,7 +25,9 @@ type Minio interface {
 	SecretKey() string
 }
 
-type JWT interface {
+type Auth interface {
+	PasswordEntropy() float64
+	BcryptCost() int
 	SigningKey() string
 }
 
@@ -34,7 +36,7 @@ type config struct {
 	Logger   Logger
 	Postgres Postgres
 	Minio    Minio
-	JWT      JWT
+	Auth     Auth
 }
 
 var app *config
@@ -64,9 +66,9 @@ func Setup() error {
 		return fmt.Errorf("setup grpc config: %w", err)
 	}
 
-	jwt, err := env.NewJWTConfig()
+	auth, err := env.NewAuthConfig()
 	if err != nil {
-		return fmt.Errorf("setup jwt config: %w", err)
+		return fmt.Errorf("setup auth config: %w", err)
 	}
 
 	app = &config{
@@ -74,7 +76,7 @@ func Setup() error {
 		Logger:   logger,
 		Postgres: postgres,
 		Minio:    minio,
-		JWT:      jwt,
+		Auth:     auth,
 	}
 
 	return nil

@@ -8,7 +8,7 @@ import (
 
 type loggerEnvConfig struct {
 	Level  string `env:"LOGGER_LEVEL,required"`
-	AsJSON bool   `env:"AS_JSON,required"`
+	AsJSON bool   `env:"LOGGER_AS_JSON,required"`
 }
 
 type loggerConfig struct {
