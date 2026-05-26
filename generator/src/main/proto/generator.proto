@@ -13,9 +13,6 @@ service Fractals {
   rpc Generation(FractalRequest) returns (TaskState) {}
   rpc SubscribeToTask(IdRequest) returns (stream TaskState) {}
   rpc GetFunctions(google.protobuf.Empty) returns (FunctionsResponse) {}
-}
-
-service Images {
   rpc GetImage(ImageRequest) returns (ImageResponse) {}
 }
 
@@ -29,6 +26,8 @@ message FractalsRequest {
 
 message FractalsResponse {
   repeated FractalResponse fractals = 1;
+  int32 page = 2;
+  int32 page_count = 3;
 }
 
 message IdRequest {
