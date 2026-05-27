@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
@@ -59,6 +60,12 @@ func (s *service) Register(ctx context.Context, username, password string) (int6
 	userID, err := s.repository.Save(ctx, username, hash)
 	if err != nil {
 		return 0, fmt.Errorf("add user to db: %w", err)
+	}
+
+	if userID == 0 {
+		slog.Warn("Failed to create user with this username", "username", username, "err", err)
+
+		return 0, errs.ErrUserAlreadyExists
 	}
 
 	return userID, nil
