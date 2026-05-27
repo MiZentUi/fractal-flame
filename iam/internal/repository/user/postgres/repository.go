@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log/slog"
 
 	sq "github.com/Masterminds/squirrel"
@@ -34,9 +33,14 @@ func (r *repository) Save(ctx context.Context, username, password, image string)
 	var id int64
 	err := r.pool.Get(ctx, &id, builder)
 	if err != nil {
-		slog.Error("Failed to get user id when creating user", "err", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			slog.Warn("User with this username already exists", "username", username)
 
-		return 0, fmt.Errorf("get user id: %w", err)
+			return 0, errs.ErrUserAlreadyExists
+		}
+		slog.Error("DB error", "err", err)
+
+		return 0, err
 	}
 
 	return id, nil
@@ -52,10 +56,13 @@ func (r *repository) FindByID(ctx context.Context, id int64) (model.User, error)
 	err := r.pool.Get(ctx, &user, builder)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			slog.Warn("Failed to find user with this id", "id", id, "err", errs.ErrUserNotFound)
+			slog.Warn("User with this id not found", "id", id)
 
 			return model.User{}, errs.ErrUserNotFound
 		}
+		slog.Error("DB error", "err", err)
+
+		return model.User{}, err
 	}
 
 	return record.RawToModel(user), nil
@@ -71,10 +78,43 @@ func (r *repository) FindByUsername(ctx context.Context, username string) (model
 	err := r.pool.Get(ctx, &user, builder)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			slog.Warn("Failed to find user with this username", "username", username, "err", errs.ErrUserNotFound)
+			slog.Warn("User with this username not found", "username", username)
 
 			return model.User{}, errs.ErrUserNotFound
 		}
+		slog.Error("DB error", "err", err)
+
+		return model.User{}, err
+	}
+
+	return record.RawToModel(user), nil
+}
+
+func (r *repository) Update(ctx context.Context, id int64, username, password, image string) (model.User, error) {
+	builder := sq.Update(record.UsersTable).
+		PlaceholderFormat(sq.Dollar).
+		Set(record.UsersTableColumnImage, image).
+		Where(sq.Eq{record.UsersTableColumnID: id}).
+		Suffix("RETURNING *")
+
+	if username != "" {
+		builder = builder.Set(record.UsersTableColumnUsername, username)
+	}
+	if password != "" {
+		builder = builder.Set(record.UsersTableColumnPassword, password)
+	}
+
+	var user record.UserRow
+	err := r.pool.Get(ctx, &user, builder)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			slog.Warn("User with this id not found", "id", id)
+
+			return model.User{}, errs.ErrUserNotFound
+		}
+		slog.Error("DB error", "err", err)
+
+		return model.User{}, err
 	}
 
 	return record.RawToModel(user), nil
