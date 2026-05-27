@@ -14,6 +14,10 @@ type UserRepository interface {
 	Update(ctx context.Context, id int64, username, password, image string) (model.User, error)
 }
 
+type ImageRepository interface {
+	Save(ctx context.Context, image string) (string, error)
+}
+
 type PasswordValidator interface {
 	Validate(password string) error
 }
@@ -23,21 +27,23 @@ type PasswordHasher interface {
 }
 
 type service struct {
-	repository UserRepository
-	validator  PasswordValidator
-	hasher     PasswordHasher
+	user      UserRepository
+	image     ImageRepository
+	validator PasswordValidator
+	hasher    PasswordHasher
 }
 
-func New(repository UserRepository, validator PasswordValidator, hasher PasswordHasher) *service {
+func New(user UserRepository, image ImageRepository, validator PasswordValidator, hasher PasswordHasher) *service {
 	return &service{
-		repository: repository,
-		validator:  validator,
-		hasher:     hasher,
+		user:      user,
+		image:     image,
+		validator: validator,
+		hasher:    hasher,
 	}
 }
 
 func (s *service) GetUser(ctx context.Context, id int64) (model.User, error) {
-	user, err := s.repository.FindByID(ctx, id)
+	user, err := s.user.FindByID(ctx, id)
 	if err != nil {
 		return model.User{}, fmt.Errorf("find user by id: %w", err)
 	}
@@ -59,7 +65,17 @@ func (s *service) UpdateUser(ctx context.Context, id int64, username, password, 
 		}
 	}
 
-	user, err := s.repository.Update(ctx, id, username, hash, image)
+	var imageName string
+	if image != "" {
+		name, err := s.image.Save(ctx, image)
+		if err != nil {
+			return model.User{}, fmt.Errorf("save avatar image: %w", err)
+		}
+
+		imageName = name
+	}
+
+	user, err := s.user.Update(ctx, id, username, hash, imageName)
 	if err != nil {
 		return model.User{}, fmt.Errorf("update user: %w", err)
 	}
