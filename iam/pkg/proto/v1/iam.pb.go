@@ -600,7 +600,7 @@ func (x *UpdateUserResponse) GetUser() *User {
 
 type GetImageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Image         string                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -635,9 +635,9 @@ func (*GetImageRequest) Descriptor() ([]byte, []int) {
 	return file_v1_iam_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetImageRequest) GetImage() string {
+func (x *GetImageRequest) GetName() string {
 	if x != nil {
-		return x.Image
+		return x.Name
 	}
 	return ""
 }
@@ -720,9 +720,9 @@ const file_v1_iam_proto_rawDesc = "" +
 	"\bpassword\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueR\bpassword\x122\n" +
 	"\x05image\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\x05image\"6\n" +
 	"\x12UpdateUserResponse\x12 \n" +
-	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"'\n" +
-	"\x0fGetImageRequest\x12\x14\n" +
-	"\x05image\x18\x01 \x01(\tR\x05image\"(\n" +
+	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"%\n" +
+	"\x0fGetImageRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"(\n" +
 	"\x10GetImageResponse\x12\x14\n" +
 	"\x05image\x18\x01 \x01(\fR\x05image2\xf8\x02\n" +
 	"\n" +

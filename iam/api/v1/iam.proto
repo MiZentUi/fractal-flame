@@ -52,12 +52,6 @@ message GetUserResponse {
   User user = 1;
 }
 
-message ListUsersRequest {}
-
-message ListUsersResponse {
-  repeated User users = 1;
-}
-
 message UpdateUserRequest {
   google.protobuf.StringValue username = 1;
   google.protobuf.StringValue password = 2;
