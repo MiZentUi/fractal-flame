@@ -1,77 +1,33 @@
-# Проект: фрактальное пламя
+# Fractal Flame
 
-## Описание
+## Usage
 
-Необходимо реализовать программу, которая позволит генерировать
-изображения фрактального пламени на основе идеи Chaos Game.
-
-### Функциональные требования
-
-* Решение должно предоставлять два варианта работы - однопоточный и многопоточный;
-* Решение должно реализовывать цветной алгоритм генерации;
-* В решении должно быть заложено минимум 4 трансформации из [приложенной статьи](https://flam3.com/flame_draves.pdf);
-* В решении должны быть представлены следующие параметры генерации и работы:
-  * Размер итогового изображения;
-  * Количество итераций;
-  * Набор трансформационных функций:
-  * Вариант функции;
-    * Параметры функции;
-  * Путь для сохранения изображения;
-  * Количество потоков;
-* Решение должно поддерживать несколько вариантов ввода параметров, такие как:
-  * Консольный ввод;
-  * JSON-файл конфигурации;
-  * Параметры по дефолту;
-* Решение должно валидировать входные параметры и сообщать в консоль об ошибках;
-* Результатом работы решения должно быть изображение в формате PNG, в цветовом диапазоне RGB, 8 бит на канал;
-
-* Реализован набор из 10 нелинейных преобразований.
-* Добавлена поддержка логарифмической гамма-коррекции:
-* В JSON-конфигурацию включены поля `gamma_correction` (булево значение для включения/выключения функции) и `gamma` (число с плавающей точкой, задающее значение гаммы).
-* В интерфейс командной строки добавлены параметры `-g` / `--gamma-correction` и --`gamma`.
-* При активации коррекции яркость каждого пикселя преобразуется по формуле `color = pow(color, 1.0 / gamma)`.
-* Реализована поддержка симметрии при генерации изображения:
-* В JSON-конфигурацию добавлено поле `symmetry_level` (целое число N ≥ 1, определяющее количество поворотов).
-* В интерфейс командной строки добавлен параметр `-s` / `--symmetry-level`.
-* В процессе рендеринга каждая точка дублируется N раз с поворотом на угол 360/N градусов вокруг центра.
-* Результатом работы программы поделились в чате учебной группы, где он получил положительную оценку.
-
-### Структура проекта
+### dotenv file
 
 ```shell
-src/main/java/academy
-├── Application.java
-├── cli
-│   ├── AppConfig.java
-│   ├── FunctionDeserializer.java
-│   ├── Options.java
-│   └── converters
-│       ├── AffineParamsConverter.java
-│       └── FunctionsConverter.java
-├── model
-│   ├── AffineTransformation.java
-│   ├── Image.java
-│   ├── Pixel.java
-│   ├── Point.java
-│   └── functions
-│       ├── DiscFunction.java
-│       ├── EyefishFunction.java
-│       ├── Function.java
-│       ├── HeartFunction.java
-│       ├── HorseshoeFunction.java
-│       ├── LinearFunction.java
-│       ├── PolarFunction.java
-│       ├── SinusoidalFunction.java
-│       ├── SphericalFunction.java
-│       └── SwirlFunction.java
-└── utils
-    ├── FunctionBuilder.java
-    ├── Generator.java
-    ├── ImageWriter.java
-    └── Render.java
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=admin
+
+MINIO_ROOT_USER=minio
+MINIO_ROOT_PASSWORD=minioadmin
+JWT_SIGNING_KEY=BASE64
 ```
 
-### Полученные изображения
+### Run
+
+```shell
+docker-compose up -d --build
+```
+
+### Port mapping
+
+- 8080 - gateway
+- 9090 - generator
+- 5432 - generator postgres
+- 9000 - generator minio
+- 9001 - generator minio web
+
+## Gallery
 
 ![Result 1](images/result1.png)
 

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: generator
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL:localhost:5432}/generator
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: false
+
+app:
+  generator:
+    count: 3
+    threads: 3
+    max-width: 2000
+    max-height: 2000
+    max-iterations: 100000000
+  jwt-signing-key: ${JWT_SIGNING_KEY}
+  s3:
+    url: ${MINIO_URL:http://localhost:9000}
+    access-key: ${MINIO_ROOT_USER}
+    secret-key: ${MINIO_ROOT_PASSWORD}

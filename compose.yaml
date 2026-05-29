@@ -1,0 +1,81 @@
+services:
+  db-generator:
+    image: postgres:18-alpine
+    ports:
+      - 5432:5432
+    env_file:
+      .env
+    environment:
+      POSTGRES_DB: generator
+    restart: unless-stopped
+    volumes:
+      - db-generator-data:/var/lib/postgresql
+    healthcheck:
+      test: "pg_isready -U ${POSTGRES_USER} -d generator"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  storage-generator:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - 9000:9000
+      - 9001:9001
+    env_file:
+      .env
+    volumes:
+     - minio-storage-generator:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  generator:
+    image: generator
+    build:
+      context: generator
+      dockerfile: Dockerfile
+    ports:
+      - 9090:9090
+    env_file:
+      .env
+    environment:
+      POSTGRES_URL: db-generator:5432
+      MINIO_URL: http://storage-generator:9000
+    depends_on:
+      db-generator:
+        condition: service_healthy
+      storage-generator:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:8080/actuator/health"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  gateway:
+    image: gateway
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    env_file:
+      .env
+    environment:
+      GENERATOR_URL: generator:9090
+    healthcheck:
+      test: "curl -f http://localhost:8080/actuator/health"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  db-generator-data:
+  minio-storage-generator:

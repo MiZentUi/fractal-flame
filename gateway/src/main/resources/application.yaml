@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: gateway
+  grpc:
+    client:
+      channels:
+        generator:
+          address: ${GENERATOR_URL:0.0.0.0:9090}
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+app:
+  jwt-signing-key: ${JWT_SIGNING_KEY}
