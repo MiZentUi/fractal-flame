@@ -7,7 +7,7 @@ import (
 )
 
 func Init(level string, asJSON bool) {
-	slog.New(newHandler(parseLevel(level), asJSON))
+	slog.SetDefault(slog.New(newHandler(parseLevel(level), asJSON)))
 }
 
 func newHandler(level slog.Level, asJSON bool) slog.Handler {
