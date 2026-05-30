@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
+	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/repository/image/minio/record"
 )
 
@@ -69,6 +70,20 @@ func (r *repository) FindByName(ctx context.Context, name string) ([]byte, error
 		return nil, err
 	}
 	defer object.Close()
+
+	_, err = object.Stat()
+	if err != nil {
+		code := minio.ToErrorResponse(err).Code
+
+		if code == record.NoSuchKeyCode {
+			slog.Warn("Image not found", "bucket", record.ImageBucketName, "name", name, "err", err)
+			return nil, errs.ErrImageNotFound
+		}
+
+		slog.Error("Failed to get image from MinIO", "bucket", record.ImageBucketName, "name", name, "err", err)
+
+		return nil, err
+	}
 
 	bytes, err := io.ReadAll(object)
 	if err != nil {
