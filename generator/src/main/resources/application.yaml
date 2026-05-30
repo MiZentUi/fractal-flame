@@ -22,6 +22,7 @@ app:
     max-width: 2000
     max-height: 2000
     max-iterations: 100000000
+    max-symmetry-level: 50
   jwt-signing-key: ${JWT_SIGNING_KEY}
   tasks-update-delay: 1s
   s3:

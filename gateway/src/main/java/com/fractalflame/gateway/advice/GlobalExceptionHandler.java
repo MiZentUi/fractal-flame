@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fractalflame.gateway.model.ApiStatusResponse;
 
 import io.grpc.StatusRuntimeException;
+import io.jsonwebtoken.security.SignatureException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,5 +33,17 @@ public class GlobalExceptionHandler {
                         .message(exception.getMessage())
                         .build(),
                 httpStatus);
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<ApiStatusResponse> handleSigning(Exception exception) {
+        var status = HttpStatus.UNAUTHORIZED;
+        return new ResponseEntity<>(
+                ApiStatusResponse.builder()
+                        .code(status.value())
+                        .status(status.name())
+                        .message(exception.getMessage())
+                        .build(),
+                status);
     }
 }
