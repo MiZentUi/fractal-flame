@@ -13,7 +13,7 @@ watch(open, (val) => {
 </script>
 
 <template>
-  <Button class="text-2xl" @click="toggleSidebar">
+  <Button class="table-cell text-2xl p-0 pb-1" @click="toggleSidebar">
       {{ innerText }}
   </Button>
 </template>
