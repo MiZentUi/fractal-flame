@@ -23,11 +23,11 @@ func New(pool *pgxpool.Pool) *repository {
 	}
 }
 
-func (r *repository) Save(ctx context.Context, username, password, image string) (int64, error) {
+func (r *repository) Save(ctx context.Context, username, password string) (int64, error) {
 	builder := sq.Insert(record.UsersTable).
 		PlaceholderFormat(sq.Dollar).
-		Columns(record.UsersTableColumnUsername, record.UsersTableColumnPassword, record.UsersTableColumnImage).
-		Values(username, password, image).
+		Columns(record.UsersTableColumnUsername, record.UsersTableColumnPassword).
+		Values(username, password).
 		Suffix("ON CONFLICT(username) DO NOTHING RETURNING id")
 
 	var id int64
