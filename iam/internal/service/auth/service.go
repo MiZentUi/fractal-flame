@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
@@ -60,6 +61,8 @@ func (s *service) Register(ctx context.Context, username, password string) (int6
 	if err != nil {
 		return 0, fmt.Errorf("add user to db: %w", err)
 	}
+
+	slog.Debug("User successfully registered", "id", userID, "username", username)
 
 	return userID, nil
 }

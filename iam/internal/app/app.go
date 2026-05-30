@@ -70,7 +70,7 @@ func Run() {
 
 	client, err := miniogo.New(config.App().Minio.Endpoint(), &miniogo.Options{
 		Creds:  credentials.NewStaticV4(config.App().Minio.AccessKey(), config.App().Minio.SecretKey(), ""),
-		Secure: true,
+		Secure: false,
 	})
 	if err != nil {
 		slog.Error("Failed to create MinIO client", "endpoint", config.App().Minio.Endpoint(), "err", err)
@@ -95,7 +95,7 @@ func Run() {
 
 	api := api.New(auth, user, image)
 
-	server := grpc.NewServer(grpc.UnaryInterceptor(interceptor.ExtractIdentity(manager)))
+	server := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor.MappingError(), interceptor.ExtractIdentity(manager)))
 
 	reflection.Register(server)
 
@@ -112,12 +112,11 @@ func Run() {
 		}
 	}()
 
-	slog.Debug("Shutting down gRPC server...")
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
 	<-quit
+
+	slog.Debug("Shutting down gRPC server...")
 
 	server.GracefulStop()
 }
