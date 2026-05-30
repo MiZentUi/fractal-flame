@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go run -o iam-service ./cmd/iam-service/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o iam-service ./cmd/iam-service/main.go
 
 FROM alpine:3.22
 
@@ -17,7 +17,7 @@ WORKDIR /build
 
 COPY --from=builder /app/iam-service ./
 
-RUN adduser -S appgroup && \
+RUN addgroup -S appgroup && \
     adduser -S appuser -G appgroup && \
     chown appuser:appgroup ./iam-service
 
