@@ -12,4 +12,5 @@ var (
 	ErrNothingToUpdate    error = errors.New("nothing to update")
 	ErrInvalidImageName   error = errors.New("invalid image name")
 	ErrUserNotFound       error = errors.New("user not found")
+	ErrImageNotFound      error = errors.New("image not found")
 )
