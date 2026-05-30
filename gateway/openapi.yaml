@@ -50,16 +50,10 @@ paths:
     post:
       tags:
         - Users
-      summary: User login
+      summary: Refresh token
       operationId: refresh
       security:
         - RefreshTokenCookie: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AuthRequest"
       responses:
         "200":
           $ref: "#/components/responses/auth"
@@ -254,6 +248,8 @@ paths:
             text/event-stream:
               schema:
                 type: object
+                required:
+                  - data
                 properties:
                   data:
                     $ref: "#/components/schemas/TaskState"
@@ -309,6 +305,9 @@ components:
   schemas:
     AuthRequest:
       type: object
+      required:
+        - username
+        - password
       properties:
         username:
           type: string
@@ -317,6 +316,7 @@ components:
           type: string
           format: password
           example: password123
+
     UserRequest:
       type: object
       properties:
@@ -334,6 +334,10 @@ components:
 
     UserResponse:
       type: object
+      required:
+        - id
+        - username
+        - image
       properties:
         id:
           type: integer
@@ -348,6 +352,14 @@ components:
 
     FractalRequest:
       type: object
+      required:
+        - width
+        - height
+        - iteration_count
+        - symmetry_level
+        - gamma
+        - functions
+        - affine_params
       properties:
         width:
           type: integer
@@ -376,6 +388,18 @@ components:
 
     FractalResponse:
       type: object
+      required:
+        - id
+        - user_id
+        - width
+        - height
+        - iteration_count
+        - symmetry_level
+        - gamma
+        - functions
+        - affine_params
+        - created
+        - image
       properties:
         id:
           type: integer
@@ -411,6 +435,10 @@ components:
 
     FractalsResponse:
       type: object
+      required:
+        - items
+        - page
+        - page_count
       properties:
         items:
           type: array
@@ -423,6 +451,9 @@ components:
 
     Function:
       type: object
+      required:
+        - name
+        - weight
       properties:
         name:
           type: string
@@ -434,6 +465,14 @@ components:
 
     AffineParams:
       type: object
+      required:
+        - color
+        - a
+        - b
+        - c
+        - d
+        - e
+        - f
       properties:
         color:
           type: string
@@ -466,6 +505,10 @@ components:
 
     TaskState:
       type: object
+      required:
+        - fractal_id
+        - progress
+        - preview
       properties:
         fractal_id:
           type: integer
@@ -481,6 +524,10 @@ components:
 
     ApiStatusResponse:
       type: object
+      required:
+        - code
+        - status
+        - message
       properties:
         code:
           type: integer
@@ -511,6 +558,8 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - access_token
             properties:
               access_token:
                 type: string

@@ -108,7 +108,8 @@ openApiGenerate {
         basePackage                         : "com.fractalflame.gateway",
         interfaceOnly                       : "false",
 		openApiNullable						: "true",
-        additionalModelTypeAnnotations      : "@lombok.Getter\n@lombok.Setter\n@lombok.Builder(toBuilder = true)\n@lombok.NoArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)\n@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)",
+		generateBuilders 					: "true",
+        additionalModelTypeAnnotations      : "@lombok.Setter\n@lombok.Getter\n@lombok.NoArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)\n@com.fasterxml.jackson.databind.annotation.JsonNaming(com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy.class)",
         useTags                             : "true"
     ]
 }
