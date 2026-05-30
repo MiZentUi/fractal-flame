@@ -20,6 +20,8 @@ func (v *validator) Validate(password string) error {
 	err := passwordvalidator.Validate(password, v.entropy)
 	if err != nil {
 		slog.Warn("Failed, invalid password", "err", err)
+
+		return err
 	}
 
 	return nil
