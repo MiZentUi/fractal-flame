@@ -6,9 +6,10 @@ import org.springframework.grpc.client.GrpcChannelFactory;
 
 import com.fractalflame.gateway.interceptor.AuthInterceptor;
 import com.fractalflame.generator.proto.FractalsGrpc;
+import com.fractalflame.iam.proto.IAMServiceGrpc;
 
 @Configuration
-public class GrpcConfiguration {
+public class GrpcConfig {
 
     @Bean
     FractalsGrpc.FractalsBlockingStub fractalsBlockingStub(GrpcChannelFactory channels,
@@ -19,5 +20,10 @@ public class GrpcConfiguration {
     @Bean
     FractalsGrpc.FractalsStub fractalsStub(GrpcChannelFactory channels, AuthInterceptor authInterceptor) {
         return FractalsGrpc.newStub(channels.createChannel("generator"));
+    }
+
+    @Bean
+    IAMServiceGrpc.IAMServiceBlockingStub iamServiceBlockingStub(GrpcChannelFactory channels) {
+        return IAMServiceGrpc.newBlockingStub(channels.createChannel("iam"));
     }
 }

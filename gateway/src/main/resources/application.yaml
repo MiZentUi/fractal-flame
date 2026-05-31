@@ -6,8 +6,13 @@ spring:
       channels:
         generator:
           address: ${GENERATOR_URL:0.0.0.0:9090}
+        iam:
+          address: ${IAM_URL:0.0.0.0:50051}
   jackson:
     property-naming-strategy: SNAKE_CASE
 
 app:
-  jwt-signing-key: ${JWT_SIGNING_KEY}
+  sse-timeout: 300000
+  jwt-signing-key: ${ACCESS_SIGNING_KEY}
+  cors:
+    allowed-origins: "*"
