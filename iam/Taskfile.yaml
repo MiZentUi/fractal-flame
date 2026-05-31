@@ -10,6 +10,7 @@ vars:
   PROTOC_GEN_GO_VERSION: "v1.36.11"
   PROTOC_GEN_GO_GRPC_VERSION: "v1.6.2"
   GOOSE_VERSION: "v3.27.1"
+  MOCKERY_VERSION: "v3.7.0"
 
   BIN_DIR: "{{.ROOT_DIR}}/bin"
   GOLANGCI: "{{.BIN_DIR}}/golangci-lint"
@@ -20,6 +21,7 @@ vars:
   PROTOC_GEN_GO: "{{.BIN_DIR}}/protoc-gen-go"
   PROTOC_GEN_GO_GRPC: "{{.BIN_DIR}}/protoc-gen-go-grpc"
   GOOSE: "{{.BIN_DIR}}/goose"
+  MOCKERY: "{{.BIN_DIR}}/mockery"
 
   MODULES: [iam]
 
@@ -136,3 +138,19 @@ tasks:
     cmds:
       - cmd: echo "Clear containers..."
       - cmd: docker compose down -v
+
+  install:mockery:
+    desc: "Install mocekry binary..."
+    deps: [create:bin]
+    cmds:
+      - cmd: echo "Install mockery..."
+      - cmd: GOBIN={{.BIN_DIR}} go install github.com/vektra/mockery/v3@{{.MOCKERY_VERSION}}
+    status:
+      - test -x "{{.MOCKERY}}"
+
+  gen:mockery:
+    desc: "Generate mocks"
+    deps: [create:bin]
+    cmds:
+      - cmd: echo "Generate mocks..."
+      - cmd: "{{.MOCKERY}}"
