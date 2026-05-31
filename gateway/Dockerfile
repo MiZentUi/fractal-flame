@@ -2,6 +2,7 @@ FROM gradle:jdk21 AS build
 WORKDIR /app
 
 COPY build.gradle settings.gradle ./
+COPY lombok.config ./
 COPY openapi.yaml .openapi-generator-ignore ./
 COPY src ./src
 RUN gradle clean build -x test --no-daemon

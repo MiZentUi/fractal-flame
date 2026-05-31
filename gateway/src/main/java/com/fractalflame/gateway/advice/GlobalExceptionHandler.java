@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fractalflame.gateway.model.ApiStatusResponse;
 
 import io.grpc.StatusRuntimeException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
 @RestControllerAdvice
@@ -23,6 +24,7 @@ public class GlobalExceptionHandler {
             case UNAUTHENTICATED -> HttpStatus.UNAUTHORIZED;
             case PERMISSION_DENIED -> HttpStatus.FORBIDDEN;
             case DEADLINE_EXCEEDED -> HttpStatus.GATEWAY_TIMEOUT;
+            case ALREADY_EXISTS -> HttpStatus.CONFLICT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
 
@@ -35,9 +37,21 @@ public class GlobalExceptionHandler {
                 httpStatus);
     }
 
-    @ExceptionHandler(SignatureException.class)
+    @ExceptionHandler({ SignatureException.class, ExpiredJwtException.class })
     public ResponseEntity<ApiStatusResponse> handleSigning(Exception exception) {
         var status = HttpStatus.UNAUTHORIZED;
+        return new ResponseEntity<>(
+                ApiStatusResponse.builder()
+                        .code(status.value())
+                        .status(status.name())
+                        .message(exception.getMessage())
+                        .build(),
+                status);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiStatusResponse> handle(Exception exception) {
+        var status = HttpStatus.INTERNAL_SERVER_ERROR;
         return new ResponseEntity<>(
                 ApiStatusResponse.builder()
                         .code(status.value())

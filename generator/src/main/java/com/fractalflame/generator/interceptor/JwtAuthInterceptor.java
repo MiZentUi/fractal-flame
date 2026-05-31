@@ -42,7 +42,9 @@ public class JwtAuthInterceptor implements ServerInterceptor {
 
             String token = authHeader.substring(7);
 
-            jwtService.validateToken(token);
+            if (!jwtService.validateToken(token)) {
+                throw new RuntimeException("Token is expired!");
+            }
 
             var claims = jwtService.extractClaims(token);
 

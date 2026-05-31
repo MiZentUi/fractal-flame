@@ -63,10 +63,15 @@ public class FractalsService {
                 try {
                     log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("send update over sse");
                     emitter.send(SseEmitter.event()
+                            .name("update")
                             .data(taskMapper.toTaskState(value)));
 
                     if (Math.abs(value.getProgress() - 1) < 0.005) {
                         log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("emitter complete");
+
+                        emitter.send(SseEmitter.event()
+                                .name("complete"));
+
                         emitter.complete();
                     }
                 } catch (Exception e) {
@@ -81,6 +86,12 @@ public class FractalsService {
 
             @Override
             public void onCompleted() {
+                try {
+                    emitter.send(SseEmitter.event()
+                            .name("complete"));
+                } catch (Exception e) {
+                    emitter.completeWithError(e);
+                }
                 emitter.complete();
             }
 
