@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
@@ -52,6 +53,12 @@ func (s *service) GetUser(ctx context.Context, id int64) (model.User, error) {
 }
 
 func (s *service) UpdateUser(ctx context.Context, id int64, username, password, image string) (model.User, error) {
+	if username == "" && password == "" && image == "" {
+		slog.Warn("Nothing user data to update", "err", errs.ErrNothingToUpdate)
+
+		return model.User{}, errs.ErrNothingToUpdate
+	}
+
 	var hash string
 	if password != "" {
 		err := s.validator.Validate(password)

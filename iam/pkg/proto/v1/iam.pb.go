@@ -7,13 +7,13 @@
 package iamv1
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -415,86 +415,6 @@ func (x *GetUserResponse) GetUser() *User {
 	return nil
 }
 
-type ListUsersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListUsersRequest) Reset() {
-	*x = ListUsersRequest{}
-	mi := &file_v1_iam_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUsersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUsersRequest) ProtoMessage() {}
-
-func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
-func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{8}
-}
-
-type ListUsersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListUsersResponse) Reset() {
-	*x = ListUsersResponse{}
-	mi := &file_v1_iam_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUsersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUsersResponse) ProtoMessage() {}
-
-func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
-func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *ListUsersResponse) GetUsers() []*User {
-	if x != nil {
-		return x.Users
-	}
-	return nil
-}
-
 type UpdateUserRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Username      *wrapperspb.StringValue `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
@@ -506,7 +426,7 @@ type UpdateUserRequest struct {
 
 func (x *UpdateUserRequest) Reset() {
 	*x = UpdateUserRequest{}
-	mi := &file_v1_iam_proto_msgTypes[10]
+	mi := &file_v1_iam_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -518,7 +438,7 @@ func (x *UpdateUserRequest) String() string {
 func (*UpdateUserRequest) ProtoMessage() {}
 
 func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[10]
+	mi := &file_v1_iam_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +451,7 @@ func (x *UpdateUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{10}
+	return file_v1_iam_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateUserRequest) GetUsername() *wrapperspb.StringValue {
@@ -564,7 +484,7 @@ type UpdateUserResponse struct {
 
 func (x *UpdateUserResponse) Reset() {
 	*x = UpdateUserResponse{}
-	mi := &file_v1_iam_proto_msgTypes[11]
+	mi := &file_v1_iam_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -576,7 +496,7 @@ func (x *UpdateUserResponse) String() string {
 func (*UpdateUserResponse) ProtoMessage() {}
 
 func (x *UpdateUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[11]
+	mi := &file_v1_iam_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -589,7 +509,7 @@ func (x *UpdateUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserResponse.ProtoReflect.Descriptor instead.
 func (*UpdateUserResponse) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{11}
+	return file_v1_iam_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateUserResponse) GetUser() *User {
@@ -608,7 +528,7 @@ type GetImageRequest struct {
 
 func (x *GetImageRequest) Reset() {
 	*x = GetImageRequest{}
-	mi := &file_v1_iam_proto_msgTypes[12]
+	mi := &file_v1_iam_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -620,7 +540,7 @@ func (x *GetImageRequest) String() string {
 func (*GetImageRequest) ProtoMessage() {}
 
 func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[12]
+	mi := &file_v1_iam_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -633,7 +553,7 @@ func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImageRequest.ProtoReflect.Descriptor instead.
 func (*GetImageRequest) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{12}
+	return file_v1_iam_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetImageRequest) GetName() string {
@@ -652,7 +572,7 @@ type GetImageResponse struct {
 
 func (x *GetImageResponse) Reset() {
 	*x = GetImageResponse{}
-	mi := &file_v1_iam_proto_msgTypes[13]
+	mi := &file_v1_iam_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +584,7 @@ func (x *GetImageResponse) String() string {
 func (*GetImageResponse) ProtoMessage() {}
 
 func (x *GetImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_iam_proto_msgTypes[13]
+	mi := &file_v1_iam_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,7 +597,7 @@ func (x *GetImageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImageResponse.ProtoReflect.Descriptor instead.
 func (*GetImageResponse) Descriptor() ([]byte, []int) {
-	return file_v1_iam_proto_rawDescGZIP(), []int{13}
+	return file_v1_iam_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetImageResponse) GetImage() []byte {
@@ -691,39 +611,36 @@ var File_v1_iam_proto protoreflect.FileDescriptor
 
 const file_v1_iam_proto_rawDesc = "" +
 	"\n" +
-	"\fv1/iam.proto\x12\x06iam.v1\x1a\x1egoogle/protobuf/wrappers.proto\"E\n" +
-	"\vAuthRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"+\n" +
+	"\fv1/iam.proto\x12\x06iam.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x17validate/validate.proto\"Y\n" +
+	"\vAuthRequest\x12%\n" +
+	"\busername\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x03\x182R\busername\x12#\n" +
+	"\bpassword\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18HR\bpassword\"+\n" +
 	"\x10RegisterResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"W\n" +
 	"\rLoginResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"5\n" +
-	"\x0eRefreshRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"Y\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\">\n" +
+	"\x0eRefreshRequest\x12,\n" +
+	"\rrefresh_token\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18HR\frefreshToken\"Y\n" +
 	"\x0fRefreshResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\")\n" +
-	"\x0eGetUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"Q\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"2\n" +
+	"\x0eGetUserRequest\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x06userId\"Q\n" +
 	"\x04User\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
 	"\x05image\x18\x03 \x01(\tR\x05image\"3\n" +
 	"\x0fGetUserResponse\x12 \n" +
-	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"\x12\n" +
-	"\x10ListUsersRequest\"7\n" +
-	"\x11ListUsersResponse\x12\"\n" +
-	"\x05users\x18\x01 \x03(\v2\f.iam.v1.UserR\x05users\"\xbb\x01\n" +
+	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"\xbb\x01\n" +
 	"\x11UpdateUserRequest\x128\n" +
 	"\busername\x18\x01 \x01(\v2\x1c.google.protobuf.StringValueR\busername\x128\n" +
 	"\bpassword\x18\x02 \x01(\v2\x1c.google.protobuf.StringValueR\bpassword\x122\n" +
 	"\x05image\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\x05image\"6\n" +
 	"\x12UpdateUserResponse\x12 \n" +
-	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\"%\n" +
-	"\x0fGetImageRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"(\n" +
+	"\x04user\x18\x01 \x01(\v2\f.iam.v1.UserR\x04user\".\n" +
+	"\x0fGetImageRequest\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x04name\"(\n" +
 	"\x10GetImageResponse\x12\x14\n" +
 	"\x05image\x18\x01 \x01(\fR\x05image2\xf8\x02\n" +
 	"\n" +
@@ -748,51 +665,45 @@ func file_v1_iam_proto_rawDescGZIP() []byte {
 	return file_v1_iam_proto_rawDescData
 }
 
-var (
-	file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
-	file_v1_iam_proto_goTypes  = []any{
-		(*AuthRequest)(nil),            // 0: iam.v1.AuthRequest
-		(*RegisterResponse)(nil),       // 1: iam.v1.RegisterResponse
-		(*LoginResponse)(nil),          // 2: iam.v1.LoginResponse
-		(*RefreshRequest)(nil),         // 3: iam.v1.RefreshRequest
-		(*RefreshResponse)(nil),        // 4: iam.v1.RefreshResponse
-		(*GetUserRequest)(nil),         // 5: iam.v1.GetUserRequest
-		(*User)(nil),                   // 6: iam.v1.User
-		(*GetUserResponse)(nil),        // 7: iam.v1.GetUserResponse
-		(*ListUsersRequest)(nil),       // 8: iam.v1.ListUsersRequest
-		(*ListUsersResponse)(nil),      // 9: iam.v1.ListUsersResponse
-		(*UpdateUserRequest)(nil),      // 10: iam.v1.UpdateUserRequest
-		(*UpdateUserResponse)(nil),     // 11: iam.v1.UpdateUserResponse
-		(*GetImageRequest)(nil),        // 12: iam.v1.GetImageRequest
-		(*GetImageResponse)(nil),       // 13: iam.v1.GetImageResponse
-		(*wrapperspb.StringValue)(nil), // 14: google.protobuf.StringValue
-	}
-)
-
+var file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_v1_iam_proto_goTypes = []any{
+	(*AuthRequest)(nil),            // 0: iam.v1.AuthRequest
+	(*RegisterResponse)(nil),       // 1: iam.v1.RegisterResponse
+	(*LoginResponse)(nil),          // 2: iam.v1.LoginResponse
+	(*RefreshRequest)(nil),         // 3: iam.v1.RefreshRequest
+	(*RefreshResponse)(nil),        // 4: iam.v1.RefreshResponse
+	(*GetUserRequest)(nil),         // 5: iam.v1.GetUserRequest
+	(*User)(nil),                   // 6: iam.v1.User
+	(*GetUserResponse)(nil),        // 7: iam.v1.GetUserResponse
+	(*UpdateUserRequest)(nil),      // 8: iam.v1.UpdateUserRequest
+	(*UpdateUserResponse)(nil),     // 9: iam.v1.UpdateUserResponse
+	(*GetImageRequest)(nil),        // 10: iam.v1.GetImageRequest
+	(*GetImageResponse)(nil),       // 11: iam.v1.GetImageResponse
+	(*wrapperspb.StringValue)(nil), // 12: google.protobuf.StringValue
+}
 var file_v1_iam_proto_depIdxs = []int32{
 	6,  // 0: iam.v1.GetUserResponse.user:type_name -> iam.v1.User
-	6,  // 1: iam.v1.ListUsersResponse.users:type_name -> iam.v1.User
-	14, // 2: iam.v1.UpdateUserRequest.username:type_name -> google.protobuf.StringValue
-	14, // 3: iam.v1.UpdateUserRequest.password:type_name -> google.protobuf.StringValue
-	14, // 4: iam.v1.UpdateUserRequest.image:type_name -> google.protobuf.StringValue
-	6,  // 5: iam.v1.UpdateUserResponse.user:type_name -> iam.v1.User
-	0,  // 6: iam.v1.IAMService.Register:input_type -> iam.v1.AuthRequest
-	0,  // 7: iam.v1.IAMService.Login:input_type -> iam.v1.AuthRequest
-	3,  // 8: iam.v1.IAMService.Refresh:input_type -> iam.v1.RefreshRequest
-	5,  // 9: iam.v1.IAMService.GetUser:input_type -> iam.v1.GetUserRequest
-	10, // 10: iam.v1.IAMService.UpdateUser:input_type -> iam.v1.UpdateUserRequest
-	12, // 11: iam.v1.IAMService.GetImage:input_type -> iam.v1.GetImageRequest
-	1,  // 12: iam.v1.IAMService.Register:output_type -> iam.v1.RegisterResponse
-	2,  // 13: iam.v1.IAMService.Login:output_type -> iam.v1.LoginResponse
-	4,  // 14: iam.v1.IAMService.Refresh:output_type -> iam.v1.RefreshResponse
-	7,  // 15: iam.v1.IAMService.GetUser:output_type -> iam.v1.GetUserResponse
-	11, // 16: iam.v1.IAMService.UpdateUser:output_type -> iam.v1.UpdateUserResponse
-	13, // 17: iam.v1.IAMService.GetImage:output_type -> iam.v1.GetImageResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	12, // 1: iam.v1.UpdateUserRequest.username:type_name -> google.protobuf.StringValue
+	12, // 2: iam.v1.UpdateUserRequest.password:type_name -> google.protobuf.StringValue
+	12, // 3: iam.v1.UpdateUserRequest.image:type_name -> google.protobuf.StringValue
+	6,  // 4: iam.v1.UpdateUserResponse.user:type_name -> iam.v1.User
+	0,  // 5: iam.v1.IAMService.Register:input_type -> iam.v1.AuthRequest
+	0,  // 6: iam.v1.IAMService.Login:input_type -> iam.v1.AuthRequest
+	3,  // 7: iam.v1.IAMService.Refresh:input_type -> iam.v1.RefreshRequest
+	5,  // 8: iam.v1.IAMService.GetUser:input_type -> iam.v1.GetUserRequest
+	8,  // 9: iam.v1.IAMService.UpdateUser:input_type -> iam.v1.UpdateUserRequest
+	10, // 10: iam.v1.IAMService.GetImage:input_type -> iam.v1.GetImageRequest
+	1,  // 11: iam.v1.IAMService.Register:output_type -> iam.v1.RegisterResponse
+	2,  // 12: iam.v1.IAMService.Login:output_type -> iam.v1.LoginResponse
+	4,  // 13: iam.v1.IAMService.Refresh:output_type -> iam.v1.RefreshResponse
+	7,  // 14: iam.v1.IAMService.GetUser:output_type -> iam.v1.GetUserResponse
+	9,  // 15: iam.v1.IAMService.UpdateUser:output_type -> iam.v1.UpdateUserResponse
+	11, // 16: iam.v1.IAMService.GetImage:output_type -> iam.v1.GetImageResponse
+	11, // [11:17] is the sub-list for method output_type
+	5,  // [5:11] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_v1_iam_proto_init() }
@@ -806,7 +717,7 @@ func file_v1_iam_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_iam_proto_rawDesc), len(file_v1_iam_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

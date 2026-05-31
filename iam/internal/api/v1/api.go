@@ -42,7 +42,7 @@ func New(auth AuthService, user UserService, image ImageService) *api {
 }
 
 func (a *api) Register(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.RegisterResponse, error) {
-	if req.Username == "" || req.Password == "" {
+	if req.ValidateAll() != nil {
 		return nil, errs.ErrInvalidCredentials
 	}
 
@@ -55,7 +55,7 @@ func (a *api) Register(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.Regi
 }
 
 func (a *api) Login(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.LoginResponse, error) {
-	if req.Username == "" || req.Password == "" {
+	if req.ValidateAll() != nil {
 		return nil, errs.ErrInvalidCredentials
 	}
 
@@ -68,7 +68,7 @@ func (a *api) Login(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.LoginRe
 }
 
 func (a *api) Refresh(ctx context.Context, req *iamv1.RefreshRequest) (*iamv1.RefreshResponse, error) {
-	if req.RefreshToken == "" {
+	if req.ValidateAll() != nil {
 		return nil, errs.ErrInvalidToken
 	}
 
@@ -81,7 +81,7 @@ func (a *api) Refresh(ctx context.Context, req *iamv1.RefreshRequest) (*iamv1.Re
 }
 
 func (a *api) GetUser(ctx context.Context, req *iamv1.GetUserRequest) (*iamv1.GetUserResponse, error) {
-	if req.UserId == 0 {
+	if req.ValidateAll() != nil {
 		return nil, errs.ErrInvalidUserID
 	}
 
@@ -94,10 +94,6 @@ func (a *api) GetUser(ctx context.Context, req *iamv1.GetUserRequest) (*iamv1.Ge
 }
 
 func (a *api) UpdateUser(ctx context.Context, req *iamv1.UpdateUserRequest) (*iamv1.UpdateUserResponse, error) {
-	if req.Username.GetValue() == "" && req.Password.GetValue() == "" && req.Image.GetValue() == "" {
-		return nil, errs.ErrNothingToUpdate
-	}
-
 	id, err := auth.ExtractUserID(ctx)
 	if err != nil {
 		return nil, err
