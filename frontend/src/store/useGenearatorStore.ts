@@ -5,15 +5,15 @@ const createStore = () => {
     const store = reactive<FractalRequest>({
         affine_params: [],
         functions: [],
-        gamma: 0,
-        height: 0,
-        width: 0,
-        iteration_count: 0,
-        symmetry_level: 0
+        gamma: 2.2,
+        height: 1080,
+        width: 1920,
+        iteration_count: 100000,
+        symmetry_level: 1
     })
     return store
 }
-const useStore = () => inject<FractalRequest>(stateSymbol)  as FractalRequest
+const useStore = () => inject<FractalRequest>(stateSymbol) as FractalRequest
 
 export {stateSymbol, createStore, useStore}
 

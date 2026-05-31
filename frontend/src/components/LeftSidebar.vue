@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import { randColor } from "@/utils/color";
 import { useStore } from "@/store/useGenearatorStore";
 
-const requesState = useStore()
-console.log(requesState)
+const requesState = useStore();
 
 watch(requesState.functions, console.log);
 watch(requesState.affine_params, console.log);
@@ -50,31 +49,35 @@ const removeFunc = (i: number) => {
     <Sidebar :side="'left'" class="mt-20 border-none">
         <SidebarContent>
             <div class="flex flex-col gap-6 px-4">
-                <Card>
-                    <CardHeader> Functions </CardHeader>
-                    <CardContent class="flex flex-col gap-4 overflow-x-scroll h-38">
-                        <FunctionSelector
-                            @remove="removeFunc(i)"
-                            :function-names="['test']"
-                            v-model="requesState.functions[i]"
-                            v-for="(_, i) in requesState.functions"
-                            :key="i"
-                        />
-                        <Button class="w-full" variant="outline" @click="addFunc">+</Button>
-                    </CardContent>
-                </Card>
+                <div class="h-60">
+                    <Card>
+                        <CardHeader> Functions </CardHeader>
+                        <CardContent class="flex flex-col gap-4 overflow-x-scroll max-h-38 w-90">
+                            <FunctionSelector
+                                @remove="removeFunc(i)"
+                                :function-names="['test']"
+                                v-model="requesState.functions[i]"
+                                v-for="(_, i) in requesState.functions"
+                                :key="i"
+                            />
+                            <Button class="w-full" variant="outline" @click="addFunc">+</Button>
+                        </CardContent>
+                    </Card>
+                </div>
 
-                <Card class="w-86">
-                    <CardHeader> Affine transforms </CardHeader>
-                    <CardContent class="flex flex-col gap-6 overflow-x-scroll h-62">
-                        <AffineSelector
-                            @remove="removeTransform(i)"
-                            v-model="requesState.affine_params[i]"
-                            v-for="(_, i) in requesState.affine_params"
-                        ></AffineSelector>
-                        <Button class="w-full" variant="outline" @click="addTransform">+</Button>
-                    </CardContent>
-                </Card>
+                <div class="h-62">
+                    <Card class="w-86">
+                        <CardHeader> Affine transforms </CardHeader>
+                        <CardContent class="flex flex-col gap-6 overflow-x-scroll max-h-62">
+                            <AffineSelector
+                                @remove="removeTransform(i)"
+                                v-model="requesState.affine_params[i]"
+                                v-for="(_, i) in requesState.affine_params"
+                            ></AffineSelector>
+                            <Button class="w-full" variant="outline" @click="addTransform">+</Button>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </SidebarContent>
     </Sidebar>
