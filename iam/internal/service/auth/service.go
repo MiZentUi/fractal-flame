@@ -70,7 +70,7 @@ func (s *service) Register(ctx context.Context, username, password string) (int6
 func (s *service) Login(ctx context.Context, username, password string) (model.TokenPair, error) {
 	user, err := s.repository.FindByUsername(ctx, username)
 	if err != nil {
-		return model.TokenPair{}, errs.ErrInvalidCredentials
+		return model.TokenPair{}, fmt.Errorf("find by username: %w", err)
 	}
 
 	err = s.hasher.ComparePasswords(user.Password, password)
