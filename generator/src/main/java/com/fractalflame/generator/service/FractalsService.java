@@ -142,6 +142,9 @@ public class FractalsService extends FractalsImplBase {
             if (!functionNames.contains(f.getName())) {
                 throw new FractalParametersException("Function with \"" + f.getName() + "\" name not found!");
             }
+            if (f.getWeight() <= 0) {
+                throw new FractalParametersException("Function weight should be positive!");
+            }
         });
 
         if (fractal.getAffineParams().isEmpty()) {
