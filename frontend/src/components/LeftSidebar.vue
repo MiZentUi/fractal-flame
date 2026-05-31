@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue";
-import type { AffineParams, Function } from "@/api/generated";
+import { ref } from "vue";
+
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
@@ -9,24 +9,15 @@ import FunctionSelector from "@/components/FunctionSelector.vue";
 import { AffineSelector } from "@/components/AffineSelector";
 import { Button } from "@/components/ui/button";
 import { randColor } from "@/utils/color";
-import { useStore } from "@/store/useGenearatorStore";
+import { type AffineParamsInput, type FunctionInput } from "@/store/useGenearatorStore";
+import { useFieldArray } from "vee-validate";
+import { fractalsApi } from "@/api";
 
-const requesState = useStore();
 
-watch(requesState.functions, console.log);
-watch(requesState.affine_params, console.log);
+const randParam = () => (Math.random() * 2 - 1).toFixed(2);
 
-const addFunc = () => {
-    requesState.functions?.push({
-        name: "",
-        weight: 1,
-    });
-};
-
-const randParam = () => Number((Math.random() * 2 - 1).toFixed(2));
-
-const addTransform = () => {
-    requesState.affine_params?.push({
+const randomAffine = () => {
+    return {
         color: randColor(),
         a: randParam(),
         b: randParam(),
@@ -34,15 +25,19 @@ const addTransform = () => {
         d: randParam(),
         e: randParam(),
         f: randParam(),
-    });
-};
-const removeTransform = (i: number) => {
-    requesState.affine_params?.splice(i, 1);
+    };
 };
 
-const removeFunc = (i: number) => {
-    requesState.functions?.splice(i, 1);
-};
+const functions = ref<string[]>([]);
+
+fractalsApi.getFunctions().then((res) => (functions.value = res.data));
+
+const { push: pushFunc, fields: funcFields, remove: removeFunc } = useFieldArray<FunctionInput>("functions");
+const {
+    push: pushAffine,
+    fields: affineFields,
+    remove: removeAffine,
+} = useFieldArray<AffineParamsInput>("affine_params");
 </script>
 
 <template>
@@ -54,13 +49,16 @@ const removeFunc = (i: number) => {
                         <CardHeader> Functions </CardHeader>
                         <CardContent class="flex flex-col gap-4 overflow-x-scroll max-h-38 w-90">
                             <FunctionSelector
-                                @remove="removeFunc(i)"
-                                :function-names="['test']"
-                                v-model="requesState.functions[i]"
-                                v-for="(_, i) in requesState.functions"
+                                :function-names="functions"
+                                v-for="(field, i) in funcFields"
                                 :key="i"
+                                v-model="field.value"
+                                @remove="removeFunc(i)"
+                                :field-name="`functions[${i}]`"
                             />
-                            <Button class="w-full" variant="outline" @click="addFunc">+</Button>
+                            <Button class="w-full" variant="outline" @click="pushFunc({ name: '', weight: 1 })"
+                                >+</Button
+                            >
                         </CardContent>
                     </Card>
                 </div>
@@ -70,11 +68,13 @@ const removeFunc = (i: number) => {
                         <CardHeader> Affine transforms </CardHeader>
                         <CardContent class="flex flex-col gap-6 overflow-x-scroll max-h-62">
                             <AffineSelector
-                                @remove="removeTransform(i)"
-                                v-model="requesState.affine_params[i]"
-                                v-for="(_, i) in requesState.affine_params"
+                                v-model="field.value"
+                                v-for="(field, i) in affineFields"
+                                @remove="removeAffine(i)"
+                                :key="i"
+                                :field-name="`affine_params[${i}]`"
                             ></AffineSelector>
-                            <Button class="w-full" variant="outline" @click="addTransform">+</Button>
+                            <Button class="w-full" variant="outline" @click="pushAffine(randomAffine())">+</Button>
                         </CardContent>
                     </Card>
                 </div>

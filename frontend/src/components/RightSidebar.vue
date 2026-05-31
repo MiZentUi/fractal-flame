@@ -3,12 +3,8 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
-import Input from "./ui/input/Input.vue";
-import { useStore } from "@/store/useGenearatorStore.ts";
 import Label from "./ui/label/Label.vue";
-import NumberInput from "./NumberInput.vue";
-
-const requesState = useStore();
+import FormInput from "./FormInput.vue";
 </script>
 
 <template>
@@ -21,16 +17,14 @@ const requesState = useStore();
                         <div>
                             <Label>Resolution</Label>
                             <div class="flex align-baseline items-center gap-4">
-                                <NumberInput
-                                    num-type="natural"
-                                    v-model="requesState.width"
+                                <FormInput
+                                    field-name="width"
                                     class="w-full text-center"
                                     placeholder="Width"
                                 />
                                 <span>X</span>
-                                <NumberInput
-                                    num-type="natural"
-                                    v-model="requesState.height"
+                                <FormInput
+                                    field-name="height"
                                     class="w-full text-center"
                                     placeholder="Height"
                                 />
@@ -38,27 +32,24 @@ const requesState = useStore();
                         </div>
                         <div class="flex flex-col gap-1">
                             <Label>Iterations</Label>
-                            <NumberInput
-                                num-type="natural"
-                                v-model="requesState.iteration_count"
+                            <FormInput
+                                field-name="iteration_count"
                                 placeholder="Iterations"
                                 class="w-full text-center"
                             />
                         </div>
                         <div class="flex flex-col gap-1">
                             <Label>Symmetry</Label>
-                            <NumberInput
-                                num-type="natural"
-                                v-model="requesState.symmetry_level"
+                            <FormInput
+                                field-name="symmetry_level"
                                 placeholder="Symmetry level"
                                 class="w-full text-center"
                             />
                         </div>
                         <div class="flex flex-col gap-1">
                             <Label>Gamma</Label>
-                            <NumberInput
-                                num-type="real"
-                                v-model="requesState.gamma"
+                            <FormInput
+                                field-name="gamma"
                                 placeholder="Gamma"
                                 class="w-full text-center"
                             />

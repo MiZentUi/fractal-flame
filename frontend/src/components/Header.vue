@@ -10,7 +10,6 @@ const router = useRouter();
 
 const opacity = ref(0);
 const isLoggedIn = ref(false);
-const { d } = useStore();
 
 const {y} = useScroll(window)
 
@@ -21,7 +20,6 @@ watch(y, (n) => {
 
     const scrollPercent = (scrollTop / (docHeight - winHeight));
     opacity.value = scrollPercent;
-    console.log(opacity.value);
 });
 
 

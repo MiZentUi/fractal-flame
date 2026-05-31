@@ -3,6 +3,7 @@ import Footer from "./Footer.vue";
 import Header from "./Header.vue";
 import { SidebarProvider } from "./ui/sidebar/index.ts";
 import Feed from "./Feed.vue";
+import { Toaster } from '@/components/ui/sonner'
 
 
 </script>
@@ -16,6 +17,7 @@ import Feed from "./Feed.vue";
             </section>
             <Feed v-if="$route.meta?.showFeed"></Feed>
             <Footer class="z-1"/>
+            <Toaster></Toaster>
         </div>
     </SidebarProvider>
 </template>

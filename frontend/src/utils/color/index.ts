@@ -43,8 +43,6 @@ const RGBtoHex = ({ r, g, b }: { r: number; g: number; b: number }) =>
     "#" + ((r << 16) | (g << 8) | (b << 0)).toString(16).padStart(6, "0");
 
 const randColor = () => {
-    const randByte = () => Math.round(Math.random() * 0xc0 + 0x3f);
-    console.log(randByte().toString(16).padStart(6, "0"));
     return RGBtoHex(HSVtoRGB(Math.random(), 1, 1));
 };
 
