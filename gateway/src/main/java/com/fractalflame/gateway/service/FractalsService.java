@@ -2,6 +2,7 @@ package com.fractalflame.gateway.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -21,14 +22,19 @@ import com.google.protobuf.Empty;
 
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FractalsService {
     private final FractalsBlockingStub blockingStub;
     private final FractalsStub stub;
     private final FractalMapper mapper;
     private final TaskMapper taskMapper;
+
+    @Value("${app.sse-timeout}")
+    private Long sseTimeout;
 
     public FractalsResponse getAll(Integer page, Integer count, String sort, String order, Long userId) {
         var response = blockingStub.getAll(mapper.toFractalsRequest(page, count, sort, order, userId));
@@ -47,16 +53,20 @@ public class FractalsService {
         return taskMapper.toTaskState(blockingStub.generation(mapper.fromFractalRequest(request)));
     }
 
-    public void subscribeToTask(Long id, SseEmitter emitter) {
+    public SseEmitter subscribeToTask(Long id) {
+        var emitter = new SseEmitter(sseTimeout);
+
         stub.subscribeToTask(IdRequest.newBuilder().setId(id).build(), new StreamObserver<TaskState>() {
 
             @Override
             public void onNext(TaskState value) {
                 try {
+                    log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("send update over sse");
                     emitter.send(SseEmitter.event()
                             .data(taskMapper.toTaskState(value)));
 
                     if (Math.abs(value.getProgress() - 1) < 0.005) {
+                        log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("emitter complete");
                         emitter.complete();
                     }
                 } catch (Exception e) {
@@ -75,6 +85,8 @@ public class FractalsService {
             }
 
         });
+
+        return emitter;
     }
 
     public List<String> getFunctions() {

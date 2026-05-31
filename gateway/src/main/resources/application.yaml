@@ -10,6 +10,7 @@ spring:
     property-naming-strategy: SNAKE_CASE
 
 app:
+  sse-timeout: 300000
   jwt-signing-key: ${JWT_SIGNING_KEY}
   cors:
     allowed-origins: "*"
