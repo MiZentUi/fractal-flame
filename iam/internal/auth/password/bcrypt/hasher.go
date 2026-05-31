@@ -3,8 +3,9 @@ package bcrypt
 import (
 	"log/slog"
 
-	"github.com/mizentui/fractal-flame/iam/internal/config"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/mizentui/fractal-flame/iam/internal/config"
 )
 
 type hasher struct{}

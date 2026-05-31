@@ -8,6 +8,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
 	"github.com/mizentui/fractal-flame/iam/internal/repository/user/postgres/record"

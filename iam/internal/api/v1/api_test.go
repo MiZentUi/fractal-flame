@@ -5,14 +5,15 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/wrapperspb"
+
 	mockery "github.com/mizentui/fractal-flame/iam/internal/api/v1/mock"
 	authctx "github.com/mizentui/fractal-flame/iam/internal/auth"
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
 	iamv1 "github.com/mizentui/fractal-flame/iam/pkg/proto/v1"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 var (

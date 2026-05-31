@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/model"
 )
@@ -63,7 +64,7 @@ func (m *manager) ValidateAccessToken(token string) (int64, error) {
 	return m.validateToken(token, m.accessSigningKey, accessTokenType)
 }
 
-func (m *manager) validateToken(tokenString string, signingKey string, tokenType string) (int64, error) {
+func (m *manager) validateToken(tokenString, signingKey, tokenType string) (int64, error) {
 	var claims Claims
 
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(t *jwt.Token) (any, error) {

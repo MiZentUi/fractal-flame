@@ -54,7 +54,7 @@ func Run() {
 			slog.Error("Closer catched errors", "err", cerr)
 		}
 	}()
-	
+
 	listener, err := net.Listen("tcp", config.App().GRPC.Address())
 	if err != nil {
 		slog.Error("Failed to listen socket", "err", err)

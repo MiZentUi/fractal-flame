@@ -5,8 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	mockery "github.com/mizentui/fractal-flame/iam/internal/service/image/mock"
 	"github.com/stretchr/testify/require"
+
+	mockery "github.com/mizentui/fractal-flame/iam/internal/service/image/mock"
 )
 
 var ErrImageRepository = errors.New("some image repo error")

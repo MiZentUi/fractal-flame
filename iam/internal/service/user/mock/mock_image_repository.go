@@ -15,7 +15,8 @@ import (
 func NewImageRepositoryMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *ImageRepositoryMock {
+},
+) *ImageRepositoryMock {
 	mock := &ImageRepositoryMock{}
 	mock.Mock.Test(t)
 
@@ -71,7 +72,7 @@ type ImageRepositoryMock_Save_Call struct {
 // Save is a helper method to define mock.On call
 //   - ctx context.Context
 //   - image string
-func (_e *ImageRepositoryMock_Expecter) Save(ctx interface{}, image interface{}) *ImageRepositoryMock_Save_Call {
+func (_e *ImageRepositoryMock_Expecter) Save(ctx, image interface{}) *ImageRepositoryMock_Save_Call {
 	return &ImageRepositoryMock_Save_Call{Call: _e.mock.On("Save", ctx, image)}
 }
 
