@@ -3,7 +3,6 @@ package minio
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"log/slog"
@@ -41,19 +40,13 @@ func New(ctx context.Context, client *minio.Client) (*repository, error) {
 	return repository, nil
 }
 
-func (r *repository) Save(ctx context.Context, imageB64 string) (string, error) {
-	image, err := base64.StdEncoding.DecodeString(imageB64)
-	if err != nil {
-		slog.Error("Failed to decode image", "err", err)
-
-		return "", err
-	}
-
+func (r *repository) Save(ctx context.Context, image []byte) (string, error) {
 	name := uuid.NewString()
+
 	reader := bytes.NewReader(image)
 	size := len(image)
 
-	_, err = r.client.PutObject(ctx, record.ImageBucketName, name, reader, int64(size), minio.PutObjectOptions{ContentType: "image/png"})
+	_, err := r.client.PutObject(ctx, record.ImageBucketName, name, reader, int64(size), minio.PutObjectOptions{ContentType: "image/png"})
 	if err != nil {
 		slog.Error("Failed to put image in minio storage", "err", err)
 

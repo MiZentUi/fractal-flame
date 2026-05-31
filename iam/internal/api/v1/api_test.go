@@ -16,10 +16,25 @@ import (
 	iamv1 "github.com/mizentui/fractal-flame/iam/pkg/proto/v1"
 )
 
+const (
+	userID           int64 = 1
+	emptyUserID      int64 = 0
+	username               = "mizentui"
+	updatedUsername        = "mizentui-new"
+	password               = "1238124AAs"
+	tooLongPassword        = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	accessToken            = "some_access_token"
+	refreshToken           = "some_refresh_token"
+	imageName              = "avatar.png"
+	image                  = "some image"
+	imageBytesString       = "some image bytes"
+)
+
 var (
 	ErrAuthService  = errors.New("some auth service error")
 	ErrUserService  = errors.New("some user service error")
 	ErrImageService = errors.New("some image service error")
+	imageBytes      = []byte(imageBytesString)
 )
 
 func TestRegister(t *testing.T) {
@@ -39,7 +54,7 @@ func TestRegister(t *testing.T) {
 			message: "validation error: empty username",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: "", Password: password},
 			},
 			want: nil,
 			err:  errs.ErrInvalidCredentials,
@@ -48,10 +63,10 @@ func TestRegister(t *testing.T) {
 			},
 		},
 		{
-			message: "validation error: empty password",
+			message: "validation error: too long password",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: ""},
+				req: &iamv1.AuthRequest{Username: username, Password: tooLongPassword},
 			},
 			want: nil,
 			err:  errs.ErrInvalidCredentials,
@@ -63,24 +78,24 @@ func TestRegister(t *testing.T) {
 			message: "auth service error: failed to register",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: username, Password: password},
 			},
 			want: nil,
 			err:  ErrAuthService,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				asm.On("Register", a.ctx, a.req.Username, a.req.Password).Once().Return(int64(0), ErrAuthService)
+				asm.On("Register", a.ctx, a.req.Username, a.req.Password).Once().Return(emptyUserID, ErrAuthService)
 			},
 		},
 		{
 			message: "auth service ok: successfully register",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: username, Password: password},
 			},
-			want: &iamv1.RegisterResponse{UserId: 1},
+			want: &iamv1.RegisterResponse{UserId: userID},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				asm.On("Register", a.ctx, a.req.Username, a.req.Password).Once().Return(int64(1), nil)
+				asm.On("Register", a.ctx, a.req.Username, a.req.Password).Once().Return(userID, nil)
 			},
 		},
 	}
@@ -128,7 +143,7 @@ func TestLogin(t *testing.T) {
 			message: "validation error: empty username",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: "", Password: password},
 			},
 			want: nil,
 			err:  errs.ErrInvalidCredentials,
@@ -137,10 +152,10 @@ func TestLogin(t *testing.T) {
 			},
 		},
 		{
-			message: "validation error: empty password",
+			message: "validation error: too long password",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: ""},
+				req: &iamv1.AuthRequest{Username: username, Password: tooLongPassword},
 			},
 			want: nil,
 			err:  errs.ErrInvalidCredentials,
@@ -152,7 +167,7 @@ func TestLogin(t *testing.T) {
 			message: "auth service error: failed to login",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: username, Password: password},
 			},
 			want: nil,
 			err:  ErrAuthService,
@@ -164,12 +179,12 @@ func TestLogin(t *testing.T) {
 			message: "auth service ok: successfully login",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.AuthRequest{Username: "mizentui", Password: "1238124AAs"},
+				req: &iamv1.AuthRequest{Username: username, Password: password},
 			},
-			want: &iamv1.LoginResponse{AccessToken: "some_access_token", RefreshToken: "some_refresh_token"},
+			want: &iamv1.LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				pair := model.TokenPair{AccessToken: "some_access_token", RefreshToken: "some_refresh_token"}
+				pair := model.TokenPair{AccessToken: accessToken, RefreshToken: refreshToken}
 
 				asm.On("Login", a.ctx, a.req.Username, a.req.Password).Once().Return(pair, nil)
 			},
@@ -216,10 +231,10 @@ func TestRefresh(t *testing.T) {
 		mock    func(*mockery.AuthServiceMock, *mockery.UserServiceMock, *mockery.ImageServiceMock, args)
 	}{
 		{
-			message: "validation error: empty refresh token",
+			message: "validation error: too long refresh token",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.RefreshRequest{RefreshToken: ""},
+				req: &iamv1.RefreshRequest{RefreshToken: tooLongPassword},
 			},
 			want: nil,
 			err:  errs.ErrInvalidToken,
@@ -231,7 +246,7 @@ func TestRefresh(t *testing.T) {
 			message: "auth service error: failed to refresh",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.RefreshRequest{RefreshToken: "some_refresh_token"},
+				req: &iamv1.RefreshRequest{RefreshToken: refreshToken},
 			},
 			want: nil,
 			err:  ErrAuthService,
@@ -243,12 +258,12 @@ func TestRefresh(t *testing.T) {
 			message: "auth service ok: successfully refresh",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.RefreshRequest{RefreshToken: "some_refresh_token"},
+				req: &iamv1.RefreshRequest{RefreshToken: refreshToken},
 			},
-			want: &iamv1.RefreshResponse{AccessToken: "some_access_token", RefreshToken: "some_refresh_token"},
+			want: &iamv1.RefreshResponse{AccessToken: accessToken, RefreshToken: refreshToken},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				pair := model.TokenPair{AccessToken: "some_access_token", RefreshToken: "some_refresh_token"}
+				pair := model.TokenPair{AccessToken: accessToken, RefreshToken: refreshToken}
 
 				asm.On("Refresh", a.ctx, a.req.RefreshToken).Once().Return(pair, nil)
 			},
@@ -298,7 +313,7 @@ func TestGetUser(t *testing.T) {
 			message: "validation error: empty user id",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.GetUserRequest{UserId: 0},
+				req: &iamv1.GetUserRequest{UserId: emptyUserID},
 			},
 			want: nil,
 			err:  errs.ErrInvalidUserID,
@@ -310,7 +325,7 @@ func TestGetUser(t *testing.T) {
 			message: "user service error: failed to get user",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.GetUserRequest{UserId: 1},
+				req: &iamv1.GetUserRequest{UserId: userID},
 			},
 			want: nil,
 			err:  ErrUserService,
@@ -322,12 +337,12 @@ func TestGetUser(t *testing.T) {
 			message: "user service ok: successfully get user",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.GetUserRequest{UserId: 1},
+				req: &iamv1.GetUserRequest{UserId: userID},
 			},
-			want: &iamv1.GetUserResponse{User: &iamv1.User{UserId: 1, Username: "mizentui", Image: "avatar.png"}},
+			want: &iamv1.GetUserResponse{User: &iamv1.User{UserId: userID, Username: username, Image: imageName}},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				user := model.User{ID: 1, Username: "mizentui", Image: "avatar.png"}
+				user := model.User{ID: userID, Username: username, Image: imageName}
 
 				usm.On("GetUser", a.ctx, a.req.UserId).Once().Return(user, nil)
 			},
@@ -374,22 +389,22 @@ func TestUpdateUser(t *testing.T) {
 		mock    func(*mockery.AuthServiceMock, *mockery.UserServiceMock, *mockery.ImageServiceMock, args)
 	}{
 		{
-			message: "validation error: nothing to update",
+			message: "user service error: nothing to update",
 			args: args{
-				ctx: authctx.WithUserID(context.Background(), 1),
+				ctx: authctx.WithUserID(context.Background(), userID),
 				req: &iamv1.UpdateUserRequest{},
 			},
 			want: nil,
 			err:  errs.ErrNothingToUpdate,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				usm.AssertNotCalled(t, "UpdateUser", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+				usm.On("UpdateUser", a.ctx, userID, "", "", "").Once().Return(model.User{}, errs.ErrNothingToUpdate)
 			},
 		},
 		{
 			message: "context error: failed to extract user id",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.UpdateUserRequest{Username: wrapperspb.String("mizentui-new")},
+				req: &iamv1.UpdateUserRequest{Username: wrapperspb.String(updatedUsername)},
 			},
 			want: nil,
 			err:  errs.ErrInvalidCtxValue,
@@ -400,35 +415,35 @@ func TestUpdateUser(t *testing.T) {
 		{
 			message: "user service error: failed to update user",
 			args: args{
-				ctx: authctx.WithUserID(context.Background(), 1),
+				ctx: authctx.WithUserID(context.Background(), userID),
 				req: &iamv1.UpdateUserRequest{
-					Username: wrapperspb.String("mizentui-new"),
-					Password: wrapperspb.String("1238124AAs"),
-					Image:    wrapperspb.String("some image"),
+					Username: wrapperspb.String(updatedUsername),
+					Password: wrapperspb.String(password),
+					Image:    wrapperspb.String(image),
 				},
 			},
 			want: nil,
 			err:  ErrUserService,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				usm.On("UpdateUser", a.ctx, int64(1), "mizentui-new", "1238124AAs", "some image").Once().Return(model.User{}, ErrUserService)
+				usm.On("UpdateUser", a.ctx, userID, updatedUsername, password, image).Once().Return(model.User{}, ErrUserService)
 			},
 		},
 		{
 			message: "user service ok: successfully update user",
 			args: args{
-				ctx: authctx.WithUserID(context.Background(), 1),
+				ctx: authctx.WithUserID(context.Background(), userID),
 				req: &iamv1.UpdateUserRequest{
-					Username: wrapperspb.String("mizentui-new"),
-					Password: wrapperspb.String("1238124AAs"),
-					Image:    wrapperspb.String("some image"),
+					Username: wrapperspb.String(updatedUsername),
+					Password: wrapperspb.String(password),
+					Image:    wrapperspb.String(image),
 				},
 			},
-			want: &iamv1.UpdateUserResponse{User: &iamv1.User{UserId: 1, Username: "mizentui-new", Image: "avatar.png"}},
+			want: &iamv1.UpdateUserResponse{User: &iamv1.User{UserId: userID, Username: updatedUsername, Image: imageName}},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				user := model.User{ID: 1, Username: "mizentui-new", Image: "avatar.png"}
+				user := model.User{ID: userID, Username: updatedUsername, Image: imageName}
 
-				usm.On("UpdateUser", a.ctx, int64(1), "mizentui-new", "1238124AAs", "some image").Once().Return(user, nil)
+				usm.On("UpdateUser", a.ctx, userID, updatedUsername, password, image).Once().Return(user, nil)
 			},
 		},
 	}
@@ -488,7 +503,7 @@ func TestGetImage(t *testing.T) {
 			message: "image service error: failed to get image",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.GetImageRequest{Name: "avatar.png"},
+				req: &iamv1.GetImageRequest{Name: imageName},
 			},
 			want: nil,
 			err:  ErrImageService,
@@ -500,14 +515,12 @@ func TestGetImage(t *testing.T) {
 			message: "image service ok: successfully get image",
 			args: args{
 				ctx: context.Background(),
-				req: &iamv1.GetImageRequest{Name: "avatar.png"},
+				req: &iamv1.GetImageRequest{Name: imageName},
 			},
-			want: &iamv1.GetImageResponse{Image: []byte("some image bytes")},
+			want: &iamv1.GetImageResponse{Image: imageBytes},
 			err:  nil,
 			mock: func(asm *mockery.AuthServiceMock, usm *mockery.UserServiceMock, ism *mockery.ImageServiceMock, a args) {
-				image := []byte("some image bytes")
-
-				ism.On("GetImage", a.ctx, a.req.Name).Once().Return(image, nil)
+				ism.On("GetImage", a.ctx, a.req.Name).Once().Return(imageBytes, nil)
 			},
 		},
 	}

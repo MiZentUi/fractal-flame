@@ -10,7 +10,14 @@ import (
 	mockery "github.com/mizentui/fractal-flame/iam/internal/service/image/mock"
 )
 
+const (
+	imageName        = "avatar.png"
+	imageBytesString = "some image bytes"
+)
+
 var ErrImageRepository = errors.New("some image repo error")
+
+var imageBytes = []byte(imageBytesString)
 
 func TestGetImage(t *testing.T) {
 	type args struct {
@@ -29,7 +36,7 @@ func TestGetImage(t *testing.T) {
 			message: "image repository error: failed to find image",
 			args: args{
 				ctx:  context.Background(),
-				name: "avatar.png",
+				name: imageName,
 			},
 			want: nil,
 			err:  ErrImageRepository,
@@ -41,14 +48,12 @@ func TestGetImage(t *testing.T) {
 			message: "image repository ok: successfully find image",
 			args: args{
 				ctx:  context.Background(),
-				name: "avatar.png",
+				name: imageName,
 			},
-			want: []byte("some image bytes"),
+			want: imageBytes,
 			err:  nil,
 			mock: func(irm *mockery.ImageRepositoryMock, a args) {
-				image := []byte("some image bytes")
-
-				irm.On("FindByName", a.ctx, a.name).Once().Return(image, nil)
+				irm.On("FindByName", a.ctx, a.name).Once().Return(imageBytes, nil)
 			},
 		},
 	}

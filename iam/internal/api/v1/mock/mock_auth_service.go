@@ -7,9 +7,8 @@ package mock
 import (
 	"context"
 
-	mock "github.com/stretchr/testify/mock"
-
 	"github.com/mizentui/fractal-flame/iam/internal/model"
+	mock "github.com/stretchr/testify/mock"
 )
 
 // NewAuthServiceMock creates a new instance of AuthServiceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -17,8 +16,7 @@ import (
 func NewAuthServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *AuthServiceMock {
+}) *AuthServiceMock {
 	mock := &AuthServiceMock{}
 	mock.Mock.Test(t)
 
@@ -41,7 +39,7 @@ func (_m *AuthServiceMock) EXPECT() *AuthServiceMock_Expecter {
 }
 
 // Login provides a mock function for the type AuthServiceMock
-func (_mock *AuthServiceMock) Login(ctx context.Context, username, password string) (model.TokenPair, error) {
+func (_mock *AuthServiceMock) Login(ctx context.Context, username string, password string) (model.TokenPair, error) {
 	ret := _mock.Called(ctx, username, password)
 
 	if len(ret) == 0 {
@@ -75,11 +73,11 @@ type AuthServiceMock_Login_Call struct {
 //   - ctx context.Context
 //   - username string
 //   - password string
-func (_e *AuthServiceMock_Expecter) Login(ctx, username, password interface{}) *AuthServiceMock_Login_Call {
+func (_e *AuthServiceMock_Expecter) Login(ctx interface{}, username interface{}, password interface{}) *AuthServiceMock_Login_Call {
 	return &AuthServiceMock_Login_Call{Call: _e.mock.On("Login", ctx, username, password)}
 }
 
-func (_c *AuthServiceMock_Login_Call) Run(run func(ctx context.Context, username, password string)) *AuthServiceMock_Login_Call {
+func (_c *AuthServiceMock_Login_Call) Run(run func(ctx context.Context, username string, password string)) *AuthServiceMock_Login_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -107,7 +105,7 @@ func (_c *AuthServiceMock_Login_Call) Return(tokenPair model.TokenPair, err erro
 	return _c
 }
 
-func (_c *AuthServiceMock_Login_Call) RunAndReturn(run func(ctx context.Context, username, password string) (model.TokenPair, error)) *AuthServiceMock_Login_Call {
+func (_c *AuthServiceMock_Login_Call) RunAndReturn(run func(ctx context.Context, username string, password string) (model.TokenPair, error)) *AuthServiceMock_Login_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -146,7 +144,7 @@ type AuthServiceMock_Refresh_Call struct {
 // Refresh is a helper method to define mock.On call
 //   - ctx context.Context
 //   - refreshToken string
-func (_e *AuthServiceMock_Expecter) Refresh(ctx, refreshToken interface{}) *AuthServiceMock_Refresh_Call {
+func (_e *AuthServiceMock_Expecter) Refresh(ctx interface{}, refreshToken interface{}) *AuthServiceMock_Refresh_Call {
 	return &AuthServiceMock_Refresh_Call{Call: _e.mock.On("Refresh", ctx, refreshToken)}
 }
 
@@ -179,7 +177,7 @@ func (_c *AuthServiceMock_Refresh_Call) RunAndReturn(run func(ctx context.Contex
 }
 
 // Register provides a mock function for the type AuthServiceMock
-func (_mock *AuthServiceMock) Register(ctx context.Context, username, password string) (int64, error) {
+func (_mock *AuthServiceMock) Register(ctx context.Context, username string, password string) (int64, error) {
 	ret := _mock.Called(ctx, username, password)
 
 	if len(ret) == 0 {
@@ -213,11 +211,11 @@ type AuthServiceMock_Register_Call struct {
 //   - ctx context.Context
 //   - username string
 //   - password string
-func (_e *AuthServiceMock_Expecter) Register(ctx, username, password interface{}) *AuthServiceMock_Register_Call {
+func (_e *AuthServiceMock_Expecter) Register(ctx interface{}, username interface{}, password interface{}) *AuthServiceMock_Register_Call {
 	return &AuthServiceMock_Register_Call{Call: _e.mock.On("Register", ctx, username, password)}
 }
 
-func (_c *AuthServiceMock_Register_Call) Run(run func(ctx context.Context, username, password string)) *AuthServiceMock_Register_Call {
+func (_c *AuthServiceMock_Register_Call) Run(run func(ctx context.Context, username string, password string)) *AuthServiceMock_Register_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -245,7 +243,7 @@ func (_c *AuthServiceMock_Register_Call) Return(n int64, err error) *AuthService
 	return _c
 }
 
-func (_c *AuthServiceMock_Register_Call) RunAndReturn(run func(ctx context.Context, username, password string) (int64, error)) *AuthServiceMock_Register_Call {
+func (_c *AuthServiceMock_Register_Call) RunAndReturn(run func(ctx context.Context, username string, password string) (int64, error)) *AuthServiceMock_Register_Call {
 	_c.Call.Return(run)
 	return _c
 }
