@@ -1,10 +1,12 @@
 package record
 
+import "database/sql"
+
 type UserRow struct {
-	ID       int64  `db:"id"`
-	Username string `db:"username"`
-	Password string `db:"password"`
-	Image    string `db:"image"`
+	ID       int64          `db:"id"`
+	Username string         `db:"username"`
+	Password string         `db:"password"`
+	Image    sql.NullString `db:"image"`
 }
 
 const (
