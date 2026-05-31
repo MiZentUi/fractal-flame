@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -16,7 +17,7 @@ type UserRepository interface {
 }
 
 type ImageRepository interface {
-	Save(ctx context.Context, image string) (string, error)
+	Save(ctx context.Context, bytes []byte) (string, error)
 }
 
 type PasswordValidator interface {
@@ -27,19 +28,25 @@ type PasswordHasher interface {
 	HashAndSalt(password string) (string, error)
 }
 
-type service struct {
-	user      UserRepository
-	image     ImageRepository
-	validator PasswordValidator
-	hasher    PasswordHasher
+type ImageValidator interface {
+	Validate(image []byte) error
 }
 
-func New(user UserRepository, image ImageRepository, validator PasswordValidator, hasher PasswordHasher) *service {
+type service struct {
+	user         UserRepository
+	image        ImageRepository
+	pwdValidator PasswordValidator
+	hasher       PasswordHasher
+	imgValidator ImageValidator
+}
+
+func New(user UserRepository, image ImageRepository, pwdValidator PasswordValidator, hasher PasswordHasher, imgValidator ImageValidator) *service {
 	return &service{
-		user:      user,
-		image:     image,
-		validator: validator,
-		hasher:    hasher,
+		user:         user,
+		image:        image,
+		pwdValidator: pwdValidator,
+		hasher:       hasher,
+		imgValidator: imgValidator,
 	}
 }
 
@@ -59,33 +66,66 @@ func (s *service) UpdateUser(ctx context.Context, id int64, username, password, 
 		return model.User{}, errs.ErrNothingToUpdate
 	}
 
-	var hash string
-	if password != "" {
-		err := s.validator.Validate(password)
-		if err != nil {
-			return model.User{}, errors.Join(errs.ErrWeakPassword, err)
-		}
-
-		hash, err = s.hasher.HashAndSalt(password)
-		if err != nil {
-			return model.User{}, fmt.Errorf("get password hash: %w", err)
-		}
+	hash, err := s.getPasswordHash(password)
+	if err != nil {
+		return model.User{}, err
 	}
 
-	var imageName string
-	if image != "" {
-		name, err := s.image.Save(ctx, image)
+	bytes, err := s.getImageBytes(image)
+	if err != nil {
+		return model.User{}, err
+	}
+
+	var name string
+	if bytes != nil {
+		name, err = s.image.Save(ctx, bytes)
 		if err != nil {
 			return model.User{}, fmt.Errorf("save avatar image: %w", err)
 		}
-
-		imageName = name
 	}
 
-	user, err := s.user.Update(ctx, id, username, hash, imageName)
+	user, err := s.user.Update(ctx, id, username, hash, name)
 	if err != nil {
 		return model.User{}, fmt.Errorf("update user: %w", err)
 	}
 
 	return user, nil
+}
+
+func (s *service) getPasswordHash(password string) (string, error) {
+	if password == "" {
+		return "", nil
+	}
+
+	err := s.pwdValidator.Validate(password)
+	if err != nil {
+		return "", errors.Join(errs.ErrWeakPassword, err)
+	}
+
+	hash, err := s.hasher.HashAndSalt(password)
+	if err != nil {
+		return "", fmt.Errorf("get password hash: %w", err)
+	}
+
+	return hash, nil
+}
+
+func (s *service) getImageBytes(image string) ([]byte, error) {
+	if image == "" {
+		return nil, nil
+	}
+
+	bytes, err := base64.StdEncoding.DecodeString(image)
+	if err != nil {
+		slog.Error("Failed to decode image", "err", err)
+
+		return nil, errors.Join(errs.ErrInvalidImage, err)
+	}
+
+	err = s.imgValidator.Validate(bytes)
+	if err != nil {
+		return nil, fmt.Errorf("validate image", err)
+	}
+
+	return bytes, nil
 }

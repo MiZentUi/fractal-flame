@@ -21,6 +21,7 @@ import (
 	"github.com/mizentui/fractal-flame/iam/internal/auth/password/bcrypt"
 	"github.com/mizentui/fractal-flame/iam/internal/auth/token/jwt"
 	"github.com/mizentui/fractal-flame/iam/internal/config"
+	img "github.com/mizentui/fractal-flame/iam/internal/image"
 	"github.com/mizentui/fractal-flame/iam/internal/interceptor"
 	"github.com/mizentui/fractal-flame/iam/internal/repository/image/minio"
 	"github.com/mizentui/fractal-flame/iam/internal/repository/user/postgres"
@@ -92,11 +93,12 @@ func Run() {
 		return
 	}
 	hasher := bcrypt.New()
-	validator := password.New(config.App().Auth.PasswordEntropy())
+	pwdValidator := password.New(config.App().Auth.PasswordEntropy())
+	imgValidator := img.New(config.App().Image.Width(), config.App().Image.Height())
 	manager := jwt.New(config.App().Auth.AccessSigningKey(), config.App().Auth.RefreshSigningKey(), config.App().Auth.AccessTokenTTL(), config.App().Auth.RefreshTokenTTL())
 
-	auth := auth.New(repo, validator, hasher, manager)
-	user := user.New(repo, storage, validator, hasher)
+	auth := auth.New(repo, pwdValidator, hasher, manager)
+	user := user.New(repo, storage, pwdValidator, hasher, imgValidator)
 	image := image.New(storage)
 
 	api := api.New(auth, user, image)

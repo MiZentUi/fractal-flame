@@ -5,6 +5,7 @@ go 1.26.1
 require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/caarlos0/env/v11 v11.4.1
+	github.com/envoyproxy/protoc-gen-validate v1.3.3
 	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/uuid v1.6.0
