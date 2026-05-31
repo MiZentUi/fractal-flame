@@ -13,6 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	miniogo "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/mizentui/fractal-flame/iam/internal/api/v1"
 	"github.com/mizentui/fractal-flame/iam/internal/auth/password"
 	"github.com/mizentui/fractal-flame/iam/internal/auth/password/bcrypt"
@@ -28,8 +31,6 @@ import (
 	"github.com/mizentui/fractal-flame/iam/pkg/grpc/health"
 	"github.com/mizentui/fractal-flame/iam/pkg/logger"
 	iamv1 "github.com/mizentui/fractal-flame/iam/pkg/proto/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 const (
@@ -47,8 +48,13 @@ func Run() {
 	ctx, cancel := context.WithTimeout(context.Background(), connectionTimeout)
 	defer cancel()
 
-	defer closer.CloseAll(ctx)
-
+	defer func() {
+		cerr := closer.CloseAll(ctx)
+		if cerr != nil {
+			slog.Error("Closer catched errors", "err", cerr)
+		}
+	}()
+	
 	listener, err := net.Listen("tcp", config.App().GRPC.Address())
 	if err != nil {
 		slog.Error("Failed to listen socket", "err", err)
