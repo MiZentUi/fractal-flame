@@ -8,7 +8,7 @@ import com.fractalflame.gateway.interceptor.AuthInterceptor;
 import com.fractalflame.generator.proto.FractalsGrpc;
 
 @Configuration
-public class GrpcConfiguration {
+public class GrpcConfig {
 
     @Bean
     FractalsGrpc.FractalsBlockingStub fractalsBlockingStub(GrpcChannelFactory channels,

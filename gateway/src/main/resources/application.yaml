@@ -11,3 +11,5 @@ spring:
 
 app:
   jwt-signing-key: ${JWT_SIGNING_KEY}
+  cors:
+    allowed-origins: "*"
