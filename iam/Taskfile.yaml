@@ -118,3 +118,21 @@ tasks:
       - cmd: GOBIN="{{.BIN_DIR}}" go install github.com/pressly/goose/v3/cmd/goose@{{.GOOSE_VERSION}}
     status:
       - test -x "{{.GOOSE}}"
+
+  up:containers:
+    desc: "Up IAM containers"
+    cmds:
+      - cmd: echo "Up containers..."
+      - cmd: docker compose up -d db-iam migrate-iam storage-iam iam --build
+
+  down:containers:
+    desc: "Down IAM containers..."
+    cmds:
+      - cmd: echo "Down containers..."
+      - cmd: docker compose down
+
+  clear:containers:
+    desc: "Clear IAM containers..."
+    cmds:
+      - cmd: echo "Clear containers..."
+      - cmd: docker compose down -v
