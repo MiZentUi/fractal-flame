@@ -101,7 +101,7 @@ func Run() {
 
 	api := api.New(auth, user, image)
 
-	server := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor.MappingError(), interceptor.ExtractIdentity(manager)))
+	server := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor.MappingError(), interceptor.RequestLogger(), interceptor.ExtractIdentity(manager)))
 
 	reflection.Register(server)
 
