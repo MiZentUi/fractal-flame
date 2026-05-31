@@ -31,4 +31,7 @@ public class GeneratorProperties {
 
     @Min(1)
     private Integer maxIterations;
+
+    @Min(1)
+    private Integer maxSymmetryLevel;
 }

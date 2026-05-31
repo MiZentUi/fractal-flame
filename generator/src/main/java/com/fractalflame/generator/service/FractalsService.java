@@ -128,16 +128,27 @@ public class FractalsService extends FractalsImplBase {
                             generatorProperties.getMaxIterations()));
         }
 
-        if (fractal.getSymmetryLevel() < 1) {
-            throw new FractalParametersException("Symmetry level should be greater than 0!");
+        if (fractal.getSymmetryLevel() > generatorProperties.getMaxSymmetryLevel()) {
+            throw new FractalParametersException(String.format("Symmetry level shouldn't be greater than %s!",
+                    generatorProperties.getMaxSymmetryLevel()));
         }
 
         if (fractal.getFunctions().isEmpty()) {
-            throw new FractalParametersException("Required almost one function!");
+            throw new FractalParametersException("Required at most one function!");
         }
 
+        var functionNames = FunctionBuilder.getFunctionsNames();
+        fractal.getFunctions().forEach(f -> {
+            if (!functionNames.contains(f.getName())) {
+                throw new FractalParametersException("Function with \"" + f.getName() + "\" name not found!");
+            }
+            if (f.getWeight() <= 0) {
+                throw new FractalParametersException("Function weight should be positive!");
+            }
+        });
+
         if (fractal.getAffineParams().isEmpty()) {
-            throw new FractalParametersException("Required almost one affine params!");
+            throw new FractalParametersException("Required at most one affine params!");
         }
 
         fractalsRepository.save(fractal);

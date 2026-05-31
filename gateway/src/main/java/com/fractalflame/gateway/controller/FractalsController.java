@@ -46,9 +46,7 @@ public class FractalsController implements FractalsApi {
 
     @GetMapping(value = "/fractals/gen/{id}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribeToTask(@Valid @PathVariable Long id) {
-        var emitter = new SseEmitter();
-        service.subscribeToTask(id, emitter);
-        return emitter;
+        return service.subscribeToTask(id);
     }
 
     @Override
