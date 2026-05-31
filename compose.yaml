@@ -3,8 +3,7 @@ services:
     image: postgres:18-alpine
     ports:
       - 5432:5432
-    env_file:
-      .env
+    env_file: .env
     environment:
       POSTGRES_DB: generator
     restart: unless-stopped
@@ -23,10 +22,9 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
-    env_file:
-      .env
+    env_file: .env
     volumes:
-     - minio-storage-generator:/data
+      - minio-storage-generator:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -41,8 +39,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 9090:9090
-    env_file:
-      .env
+    env_file: .env
     environment:
       POSTGRES_URL: db-generator:5432
       MINIO_URL: http://storage-generator:9000
@@ -65,8 +62,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8080:8080
-    env_file:
-      .env
+    env_file: .env
     environment:
       GENERATOR_URL: generator:9090
     healthcheck:
@@ -76,6 +72,79 @@ services:
       retries: 3
       start_period: 5s
 
+  db-iam:
+    container_name: db-iam-service
+    image: postgres:18-alpine3.23
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5433
+    volumes:
+      - iam-db-data:/var/lib/postgresql
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  migrate-iam:
+    container_name: migrate-iam
+    build:
+      context: iam
+      dockerfile: migrate.Dockerfile
+    environment:
+      GOOSE_DRIVER: ${GOOSE_DRIVER}
+      GOOSE_DBSTRING: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      GOOSE_MIGRATION_DIR: ${GOOSE_MIGRATION_DIR}
+    depends_on:
+      db-iam:
+        condition: service_healthy
+    restart: on-failure
+
+  storage-iam:
+    container_name: storage-iam
+    image: minio/minio:latest
+    ports:
+      - ${MINIO_PORT}:9002
+      - ${MINIO_WEB_PORT}:9003
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server --console-address ":9003" /data/
+    volumes:
+      - iam-storage-data:/data
+    healthcheck:
+      test: curl -f http://localhost:9000/minio/health/live
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  iam:
+    container_name: iam-service
+    build:
+      context: iam
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - ${IAM_PORT}:50051
+    healthcheck:
+      test: /grpc_health_probe -addr=50051 -service=iam.v1.IAMService
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      migrate-iam:
+        condition: service_completed_successfully
+      storage-iam:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   db-generator-data:
   minio-storage-generator:
+  iam-db-data:
+  iam-storage-data:

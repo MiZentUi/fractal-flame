@@ -2,6 +2,19 @@
 
 ## Usage
 
+### dotenv file
+
+```shell
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=admin
+
+MINIO_ROOT_USER=minio
+MINIO_ROOT_PASSWORD=minioadmin
+JWT_SIGNING_KEY=BASE64
+```
+
+### Run
+
 ```shell
 docker-compose up -d --build
 ```
