@@ -15,8 +15,7 @@ import (
 func NewImageServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *ImageServiceMock {
+}) *ImageServiceMock {
 	mock := &ImageServiceMock{}
 	mock.Mock.Test(t)
 
@@ -74,7 +73,7 @@ type ImageServiceMock_GetImage_Call struct {
 // GetImage is a helper method to define mock.On call
 //   - ctx context.Context
 //   - name string
-func (_e *ImageServiceMock_Expecter) GetImage(ctx, name interface{}) *ImageServiceMock_GetImage_Call {
+func (_e *ImageServiceMock_Expecter) GetImage(ctx interface{}, name interface{}) *ImageServiceMock_GetImage_Call {
 	return &ImageServiceMock_GetImage_Call{Call: _e.mock.On("GetImage", ctx, name)}
 }
 

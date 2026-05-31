@@ -15,8 +15,7 @@ import (
 func NewImageRepositoryMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *ImageRepositoryMock {
+}) *ImageRepositoryMock {
 	mock := &ImageRepositoryMock{}
 	mock.Mock.Test(t)
 
@@ -39,8 +38,8 @@ func (_m *ImageRepositoryMock) EXPECT() *ImageRepositoryMock_Expecter {
 }
 
 // Save provides a mock function for the type ImageRepositoryMock
-func (_mock *ImageRepositoryMock) Save(ctx context.Context, image string) (string, error) {
-	ret := _mock.Called(ctx, image)
+func (_mock *ImageRepositoryMock) Save(ctx context.Context, bytes []byte) (string, error) {
+	ret := _mock.Called(ctx, bytes)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Save")
@@ -48,16 +47,16 @@ func (_mock *ImageRepositoryMock) Save(ctx context.Context, image string) (strin
 
 	var r0 string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (string, error)); ok {
-		return returnFunc(ctx, image)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []byte) (string, error)); ok {
+		return returnFunc(ctx, bytes)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) string); ok {
-		r0 = returnFunc(ctx, image)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []byte) string); ok {
+		r0 = returnFunc(ctx, bytes)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = returnFunc(ctx, image)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []byte) error); ok {
+		r1 = returnFunc(ctx, bytes)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -71,20 +70,20 @@ type ImageRepositoryMock_Save_Call struct {
 
 // Save is a helper method to define mock.On call
 //   - ctx context.Context
-//   - image string
-func (_e *ImageRepositoryMock_Expecter) Save(ctx, image interface{}) *ImageRepositoryMock_Save_Call {
-	return &ImageRepositoryMock_Save_Call{Call: _e.mock.On("Save", ctx, image)}
+//   - bytes []byte
+func (_e *ImageRepositoryMock_Expecter) Save(ctx interface{}, bytes interface{}) *ImageRepositoryMock_Save_Call {
+	return &ImageRepositoryMock_Save_Call{Call: _e.mock.On("Save", ctx, bytes)}
 }
 
-func (_c *ImageRepositoryMock_Save_Call) Run(run func(ctx context.Context, image string)) *ImageRepositoryMock_Save_Call {
+func (_c *ImageRepositoryMock_Save_Call) Run(run func(ctx context.Context, bytes []byte)) *ImageRepositoryMock_Save_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 []byte
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].([]byte)
 		}
 		run(
 			arg0,
@@ -99,7 +98,7 @@ func (_c *ImageRepositoryMock_Save_Call) Return(s string, err error) *ImageRepos
 	return _c
 }
 
-func (_c *ImageRepositoryMock_Save_Call) RunAndReturn(run func(ctx context.Context, image string) (string, error)) *ImageRepositoryMock_Save_Call {
+func (_c *ImageRepositoryMock_Save_Call) RunAndReturn(run func(ctx context.Context, bytes []byte) (string, error)) *ImageRepositoryMock_Save_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -124,7 +124,7 @@ func (s *service) getImageBytes(image string) ([]byte, error) {
 
 	err = s.imgValidator.Validate(bytes)
 	if err != nil {
-		return nil, fmt.Errorf("validate image", err)
+		return nil, fmt.Errorf("validate image: %w", err)
 	}
 
 	return bytes, nil
