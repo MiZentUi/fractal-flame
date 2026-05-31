@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
+
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"github.com/mizentui/fractal-flame/iam/internal/repository/image/minio/record"
 )
@@ -25,8 +26,8 @@ func New(ctx context.Context, client *minio.Client) (*repository, error) {
 
 	err := client.MakeBucket(ctx, record.ImageBucketName, minio.MakeBucketOptions{Region: record.ImageBucketLocation})
 	if err != nil {
-		exists, _ := client.BucketExists(ctx, record.ImageBucketName)
-		if exists {
+		exists, errBucketExists := client.BucketExists(ctx, record.ImageBucketName)
+		if errBucketExists == nil && exists {
 			slog.Debug("We already own this bucket", "bucket", record.ImageBucketName)
 
 			return repository, nil
@@ -69,7 +70,12 @@ func (r *repository) FindByName(ctx context.Context, name string) ([]byte, error
 
 		return nil, err
 	}
-	defer object.Close()
+	defer func() {
+		cerr := object.Close()
+		if cerr != nil {
+			slog.Error("Catch object close error", "err", err)
+		}
+	}()
 
 	_, err = object.Stat()
 	if err != nil {

@@ -13,7 +13,7 @@ vars:
   MOCKERY_VERSION: "v3.7.0"
 
   BIN_DIR: "{{.ROOT_DIR}}/bin"
-  GOLANGCI: "{{.BIN_DIR}}/golangci-lint"
+  GOLANGCI_LINT: "{{.BIN_DIR}}/golangci-lint"
   GOFUMPT: "{{.BIN_DIR}}/gofumpt"
   GCI: "{{.BIN_DIR}}/gci"
   EASYP: "{{.BIN_DIR}}/easyp"
@@ -22,8 +22,6 @@ vars:
   PROTOC_GEN_GO_GRPC: "{{.BIN_DIR}}/protoc-gen-go-grpc"
   GOOSE: "{{.BIN_DIR}}/goose"
   MOCKERY: "{{.BIN_DIR}}/mockery"
-
-  MODULES: [iam]
 
 tasks:
   create:bin:
@@ -40,7 +38,6 @@ tasks:
     cmds:
       - echo "Install golangci-lint..."
       - GOBIN="{{.BIN_DIR}}" go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@"{{.GOLANGCI_LINT_VERSION}}"
-
     status:
       - test -x "{{.GOLANGCI_LINT}}"
 
@@ -88,18 +85,16 @@ tasks:
     deps: [install:golangci-lint]
     cmds:
       - cmd: echo "Linting all modules..."
-      - for: { var: MODULES, as: MOD }
-        cmd: "{{.GOLANGCI_LINT}} run {{.MOD}}/... --config=.golangci.yml"
-        if: '[ -d "{{.MOD}}" ] && {{ne .MOD "shared" }}'
+      - cmd: "{{.GOLANGCI_LINT}} run ./... --config=.golangci.yaml"
 
   format:
     desc: "Formatting all projects with gofumpt + gci, exclude mocks"
     deps: [install:formaters]
     cmds:
-      - cmd: echo "Formatting all modules..."
-      - for: { var: MODULES, as: MOD }
-        cmd: 'find {{.MOD}} -type f -name ''*.go'' ! -path ''*/mocks/*'' -exec sh -c ''{{.GOFUMPT}} -extra -w "$@" && {{.GCI}} write -s standard -s default -s "prefix(github.com/ekuzm/rocket-factory)" "$@"'' sh {} +'
-        if: ' [ -d "{{.MOD}}" ] && {{ne .MOD "shared"}}'
+      - cmd: echo "Formating all modules..."
+      - cmd: echo "Formating booking service..."
+      - cmd: 'find . -type f -name ''*.go'' ! -path ''*/mocks/*'' -exec sh -c ''{{.GOFUMPT}} -extra -w "$@" && {{.GCI}} write -s standard -s default -s "prefix(github.com/mizentui/fractal-flame/iam)" "$@"'' sh {} +'
+      - cmd: echo "Format passed successfully"
 
   generate:code:
     desc: "Generating code from ProtoBuf declaration"

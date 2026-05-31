@@ -7,12 +7,13 @@
 package iamv1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const (
@@ -747,24 +748,27 @@ func file_v1_iam_proto_rawDescGZIP() []byte {
 	return file_v1_iam_proto_rawDescData
 }
 
-var file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
-var file_v1_iam_proto_goTypes = []any{
-	(*AuthRequest)(nil),            // 0: iam.v1.AuthRequest
-	(*RegisterResponse)(nil),       // 1: iam.v1.RegisterResponse
-	(*LoginResponse)(nil),          // 2: iam.v1.LoginResponse
-	(*RefreshRequest)(nil),         // 3: iam.v1.RefreshRequest
-	(*RefreshResponse)(nil),        // 4: iam.v1.RefreshResponse
-	(*GetUserRequest)(nil),         // 5: iam.v1.GetUserRequest
-	(*User)(nil),                   // 6: iam.v1.User
-	(*GetUserResponse)(nil),        // 7: iam.v1.GetUserResponse
-	(*ListUsersRequest)(nil),       // 8: iam.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),      // 9: iam.v1.ListUsersResponse
-	(*UpdateUserRequest)(nil),      // 10: iam.v1.UpdateUserRequest
-	(*UpdateUserResponse)(nil),     // 11: iam.v1.UpdateUserResponse
-	(*GetImageRequest)(nil),        // 12: iam.v1.GetImageRequest
-	(*GetImageResponse)(nil),       // 13: iam.v1.GetImageResponse
-	(*wrapperspb.StringValue)(nil), // 14: google.protobuf.StringValue
-}
+var (
+	file_v1_iam_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+	file_v1_iam_proto_goTypes  = []any{
+		(*AuthRequest)(nil),            // 0: iam.v1.AuthRequest
+		(*RegisterResponse)(nil),       // 1: iam.v1.RegisterResponse
+		(*LoginResponse)(nil),          // 2: iam.v1.LoginResponse
+		(*RefreshRequest)(nil),         // 3: iam.v1.RefreshRequest
+		(*RefreshResponse)(nil),        // 4: iam.v1.RefreshResponse
+		(*GetUserRequest)(nil),         // 5: iam.v1.GetUserRequest
+		(*User)(nil),                   // 6: iam.v1.User
+		(*GetUserResponse)(nil),        // 7: iam.v1.GetUserResponse
+		(*ListUsersRequest)(nil),       // 8: iam.v1.ListUsersRequest
+		(*ListUsersResponse)(nil),      // 9: iam.v1.ListUsersResponse
+		(*UpdateUserRequest)(nil),      // 10: iam.v1.UpdateUserRequest
+		(*UpdateUserResponse)(nil),     // 11: iam.v1.UpdateUserResponse
+		(*GetImageRequest)(nil),        // 12: iam.v1.GetImageRequest
+		(*GetImageResponse)(nil),       // 13: iam.v1.GetImageResponse
+		(*wrapperspb.StringValue)(nil), // 14: google.protobuf.StringValue
+	}
+)
+
 var file_v1_iam_proto_depIdxs = []int32{
 	6,  // 0: iam.v1.GetUserResponse.user:type_name -> iam.v1.User
 	6,  // 1: iam.v1.ListUsersResponse.users:type_name -> iam.v1.User

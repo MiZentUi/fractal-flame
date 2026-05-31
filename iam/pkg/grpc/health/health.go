@@ -1,11 +1,11 @@
 package health
 
 import (
-	iamv1 "github.com/mizentui/fractal-flame/iam/pkg/proto/v1"
 	"google.golang.org/grpc"
-
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
+
+	iamv1 "github.com/mizentui/fractal-flame/iam/pkg/proto/v1"
 )
 
 func Register(server *grpc.Server) {

@@ -13,7 +13,8 @@ import (
 func NewPasswordHasherMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *PasswordHasherMock {
+},
+) *PasswordHasherMock {
 	mock := &PasswordHasherMock{}
 	mock.Mock.Test(t)
 
@@ -36,7 +37,7 @@ func (_m *PasswordHasherMock) EXPECT() *PasswordHasherMock_Expecter {
 }
 
 // ComparePasswords provides a mock function for the type PasswordHasherMock
-func (_mock *PasswordHasherMock) ComparePasswords(hash string, password string) error {
+func (_mock *PasswordHasherMock) ComparePasswords(hash, password string) error {
 	ret := _mock.Called(hash, password)
 
 	if len(ret) == 0 {
@@ -60,11 +61,11 @@ type PasswordHasherMock_ComparePasswords_Call struct {
 // ComparePasswords is a helper method to define mock.On call
 //   - hash string
 //   - password string
-func (_e *PasswordHasherMock_Expecter) ComparePasswords(hash interface{}, password interface{}) *PasswordHasherMock_ComparePasswords_Call {
+func (_e *PasswordHasherMock_Expecter) ComparePasswords(hash, password interface{}) *PasswordHasherMock_ComparePasswords_Call {
 	return &PasswordHasherMock_ComparePasswords_Call{Call: _e.mock.On("ComparePasswords", hash, password)}
 }
 
-func (_c *PasswordHasherMock_ComparePasswords_Call) Run(run func(hash string, password string)) *PasswordHasherMock_ComparePasswords_Call {
+func (_c *PasswordHasherMock_ComparePasswords_Call) Run(run func(hash, password string)) *PasswordHasherMock_ComparePasswords_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 string
 		if args[0] != nil {
@@ -87,7 +88,7 @@ func (_c *PasswordHasherMock_ComparePasswords_Call) Return(err error) *PasswordH
 	return _c
 }
 
-func (_c *PasswordHasherMock_ComparePasswords_Call) RunAndReturn(run func(hash string, password string) error) *PasswordHasherMock_ComparePasswords_Call {
+func (_c *PasswordHasherMock_ComparePasswords_Call) RunAndReturn(run func(hash, password string) error) *PasswordHasherMock_ComparePasswords_Call {
 	_c.Call.Return(run)
 	return _c
 }

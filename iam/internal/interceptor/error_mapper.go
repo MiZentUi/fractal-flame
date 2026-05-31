@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 
-	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 )
 
 func MappingError() grpc.UnaryServerInterceptor {
