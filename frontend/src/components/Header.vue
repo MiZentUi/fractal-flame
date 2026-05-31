@@ -2,8 +2,7 @@
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { Button } from "./ui/button";
 import { ref, watch } from "vue";
-import { useScroll, useWindowSize } from "@vueuse/core";
-import { useStore } from "@/store/useGenearatorStore";
+import { useScroll } from "@vueuse/core";
 
 const route = useRoute();
 const router = useRouter();

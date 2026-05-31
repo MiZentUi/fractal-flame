@@ -8,11 +8,9 @@ interface Emits {
 }
 
 import { Button } from "@/components/ui/button";
-import Input from "@/components/ui/input/Input.vue";
 import Select from "@/components/Select.vue";
 import { computed } from "vue";
-import { Label } from "./ui/label";
-import type { FunctionInput } from "@/store/useGenearatorStore.ts";
+import { Label } from "../ui/label/index.ts";
 import FormInput from "./FormInput.vue";
 import { useField } from "vee-validate";
 

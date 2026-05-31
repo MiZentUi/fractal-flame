@@ -3,10 +3,9 @@ interface Props {
     fieldName: string;
 }
 
-
 import { Button } from "@/components/ui/button";
 import { useField } from "vee-validate";
-import FormInput from "../FormInput.vue";
+import FormInput from "./FormInput.vue";
 
 const inputStyles = "w-12 h-fit p-0.5 pb-0 pt-0 text-center placeholder:text-center";
 const { fieldName } = defineProps<Props>();

@@ -3,8 +3,8 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
-import Label from "./ui/label/Label.vue";
-import FormInput from "./FormInput.vue";
+import Label from "../ui/label/Label.vue";
+import FormInput from "../form/FormInput.vue";
 </script>
 
 <template>
