@@ -18,8 +18,13 @@ type manager struct {
 	refreshTokenTTL   time.Duration
 }
 
-func New() *manager {
-	return &manager{}
+func New(accessSigningKey, refreshSigningKey string, accessTokenTTL, refreshTokenTTL time.Duration) *manager {
+	return &manager{
+		accessSigningKey:  accessSigningKey,
+		refreshSigningKey: refreshSigningKey,
+		accessTokenTTL:    accessTokenTTL,
+		refreshTokenTTL:   refreshTokenTTL,
+	}
 }
 
 const (
@@ -94,15 +99,13 @@ func (m *manager) validateToken(tokenString string, signingKey string, tokenType
 }
 
 func (m *manager) generateToken(user model.User, tokenType string, tokenTTL time.Duration, signingKey string) (string, error) {
-	expiresAt := time.Now().Add(tokenTTL)
-
 	claims := Claims{
 		Username: user.Username,
 		Type:     tokenType,
 
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   fmt.Sprint(user.ID),
-			ExpiresAt: jwt.NewNumericDate(expiresAt),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

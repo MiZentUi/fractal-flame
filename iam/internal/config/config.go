@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/mizentui/fractal-flame/iam/internal/config/env"
 )
@@ -28,7 +29,10 @@ type Minio interface {
 type Auth interface {
 	PasswordEntropy() float64
 	BcryptCost() int
-	SigningKey() string
+	AccessSigningKey() string
+	RefreshSigningKey() string
+	AccessTokenTTL() time.Duration
+	RefreshTokenTTL() time.Duration
 }
 
 type config struct {

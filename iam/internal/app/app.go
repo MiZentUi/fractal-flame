@@ -87,7 +87,7 @@ func Run() {
 	}
 	hasher := bcrypt.New()
 	validator := password.New(config.App().Auth.PasswordEntropy())
-	manager := jwt.New()
+	manager := jwt.New(config.App().Auth.AccessSigningKey(), config.App().Auth.RefreshSigningKey(), config.App().Auth.AccessTokenTTL(), config.App().Auth.RefreshTokenTTL())
 
 	auth := auth.New(repo, validator, hasher, manager)
 	user := user.New(repo, storage, validator, hasher)
