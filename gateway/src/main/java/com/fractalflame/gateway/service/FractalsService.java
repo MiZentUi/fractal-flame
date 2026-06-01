@@ -13,14 +13,13 @@ import com.fractalflame.gateway.mapper.TaskMapper;
 import com.fractalflame.gateway.model.FractalRequest;
 import com.fractalflame.gateway.model.FractalResponse;
 import com.fractalflame.gateway.model.FractalsResponse;
+import com.fractalflame.gateway.service.observer.TaskEventsObserver;
 import com.fractalflame.generator.proto.IdRequest;
 import com.fractalflame.generator.proto.ImageRequest;
-import com.fractalflame.generator.proto.TaskState;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsBlockingStub;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsStub;
 import com.google.protobuf.Empty;
 
-import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,46 +55,8 @@ public class FractalsService {
     public SseEmitter subscribeToTask(Long id) {
         var emitter = new SseEmitter(sseTimeout);
 
-        stub.subscribeToTask(IdRequest.newBuilder().setId(id).build(), new StreamObserver<TaskState>() {
-
-            @Override
-            public void onNext(TaskState value) {
-                try {
-                    log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("send update over sse");
-                    emitter.send(SseEmitter.event()
-                            .name("update")
-                            .data(taskMapper.toTaskState(value)));
-
-                    if (Math.abs(value.getProgress() - 1) < 0.005) {
-                        log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("emitter complete");
-
-                        emitter.send(SseEmitter.event()
-                                .name("complete"));
-
-                        emitter.complete();
-                    }
-                } catch (Exception e) {
-                    emitter.completeWithError(e);
-                }
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                emitter.completeWithError(t);
-            }
-
-            @Override
-            public void onCompleted() {
-                try {
-                    emitter.send(SseEmitter.event()
-                            .name("complete"));
-                } catch (Exception e) {
-                    emitter.completeWithError(e);
-                }
-                emitter.complete();
-            }
-
-        });
+        stub.subscribeToTask(IdRequest.newBuilder().setId(id).build(),
+                new TaskEventsObserver(emitter, taskMapper));
 
         return emitter;
     }

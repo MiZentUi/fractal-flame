@@ -20,7 +20,7 @@ app:
     max-width: 2000
     max-height: 2000
     max-iterations: 10000000
-    max-symmetry-level: 20
+    max-symmetry-level: 10
   jwt-signing-key: ${JWT_SIGNING_KEY}
   s3:
     url: ${MINIO_URL:http://localhost:9000}

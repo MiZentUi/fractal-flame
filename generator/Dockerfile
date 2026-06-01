@@ -2,8 +2,12 @@ FROM gradle:jdk21 AS build
 WORKDIR /app
 
 COPY build.gradle settings.gradle ./
+RUN --mount=type=cache,id=generator,target=/home/gradle/.gradle \
+    gradle dependencies --no-daemon
+
 COPY src ./src
-RUN gradle clean build -x test --no-daemon
+RUN --mount=type=cache,id=generator,target=/home/gradle/.gradle \
+    gradle clean build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 RUN apk --no-cache add curl
