@@ -11,7 +11,6 @@ interface FracatalStore {
         userid?: number,
     ) => Promise<FractalsResponse>;
 }
-
 const storeSymbol = Symbol("FRACTAL_STORE");
 const createFractalsStore = () => {
     const fetchData = (page?: number, count?: number, sort?: string, order?: "asc" | "desc", userid?: number) => {

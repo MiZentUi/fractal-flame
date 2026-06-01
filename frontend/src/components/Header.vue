@@ -1,27 +1,18 @@
 <script setup lang="ts">
 import { useRouter, RouterLink } from "vue-router";
 import { Button } from "./ui/button";
-import { ref, watch } from "vue";
-import { useScroll } from "@vueuse/core";
 import { useLogin } from "@/utils/useLogin";
 import { UserIcon } from "lucide-vue-next";
 import { toast } from "vue-sonner";
+import { useScroll } from "@/utils/useScroll";
+import Avatar from "./ui/avatar/Avatar.vue";
+import AvatarImage from "./ui/avatar/AvatarImage.vue";
+import { BASE_PATH } from "@/api/generated/base";
+import AvatarFallback from "./ui/avatar/AvatarFallback.vue";
 
 const router = useRouter();
-
-const opacity = ref(0);
-const { isLogedin, logout } = useLogin();
-
-const { y } = useScroll(window);
-
-watch(y, (n) => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight;
-    const winHeight = window.innerHeight;
-
-    const scrollPercent = scrollTop / (docHeight - winHeight);
-    opacity.value = scrollPercent;
-});
+const { isLogedin, logout, user } = useLogin();
+const { scrollProgress } = useScroll();
 
 const _logout = () => {
     logout().then(() => {
@@ -31,7 +22,7 @@ const _logout = () => {
 };
 </script>
 <template>
-    <header class="w-full h-(--header-height)" :style="{ backgroundColor: 'rgba(0,0,0,' + opacity + ')' }">
+    <header class="w-full h-(--header-height)" :style="{ backgroundColor: 'rgba(0,0,0,' + scrollProgress + ')' }">
         <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8 justify-between">
             <RouterLink :to="{ name: 'home' }" class="shrink-0">
                 <div class="flex items-center gap-3">
@@ -48,7 +39,15 @@ const _logout = () => {
             <div class="items-center gap-3 md:flex">
                 <RouterLink v-if="isLogedin" :to="{ name: 'account' }" class="hidden lg:flex">
                     <Button variant="outline" size="icon" class="">
-                        <UserIcon></UserIcon>
+                        <Avatar class="border bg-primary-foreground hover:bg-accent" shape="square">
+                            <AvatarImage
+                                v-if="user?.image"
+                                :src="`${BASE_PATH}/users/images${user?.image}`"
+                            ></AvatarImage>
+                            <AvatarFallback>
+                                <UserIcon></UserIcon>
+                            </AvatarFallback>
+                        </Avatar>
                     </Button>
                 </RouterLink>
                 <RouterLink v-if="!isLogedin" :to="{ name: 'login' }">

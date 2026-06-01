@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLogin } from "@/utils/useLogin";
 import type { AxiosError } from "axios";
 import type { ApiStatusResponse, AuthRequest } from "@/api/generated";
 import { useForm } from "vee-validate";
 import FormInput from "@/components/form/FormInput.vue";
-import * as yup from "yup";
 import { useRegister } from "@/utils/useRegister";
 import { authSchema } from "@/shemas/authSchema";
 

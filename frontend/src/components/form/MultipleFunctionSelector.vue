@@ -4,8 +4,8 @@ import CardContent from "@/components/ui/card/CardContent.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import FunctionSelector from "./FunctionSelector.vue";
 import { Button } from "@/components/ui/button";
-import { type FunctionInput } from "@/store/useGenearatorStore";
 import { useField, useFieldArray } from "vee-validate";
+import type { Function } from "@/api/generated/api.ts";
 
 interface Props {
     functionNames: string[];
@@ -14,10 +14,10 @@ interface Props {
 
 const { fieldName, functionNames } = defineProps<Props>();
 const field = useField(fieldName);
-const { push, fields, remove } = useFieldArray<FunctionInput>(fieldName);
+const { push, fields, remove } = useFieldArray<Function>(fieldName);
 
 const pushNew = () => {
-    push({ name: functionNames[Math.round(functionNames.length * Math.random())], weight: 1 });
+    push({ name: functionNames[Math.round((functionNames.length - 1) * Math.random())], weight: 1 });
     field.validate();
 };
 const removeV = (i: number) => {

@@ -25,7 +25,7 @@ const generatorSchema = yup.object<Shape<FractalRequest>>({
     gamma: yup.number().positive(),
     height: yup.number().integer().positive().max(2000).min(100),
     width: yup.number().integer().positive().max(2000).min(100),
-    iteration_count: yup.number().integer().positive().max(100000000),
-    symmetry_level: yup.number().integer().positive().max(20),
+    iteration_count: yup.number().integer().positive().max(10000000),
+    symmetry_level: yup.number().integer().positive().max(10),
 });
 export {generatorSchema as formSchema}

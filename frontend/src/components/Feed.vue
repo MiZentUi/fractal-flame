@@ -4,34 +4,44 @@ import CardContent from "./ui/card/CardContent.vue";
 import CardHeader from "./ui/card/CardHeader.vue";
 import Pagination from "./Pagination.vue";
 import FractalView from "./FractalView.vue";
-import { useFractalStore } from "@/store/useFractalStore.ts";
-import { ref, watch } from "vue";
-import { createFractalImageUrl } from "@/api";
+import { reactive, ref, watch } from "vue";
+import { createFractalImageUrl, fractalsApi, usersApi } from "@/api";
+import { useScroll } from "@/utils/useScroll.ts";
+import type { UserResponse, FractalsResponse } from "@/api/generated/api.ts";
+import MultiFractalView from "./MultiFractalView.vue";
 
-const fractalStore = useFractalStore();
-
-const page = ref<number>(1);
-watch(page, (n) => {
-    fractalStore.fetch(n, 12).then(console.log).catch(console.log);
+const fractals = ref<FractalsResponse>({
+    items: [],
+    page: 0,
+    page_count: 0,
 });
-fractalStore.fetch(1, 12).then(console.log).catch(console.log);
+
+const { scrollProgress } = useScroll();
+const page = ref<number>(1);
+const users = reactive<Map<number, UserResponse>>(new Map());
+watch(fractals, () => {
+    for (const i in fractals.value.items) {
+        const frac = fractals.value.items[i];
+        if (frac.user_id) usersApi.getUser(frac.user_id).then((user) => users.set(frac.id, user.data));
+    }
+});
+
+const fetchPage = async (num: number) => {
+    const fratcalsResp = await fractalsApi.getFractals(num, 12, "created", "desc");
+    fractals.value = fratcalsResp.data;
+};
+
+watch(page, fetchPage);
+fetchPage(1);
 </script>
 <template>
-    <section class="bg-primary-foreground flex flex-col h-[calc(100vh-var(--footer-height)-var(--header-height))] w-full z-40 p-0">
-        <Card class="w-300 m-auto">
-            <CardHeader> Works of others </CardHeader>
-            <CardContent class="grid gap-4 p-4 grid-cols-[1fr_1fr_1fr_1fr] items-center justify-items-center">
-                <Card
-                    class="flex items-center justify-center border h-36 w-full relative"
-                    v-for="fractal in fractalStore.data.items"
-                >
-                    <CardContent class="flex items-center justify-center p-0 h-full">
-                        <FractalView class="self-center" :href="createFractalImageUrl(fractal.image)"></FractalView>
-                        <span class="absolute bottom-1 left-2"> By: {{ fractal.user_id || "REDACTED" }} </span>
-                    </CardContent>
-                </Card>
-            </CardContent>
-        </Card>
-        <Pagination :page-count="fractalStore.data.page_count" :items-per-page="12" v-model="page"></Pagination>
-    </section>
+    <MultiFractalView
+        header="Works of others"
+        v-model="page"
+        :users="users"
+        :fractals="fractals"
+        :style="{ backgroundColor: 'rgba(0,0,0,' + scrollProgress + ')' }"
+        class="h-[calc(100vh-var(--footer-height)-var(--header-height))]"
+    />
+
 </template>

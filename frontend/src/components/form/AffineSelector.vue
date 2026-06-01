@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { useField } from "vee-validate";
 import FormInput from "./FormInput.vue";
 
-const inputStyles = "w-12 h-fit p-0.5 pb-0 pt-0 text-center placeholder:text-center";
 const { fieldName } = defineProps<Props>();
 const colorField = useField(`${fieldName}.color`)
 const emit = defineEmits<{ remove: [] }>();
+const inputStyles = "w-12 h-fit p-0.5 pb-0 pt-0 text-center placeholder:text-center";
+
 </script>
 
 <template>
