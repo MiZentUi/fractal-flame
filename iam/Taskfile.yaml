@@ -11,6 +11,7 @@ vars:
   PROTOC_GEN_GO_GRPC_VERSION: "v1.6.2"
   GOOSE_VERSION: "v3.27.1"
   MOCKERY_VERSION: "v3.7.0"
+  PROTOC_GEN_VALIDATE_VERSION: "v1.3.3"
 
   BIN_DIR: "{{.ROOT_DIR}}/bin"
   GOLANGCI_LINT: "{{.BIN_DIR}}/golangci-lint"
@@ -22,6 +23,7 @@ vars:
   PROTOC_GEN_GO_GRPC: "{{.BIN_DIR}}/protoc-gen-go-grpc"
   GOOSE: "{{.BIN_DIR}}/goose"
   MOCKERY: "{{.BIN_DIR}}/mockery"
+  PROTOC_GEN_VALIDATE: "protoc-gen-validate"
 
 tasks:
   create:bin:
@@ -80,6 +82,15 @@ tasks:
     status:
       - test -x "{{.PROTOC_GEN_GO_GRPC}}"
 
+  install:protoc-gen-validate:
+    desc: "Install protoc-gen-validate"
+    deps: [create:bin]
+    cmds:
+      - echo "Installing protoc gen validate..."
+      - GOBIN="{{.BIN_DIR}}" go install github.com/envoyproxy/protoc-gen-validate@"{{.PROTOC_GEN_VALIDATE_VERSION}}"
+    status:
+      - test -x "{{.PROTOC_GEN_VALIDATE}}"
+
   lint:
     desc: "Run golangci-lint on the all modules"
     deps: [install:golangci-lint]
@@ -99,7 +110,7 @@ tasks:
   generate:code:
     desc: "Generating code from ProtoBuf declaration"
     dir: ./api
-    deps: [install:easyp, install:protoc-gen-go, install:protoc-gen-go-grpc]
+    deps: [install:easyp, install:protoc-gen-go, install:protoc-gen-go-grpc, install:protoc-gen-validate]
     cmds:
       - cmd: echo "Generating code..."
       - cmd: rm -rf "{{.HIDDEN_EASYP}}"

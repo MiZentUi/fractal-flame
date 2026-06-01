@@ -35,12 +35,18 @@ type Auth interface {
 	RefreshTokenTTL() time.Duration
 }
 
+type Image interface {
+	Width() int
+	Height() int
+}
+
 type config struct {
 	GRPC     GRPC
 	Logger   Logger
 	Postgres Postgres
 	Minio    Minio
 	Auth     Auth
+	Image    Image
 }
 
 var app *config
@@ -75,12 +81,18 @@ func Setup() error {
 		return fmt.Errorf("setup auth config: %w", err)
 	}
 
+	image, err := env.NewImageConfig()
+	if err != nil {
+		return fmt.Errorf("setup image config: %w", err)
+	}
+
 	app = &config{
 		GRPC:     grpc,
 		Logger:   logger,
 		Postgres: postgres,
 		Minio:    minio,
 		Auth:     auth,
+		Image:    image,
 	}
 
 	return nil

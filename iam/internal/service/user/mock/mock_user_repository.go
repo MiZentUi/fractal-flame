@@ -7,9 +7,8 @@ package mock
 import (
 	"context"
 
-	mock "github.com/stretchr/testify/mock"
-
 	"github.com/mizentui/fractal-flame/iam/internal/model"
+	mock "github.com/stretchr/testify/mock"
 )
 
 // NewUserRepositoryMock creates a new instance of UserRepositoryMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -17,8 +16,7 @@ import (
 func NewUserRepositoryMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *UserRepositoryMock {
+}) *UserRepositoryMock {
 	mock := &UserRepositoryMock{}
 	mock.Mock.Test(t)
 
@@ -74,7 +72,7 @@ type UserRepositoryMock_FindByID_Call struct {
 // FindByID is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int64
-func (_e *UserRepositoryMock_Expecter) FindByID(ctx, id interface{}) *UserRepositoryMock_FindByID_Call {
+func (_e *UserRepositoryMock_Expecter) FindByID(ctx interface{}, id interface{}) *UserRepositoryMock_FindByID_Call {
 	return &UserRepositoryMock_FindByID_Call{Call: _e.mock.On("FindByID", ctx, id)}
 }
 
@@ -107,7 +105,7 @@ func (_c *UserRepositoryMock_FindByID_Call) RunAndReturn(run func(ctx context.Co
 }
 
 // Update provides a mock function for the type UserRepositoryMock
-func (_mock *UserRepositoryMock) Update(ctx context.Context, id int64, username, password, image string) (model.User, error) {
+func (_mock *UserRepositoryMock) Update(ctx context.Context, id int64, username string, password string, image string) (model.User, error) {
 	ret := _mock.Called(ctx, id, username, password, image)
 
 	if len(ret) == 0 {
@@ -143,11 +141,11 @@ type UserRepositoryMock_Update_Call struct {
 //   - username string
 //   - password string
 //   - image string
-func (_e *UserRepositoryMock_Expecter) Update(ctx, id, username, password, image interface{}) *UserRepositoryMock_Update_Call {
+func (_e *UserRepositoryMock_Expecter) Update(ctx interface{}, id interface{}, username interface{}, password interface{}, image interface{}) *UserRepositoryMock_Update_Call {
 	return &UserRepositoryMock_Update_Call{Call: _e.mock.On("Update", ctx, id, username, password, image)}
 }
 
-func (_c *UserRepositoryMock_Update_Call) Run(run func(ctx context.Context, id int64, username, password, image string)) *UserRepositoryMock_Update_Call {
+func (_c *UserRepositoryMock_Update_Call) Run(run func(ctx context.Context, id int64, username string, password string, image string)) *UserRepositoryMock_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -185,7 +183,7 @@ func (_c *UserRepositoryMock_Update_Call) Return(user model.User, err error) *Us
 	return _c
 }
 
-func (_c *UserRepositoryMock_Update_Call) RunAndReturn(run func(ctx context.Context, id int64, username, password, image string) (model.User, error)) *UserRepositoryMock_Update_Call {
+func (_c *UserRepositoryMock_Update_Call) RunAndReturn(run func(ctx context.Context, id int64, username string, password string, image string) (model.User, error)) *UserRepositoryMock_Update_Call {
 	_c.Call.Return(run)
 	return _c
 }

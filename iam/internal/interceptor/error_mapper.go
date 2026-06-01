@@ -22,14 +22,15 @@ func MappingError() grpc.UnaryServerInterceptor {
 		if err != nil {
 			switch {
 			case errors.Is(err, errs.ErrWeakPassword), errors.Is(err, errs.ErrInvalidCredentials),
-				errors.Is(err, errs.ErrInvalidToken), errors.Is(err, errs.ErrInvalidCtxValue),
-				errors.Is(err, errs.ErrInvalidUserID), errors.Is(err, errs.ErrNothingToUpdate),
-				errors.Is(err, errs.ErrInvalidImageName):
+				errors.Is(err, errs.ErrInvalidCtxValue), errors.Is(err, errs.ErrInvalidUserID),
+				errors.Is(err, errs.ErrNothingToUpdate), errors.Is(err, errs.ErrInvalidImageName):
 				return nil, status.Error(codes.InvalidArgument, err.Error())
 			case errors.Is(err, errs.ErrUserAlreadyExists):
 				return nil, status.Error(codes.AlreadyExists, err.Error())
 			case errors.Is(err, errs.ErrUserNotFound), errors.Is(err, errs.ErrImageNotFound):
 				return nil, status.Error(codes.NotFound, err.Error())
+			case errors.Is(err, errs.ErrInvalidToken):
+				return nil, status.Error(codes.Unauthenticated, err.Error())
 			default:
 				return nil, status.Error(codes.Internal, err.Error())
 			}

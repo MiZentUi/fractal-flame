@@ -13,8 +13,7 @@ import (
 func NewPasswordHasherMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-},
-) *PasswordHasherMock {
+}) *PasswordHasherMock {
 	mock := &PasswordHasherMock{}
 	mock.Mock.Test(t)
 

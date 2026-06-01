@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"testing"
 
@@ -13,10 +14,18 @@ import (
 	mockery "github.com/mizentui/fractal-flame/iam/internal/service/user/mock"
 )
 
+const (
+	invalidBase64Image = "some image"
+)
+
 var (
-	ErrUserRepository  = errors.New("some user repo error")
-	ErrImageRepository = errors.New("some image repo error")
-	ErrPasswordHasher  = errors.New("some hasher error")
+	validImageBytes     = []byte("some image bytes")
+	validBase64Image    = base64.StdEncoding.EncodeToString(validImageBytes)
+	errUserRepository   = errors.New("some user repo error")
+	errImageRepository  = errors.New("some image repo error")
+	errPasswordHasher   = errors.New("some hasher error")
+	errImageValidator   = errors.New("some image validator error")
+	errPasswordValidate = errors.New("password is too short")
 )
 
 func TestGetUser(t *testing.T) {
@@ -30,7 +39,7 @@ func TestGetUser(t *testing.T) {
 		args    args
 		want    model.User
 		err     error
-		mock    func(*mockery.UserRepositoryMock, *mockery.ImageRepositoryMock, *mockery.PasswordValidatorMock, *mockery.PasswordHasherMock, args)
+		mock    func(*mockery.UserRepositoryMock, *mockery.ImageRepositoryMock, *mockery.PasswordValidatorMock, *mockery.PasswordHasherMock, *mockery.ImageValidatorMock, args)
 	}{
 		{
 			message: "user repository error: failed to find user",
@@ -39,9 +48,9 @@ func TestGetUser(t *testing.T) {
 				id:  1,
 			},
 			want: model.User{},
-			err:  ErrUserRepository,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
-				urm.On("FindByID", a.ctx, a.id).Once().Return(model.User{}, ErrUserRepository)
+			err:  errUserRepository,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
+				urm.On("FindByID", a.ctx, a.id).Once().Return(model.User{}, errUserRepository)
 			},
 		},
 		{
@@ -52,7 +61,7 @@ func TestGetUser(t *testing.T) {
 			},
 			want: model.User{ID: 1, Username: "mizentui", Password: "some_password_hash", Image: "avatar.png"},
 			err:  nil,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				user := model.User{ID: 1, Username: "mizentui", Password: "some_password_hash", Image: "avatar.png"}
 
 				urm.On("FindByID", a.ctx, a.id).Once().Return(user, nil)
@@ -66,12 +75,13 @@ func TestGetUser(t *testing.T) {
 
 			userRepo := mockery.NewUserRepositoryMock(t)
 			imageRepo := mockery.NewImageRepositoryMock(t)
-			validator := mockery.NewPasswordValidatorMock(t)
+			pwdValidator := mockery.NewPasswordValidatorMock(t)
 			hasher := mockery.NewPasswordHasherMock(t)
+			imgValidator := mockery.NewImageValidatorMock(t)
 
-			test.mock(userRepo, imageRepo, validator, hasher, test.args)
+			test.mock(userRepo, imageRepo, pwdValidator, hasher, imgValidator, test.args)
 
-			service := New(userRepo, imageRepo, validator, hasher)
+			service := New(userRepo, imageRepo, pwdValidator, hasher, imgValidator)
 
 			user, err := service.GetUser(test.args.ctx, test.args.id)
 			if err != nil {
@@ -97,26 +107,44 @@ func TestUpdateUser(t *testing.T) {
 	}
 
 	tests := []struct {
-		message string
-		args    args
-		want    model.User
-		err     error
-		mock    func(*mockery.UserRepositoryMock, *mockery.ImageRepositoryMock, *mockery.PasswordValidatorMock, *mockery.PasswordHasherMock, args)
+		message     string
+		args        args
+		want        model.User
+		err         error
+		errContains string
+		mock        func(*mockery.UserRepositoryMock, *mockery.ImageRepositoryMock, *mockery.PasswordValidatorMock, *mockery.PasswordHasherMock, *mockery.ImageValidatorMock, args)
 	}{
 		{
-			message: "validator error: weak password",
+			message: "validation error: nothing to update",
+			args: args{
+				ctx: context.Background(),
+				id:  1,
+			},
+			want: model.User{},
+			err:  errs.ErrNothingToUpdate,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
+				pvm.AssertNotCalled(t, "Validate", mock.Anything)
+				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
+				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
+				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+			},
+		},
+		{
+			message: "password validator error: weak password",
 			args: args{
 				ctx:      context.Background(),
 				id:       1,
 				username: "mizentui",
 				password: "123",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{},
 			err:  errs.ErrWeakPassword,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
-				pvm.On("Validate", a.password).Once().Return(errors.New("password is too short"))
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
+				pvm.On("Validate", a.password).Once().Return(errPasswordValidate)
 				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
 				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
 				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 			},
@@ -128,13 +156,50 @@ func TestUpdateUser(t *testing.T) {
 				id:       1,
 				username: "mizentui",
 				password: "1238124AAs",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{},
-			err:  ErrPasswordHasher,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			err:  errPasswordHasher,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				pvm.On("Validate", a.password).Once().Return(nil)
-				phm.On("HashAndSalt", a.password).Once().Return("", ErrPasswordHasher)
+				phm.On("HashAndSalt", a.password).Once().Return("", errPasswordHasher)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
+				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
+				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+			},
+		},
+		{
+			message: "image decode error: invalid base64 image",
+			args: args{
+				ctx:      context.Background(),
+				id:       1,
+				username: "mizentui",
+				image:    invalidBase64Image,
+			},
+			want: model.User{},
+			err:  errs.ErrInvalidImage,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
+				pvm.AssertNotCalled(t, "Validate", mock.Anything)
+				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
+				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
+				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+			},
+		},
+		{
+			message: "image validator error: invalid image bytes",
+			args: args{
+				ctx:      context.Background(),
+				id:       1,
+				username: "mizentui",
+				image:    validBase64Image,
+			},
+			want:        model.User{},
+			errContains: "validate image",
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
+				pvm.AssertNotCalled(t, "Validate", mock.Anything)
+				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
+				ivm.On("Validate", validImageBytes).Once().Return(errImageValidator)
 				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
 				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 			},
@@ -146,16 +211,17 @@ func TestUpdateUser(t *testing.T) {
 				id:       1,
 				username: "mizentui",
 				password: "1238124AAs",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{},
-			err:  ErrImageRepository,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			err:  errImageRepository,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				hash := "some_password_hash"
 
 				pvm.On("Validate", a.password).Once().Return(nil)
 				phm.On("HashAndSalt", a.password).Once().Return(hash, nil)
-				irm.On("Save", a.ctx, a.image).Once().Return("", ErrImageRepository)
+				ivm.On("Validate", validImageBytes).Once().Return(nil)
+				irm.On("Save", a.ctx, validImageBytes).Once().Return("", errImageRepository)
 				urm.AssertNotCalled(t, "Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 			},
 		},
@@ -166,17 +232,18 @@ func TestUpdateUser(t *testing.T) {
 				id:       1,
 				username: "mizentui",
 				password: "1238124AAs",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{},
-			err:  ErrUserRepository,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			err:  errUserRepository,
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				hash, imageName := "some_password_hash", "avatar.png"
 
 				pvm.On("Validate", a.password).Once().Return(nil)
 				phm.On("HashAndSalt", a.password).Once().Return(hash, nil)
-				irm.On("Save", a.ctx, a.image).Once().Return(imageName, nil)
-				urm.On("Update", a.ctx, a.id, a.username, hash, imageName).Once().Return(model.User{}, ErrUserRepository)
+				ivm.On("Validate", validImageBytes).Once().Return(nil)
+				irm.On("Save", a.ctx, validImageBytes).Once().Return(imageName, nil)
+				urm.On("Update", a.ctx, a.id, a.username, hash, imageName).Once().Return(model.User{}, errUserRepository)
 			},
 		},
 		{
@@ -185,16 +252,15 @@ func TestUpdateUser(t *testing.T) {
 				ctx:      context.Background(),
 				id:       1,
 				username: "mizentui-new",
-				password: "",
-				image:    "",
 			},
 			want: model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: "avatar.png"},
 			err:  nil,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				user := model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: "avatar.png"}
 
 				pvm.AssertNotCalled(t, "Validate", mock.Anything)
 				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
 				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
 				urm.On("Update", a.ctx, a.id, a.username, "", "").Once().Return(user, nil)
 			},
@@ -206,16 +272,16 @@ func TestUpdateUser(t *testing.T) {
 				id:       1,
 				username: "mizentui-new",
 				password: "1238124AAs",
-				image:    "",
 			},
 			want: model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: "avatar.png"},
 			err:  nil,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				hash := "some_password_hash"
 				user := model.User{ID: 1, Username: "mizentui-new", Password: hash, Image: "avatar.png"}
 
 				pvm.On("Validate", a.password).Once().Return(nil)
 				phm.On("HashAndSalt", a.password).Once().Return(hash, nil)
+				ivm.AssertNotCalled(t, "Validate", mock.Anything)
 				irm.AssertNotCalled(t, "Save", mock.Anything, mock.Anything)
 				urm.On("Update", a.ctx, a.id, a.username, hash, "").Once().Return(user, nil)
 			},
@@ -226,18 +292,18 @@ func TestUpdateUser(t *testing.T) {
 				ctx:      context.Background(),
 				id:       1,
 				username: "mizentui-new",
-				password: "",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: "avatar.png"},
 			err:  nil,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				imageName := "avatar.png"
 				user := model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: imageName}
 
 				pvm.AssertNotCalled(t, "Validate", mock.Anything)
 				phm.AssertNotCalled(t, "HashAndSalt", mock.Anything)
-				irm.On("Save", a.ctx, a.image).Once().Return(imageName, nil)
+				ivm.On("Validate", validImageBytes).Once().Return(nil)
+				irm.On("Save", a.ctx, validImageBytes).Once().Return(imageName, nil)
 				urm.On("Update", a.ctx, a.id, a.username, "", imageName).Once().Return(user, nil)
 			},
 		},
@@ -248,17 +314,18 @@ func TestUpdateUser(t *testing.T) {
 				id:       1,
 				username: "mizentui-new",
 				password: "1238124AAs",
-				image:    "some image",
+				image:    validBase64Image,
 			},
 			want: model.User{ID: 1, Username: "mizentui-new", Password: "some_password_hash", Image: "avatar.png"},
 			err:  nil,
-			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, a args) {
+			mock: func(urm *mockery.UserRepositoryMock, irm *mockery.ImageRepositoryMock, pvm *mockery.PasswordValidatorMock, phm *mockery.PasswordHasherMock, ivm *mockery.ImageValidatorMock, a args) {
 				hash, imageName := "some_password_hash", "avatar.png"
 				user := model.User{ID: 1, Username: "mizentui-new", Password: hash, Image: imageName}
 
 				pvm.On("Validate", a.password).Once().Return(nil)
 				phm.On("HashAndSalt", a.password).Once().Return(hash, nil)
-				irm.On("Save", a.ctx, a.image).Once().Return(imageName, nil)
+				ivm.On("Validate", validImageBytes).Once().Return(nil)
+				irm.On("Save", a.ctx, validImageBytes).Once().Return(imageName, nil)
 				urm.On("Update", a.ctx, a.id, a.username, hash, imageName).Once().Return(user, nil)
 			},
 		},
@@ -270,12 +337,13 @@ func TestUpdateUser(t *testing.T) {
 
 			userRepo := mockery.NewUserRepositoryMock(t)
 			imageRepo := mockery.NewImageRepositoryMock(t)
-			validator := mockery.NewPasswordValidatorMock(t)
+			pwdValidator := mockery.NewPasswordValidatorMock(t)
 			hasher := mockery.NewPasswordHasherMock(t)
+			imgValidator := mockery.NewImageValidatorMock(t)
 
-			test.mock(userRepo, imageRepo, validator, hasher, test.args)
+			test.mock(userRepo, imageRepo, pwdValidator, hasher, imgValidator, test.args)
 
-			service := New(userRepo, imageRepo, validator, hasher)
+			service := New(userRepo, imageRepo, pwdValidator, hasher, imgValidator)
 
 			user, err := service.UpdateUser(
 				test.args.ctx,
@@ -286,7 +354,12 @@ func TestUpdateUser(t *testing.T) {
 			)
 			if err != nil {
 				require.Error(t, err)
-				require.ErrorIs(t, err, test.err)
+				if test.err != nil {
+					require.ErrorIs(t, err, test.err)
+				}
+				if test.errContains != "" {
+					require.ErrorContains(t, err, test.errContains)
+				}
 
 				return
 			}
