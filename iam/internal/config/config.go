@@ -63,17 +63,17 @@ func Setup() error {
 
 	logger, err := env.NewLoggerConfig()
 	if err != nil {
-		return fmt.Errorf("setup grpc config: %w", err)
+		return fmt.Errorf("setup logger config: %w", err)
 	}
 
 	postgres, err := env.NewPostgresConfig()
 	if err != nil {
-		return fmt.Errorf("setup grpc config: %w", err)
+		return fmt.Errorf("setup postgres config: %w", err)
 	}
 
 	minio, err := env.NewMinioConfig()
 	if err != nil {
-		return fmt.Errorf("setup grpc config: %w", err)
+		return fmt.Errorf("setup minio config: %w", err)
 	}
 
 	auth, err := env.NewAuthConfig()
