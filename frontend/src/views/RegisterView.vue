@@ -46,7 +46,7 @@ async function submit() {
     try {
         await register(values.username, values.password);
         toast.success("Account created");
-        await router.push({ name: "home" });
+        await router.push({ name: "login" });
     } catch (error) {
         handleRegError(error)
     }
