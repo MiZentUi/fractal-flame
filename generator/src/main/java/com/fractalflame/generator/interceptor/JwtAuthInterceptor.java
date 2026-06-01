@@ -15,6 +15,7 @@ import io.grpc.ForwardingServerCallListener;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCall.Listener;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
@@ -43,7 +44,7 @@ public class JwtAuthInterceptor implements ServerInterceptor {
             String token = authHeader.substring(7);
 
             if (!jwtService.validateToken(token)) {
-                throw new RuntimeException("Token is expired!");
+                throw new JwtException("Token is expired!");
             }
 
             var claims = jwtService.extractClaims(token);
