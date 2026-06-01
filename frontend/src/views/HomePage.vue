@@ -9,11 +9,10 @@ import { ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { useSidebar } from "@/components/ui/sidebar";
-import { formSchema } from "@/components/sidebar/validationSchema";
+import { formSchema } from "@/shemas/generatorSchema";
 import GenerateButton from "@/components/GenerateButton.vue";
-import { fractalsApi } from "@/api";
+import { createFractalEventsUrl, fractalsApi } from "@/api";
 import type { FractalRequest, TaskState } from "@/api/generated";
-import { number } from "yup";
 
 const { values, errors, validate } = useForm<FractalRequest>({
     validationSchema: formSchema,
@@ -26,6 +25,7 @@ const { values, errors, validate } = useForm<FractalRequest>({
         iteration_count: 1000000,
         symmetry_level: 1,
     },
+    keepValuesOnUnmount: true
 });
 
 watch(values, console.log);
@@ -44,15 +44,12 @@ const subbmit = async () => {
     }
 
     fractalsApi.generation(values).then((res) => {
-        const source = new EventSource(`http://localhost:5173/api/v1/fractals/gen/${res.data.fractal_id}/events`);
+        const source = new EventSource(createFractalEventsUrl(res.data.fractal_id), { withCredentials: true });
         altText.value = "Pending...";
         base64Image.value = "";
         // Listen for generic messages
         source.onmessage = (event) => {
             console.log("New message:", event.data);
-            const data = JSON.parse(event.data) as TaskState;
-            progress.value = data.progress;
-            base64Image.value = data.preview;
         };
 
         source.onopen = () => {
@@ -62,9 +59,12 @@ const subbmit = async () => {
         // Listen for specific event types (if named by the server)
         source.addEventListener("update", (event) => {
             console.log("Update received:", event.data);
+            const data = JSON.parse(event.data) as TaskState;
+            progress.value = data.progress;
+            base64Image.value = data.preview;
         });
-        source.addEventListener("complite", (event) => {
-            console.log("Update received:", event.data);
+        source.addEventListener("complete", (event) => {
+            console.log("completed:", event.data);
             source.close();
         });
 
@@ -84,11 +84,10 @@ const subbmit = async () => {
 
         <FractalView
             :alt="altText"
-            class="h-screen absolute top-0 left-0 z-[-9] w-screen"
+            class="h-screen absolute top-0 left-0 z-[-9] w-full"
             :href="`data:image/png;base64, ${base64Image}`"
         />
         <LeftSidebar />
         <RightSidebar />
     </div>
 </template>
-z

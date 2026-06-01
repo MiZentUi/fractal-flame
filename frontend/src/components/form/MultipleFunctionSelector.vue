@@ -29,7 +29,7 @@ const removeV = (i: number) => {
 <template>
     <Card :class="field.errors.value.length > 0 ? 'border-accent' : ''">
         <CardHeader> Functions </CardHeader>
-        <CardContent class="flex flex-col gap-4 overflow-x-scroll max-h-38 w-90">
+        <CardContent class="flex flex-col gap-4 overflow-y-auto max-h-38 w-90">
             <FunctionSelector
                 :function-names="functionNames"
                 v-for="(field, i) in fields"

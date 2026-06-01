@@ -1,5 +1,5 @@
 import { fractalsApi } from "@/api";
-import type { FractalResponse, FractalsResponse } from "@/api/generated";
+import type { FractalsResponse } from "@/api/generated";
 import { inject, reactive } from "vue";
 interface FracatalStore {
     data: FractalsResponse;

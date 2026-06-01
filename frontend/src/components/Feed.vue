@@ -6,6 +6,7 @@ import Pagination from "./Pagination.vue";
 import FractalView from "./FractalView.vue";
 import { useFractalStore } from "@/store/useFractalStore.ts";
 import { ref, watch } from "vue";
+import { createFractalImageUrl } from "@/api";
 
 const fractalStore = useFractalStore();
 
@@ -16,7 +17,7 @@ watch(page, (n) => {
 fractalStore.fetch(1, 12).then(console.log).catch(console.log);
 </script>
 <template>
-    <section class="bg-primary-foreground w-screen z-40 p-0">
+    <section class="bg-primary-foreground flex flex-col h-[calc(100vh-var(--footer-height)-var(--header-height))] w-full z-40 p-0">
         <Card class="w-300 m-auto">
             <CardHeader> Works of others </CardHeader>
             <CardContent class="grid gap-4 p-4 grid-cols-[1fr_1fr_1fr_1fr] items-center justify-items-center">
@@ -25,10 +26,7 @@ fractalStore.fetch(1, 12).then(console.log).catch(console.log);
                     v-for="fractal in fractalStore.data.items"
                 >
                     <CardContent class="flex items-center justify-center p-0 h-full">
-                        <FractalView
-                            class="self-center"
-                            :href="`http://localhost:5173/api/v1/fractals/images/${fractal.image}`"
-                        ></FractalView>
+                        <FractalView class="self-center" :href="createFractalImageUrl(fractal.image)"></FractalView>
                         <span class="absolute bottom-1 left-2"> By: {{ fractal.user_id || "REDACTED" }} </span>
                     </CardContent>
                 </Card>

@@ -51,6 +51,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --header-height: calc(var(--spacing) * 18);
+  --footer-height: calc(var(--spacing) * 16);
+
 }
 
 :root {
@@ -65,7 +68,7 @@
   --primary-foreground: oklch(0% 0 0);
   --secondary: oklch(21.779% 0.00002 271.152);
   --secondary-foreground: oklch(100% 0.00011 271.152);
-  --muted: oklch(0% 0 0);
+  --muted: oklch(40.54% 0.00005 271.152);
   --muted-foreground: oklch(46.4% 0.00005 271.152);
   --accent: var(--color-red-700);
   --accent-foreground: oklch(100% 0.00011 271.152);
@@ -91,7 +94,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 scrollbar-thin scrollbar-track-background scrollbar-thumb-muted;
   }
   body {
     @apply bg-background text-foreground;

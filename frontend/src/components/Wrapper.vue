@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
     <SidebarProvider>
         <div class="min-h-screen flex flex-col justify-between 6 w-full">
             <Header class="fixed z-10" />
-            <section class="w-screen mx-auto min-h-[calc(100vh-18*var(--spacing))]">
+            <section class="w-full mx-auto min-h-[calc(100vh-18*var(--spacing))]">
                 <slot></slot>
             </section>
             <Feed v-if="$route.meta?.showFeed"></Feed>

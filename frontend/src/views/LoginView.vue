@@ -1,79 +1,115 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usersApi } from "@/api";
 import { useLogin } from "@/utils/useLogin";
-// import { ApiError } from "@/lib/api";
-// import { useAuthStore } from "@/stores/auth";
+import { useForm } from "vee-validate";
+import { authSchema } from "@/shemas/authSchema";
+import type { AxiosError } from "axios";
+import type { ApiStatusResponse, AuthRequest } from "@/api/generated";
+import FormInput from "@/components/form/FormInput.vue";
 
-// const auth = useAuthStore();
+
+
+// const form = reactive({
+//     name: "",
+//     email: "",
+//     password: "",
+// });
+// const errors = reactive<Record<"name" | "email" | "password", string>>({
+//     name: "",
+//     email: "",
+//     password: "",
+// });
+
+// function clearErrors() {
+//     errors.name = "";
+//     errors.email = "";
+//     errors.password = "";
+// }
+
+// function validateForm() {
+//     clearErrors();
+
+//     const name = form.name.trim();
+//     if (!name) errors.name = "Name is required.";
+//     else if (name.length > 255) errors.name = "Name is too long.";
+
+//     if (!form.password) errors.password = "Password is required.";
+//     else if (form.password.length < 6) errors.password = "Password must be at least 6 characters.";
+//     else if (form.password.length > 255) errors.password = "Password is too long.";
+
+//     return !errors.name && !errors.email && !errors.password;
+// }
+// async function submit() {
+//     if (!validateForm()) {
+//         return;
+//     }
+
+//     try {
+//         await login(form.name, form.password);
+//         toast.success("Logged in successfully");
+
+//         await router.push({ name: "home" });
+//     } catch (error) {
+//         const message = error instanceof Error ? error.message : "Authentication failed";
+//         // if (
+//         //   mode.value === "login" &&
+//         //   error instanceof ApiError &&
+//         //   error.status === 401
+//         // ) {
+//         //   errors.email = "Invalid email or password.";
+//         //   errors.password = "Invalid email or password.";
+//         //   toast.error("Invalid email or password");
+//         //   return;
+//         // }
+
+//         toast.error(message);
+//     }
+// }
+
+
+const { login, isLoading } = useLogin();
 const router = useRouter();
-const route = useRoute();
-
-const {login, isLoading} = useLogin()
-
-const form = reactive({
-    name: "",
-    email: "",
-    password: "",
+const { errors, values, setFieldError } = useForm<AuthRequest>({
+    validationSchema: authSchema,
+    initialValues: {
+        password: "",
+        username: "",
+    },
 });
-const errors = reactive<Record<"name" | "email" | "password", string>>({
-    name: "",
-    email: "",
-    password: "",
-});
+const handleLoninError = (e: unknown) => {
+    const error = e as AxiosError;
+    if (!error.response?.data) {
+        toast.error(error.message);
+        return;
+    }
 
-function clearErrors() {
-    errors.name = "";
-    errors.email = "";
-    errors.password = "";
-}
+    const response = error.response?.data as ApiStatusResponse;
 
-function validateForm() {
-    clearErrors();
+    switch (response.status) {
+        case "NOT_FOUND":
+        case "INVALID_ARGUMENT":
+            setFieldError("username", "Invalid uesername or password");
+            setFieldError("password", "Invalid uesername or password");;
+            break;
+        default:
+            toast.error(response.message);
+            break;
+    }
+};
 
-    const name = form.name.trim();
-    const email = form.email.trim();
-
-    if (!name) errors.name = "Name is required.";
-    else if (name.length > 255) errors.name = "Name is too long.";
-
-    if (!form.password) errors.password = "Password is required.";
-    else if (form.password.length < 6) errors.password = "Password must be at least 6 characters.";
-    else if (form.password.length > 255) errors.password = "Password is too long.";
-
-    return !errors.name && !errors.email && !errors.password;
-}
 async function submit() {
-    if (!validateForm()){ console.error("E"); return;}
-
     try {
-        console.log(await login(form.name, form.password));
-        toast.success("Logged in successfully");
-
-
-        await router.push(
-          {name: "home"}
-        );
+        await login(values.username, values.password);
+        toast.success("Account created");
+        await router.push({ name: "home" });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Authentication failed";
-        // if (
-        //   mode.value === "login" &&
-        //   error instanceof ApiError &&
-        //   error.status === 401
-        // ) {
-        //   errors.email = "Invalid email or password.";
-        //   errors.password = "Invalid email or password.";
-        //   toast.error("Invalid email or password");
-        //   return;
-        // }
-
-        toast.error(message);
+        handleLoninError(error)
     }
 }
 
@@ -92,26 +128,14 @@ async function submit() {
                     <form class="space-y-4" novalidate @submit.prevent="submit">
                         <div class="space-y-2">
                             <Label for="name">Username</Label>
-                            <Input
-                                id="name"
-                                v-model="form.name"
-                                type="username"
-                                autocomplete="username"
-                                :aria-invalid="Boolean(errors.name)"
-                            />
-                            <p v-if="errors.name" class="text-sm text-red-600">
-                                {{ errors.name }}
+                            <FormInput field-name="username" id="name" autocomplete="username" />
+                            <p v-if="errors.username" class="text-sm text-red-600">
+                                {{ errors.username }}
                             </p>
                         </div>
                         <div class="space-y-2">
                             <Label for="password">Password</Label>
-                            <Input
-                                id="password"
-                                v-model="form.password"
-                                type="password"
-                                autocomplete="password"
-                                :aria-invalid="Boolean(errors.password)"
-                            />
+                            <FormInput field-name="password" id="password" type="password" autocomplete="password" />
                             <p v-if="errors.password" class="text-sm text-red-600">
                                 {{ errors.password }}
                             </p>

@@ -1,106 +1,129 @@
-import axios, { AxiosError, isAxiosError } from "axios";
-import { FractalsApi, UsersApi } from "./generated";
+import axios, { isAxiosError, type AxiosRequestConfig } from "axios";
+import { FractalsApi, UsersApi, type AccessToken } from "./generated";
 import { getJWTToken, removeJWTToken, setJWTToken } from "@/utils/useJWT";
 
-const BASE_URL = "http://192.168.0.109:8080/api/v1"
-const axiosInstance = axios.create({});
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api/v1").replace(/\/+$/, "");
+const REFRESH_COOKIE_PLACEHOLDER = "refresh_token";
 
+type RetriableRequestConfig = AxiosRequestConfig & {
+    _retry?: boolean;
+};
+
+type FailedRequest = {
+    resolve: (token: string) => void;
+    reject: (error: unknown) => void;
+};
+
+const axiosInstance = axios.create({
+    withCredentials: true,
+});
+
+const refreshAxiosInstance = axios.create({
+    withCredentials: true,
+});
 
 // Track whether a refresh is already in progress to avoid parallel refresh calls
 let isRefreshing = false;
-let failedQueue : {resolve :(val : unknown) => void, reject: () => void}[] = [];
+let failedQueue: FailedRequest[] = [];
 
+const processQueue = (error: unknown, token?: string) => {
+    failedQueue.forEach((prom) => {
+        if (error || !token) {
+            prom.reject(error);
+            return;
+        }
 
+        prom.resolve(token);
+    });
+    failedQueue = [];
+};
 
+const setAuthorizationHeader = (config: AxiosRequestConfig, token: string) => {
+    config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+    };
+};
 
+const refreshApi = new UsersApi(undefined, API_BASE_URL, refreshAxiosInstance);
 
+const refreshAccessToken = async () => {
+    const { data } = await refreshApi.refresh(REFRESH_COOKIE_PLACEHOLDER, {
+        withCredentials: true,
+    });
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
+    const newToken = (data as AccessToken).access_token;
+    setJWTToken(newToken);
+    axiosInstance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+
+    return newToken;
 };
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+    (response) => response,
+    async (error) => {
+        if (!isAxiosError(error)) {
+            return Promise.reject(error);
+        }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        // Queue the request until the refresh completes
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            // TODO
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+        const originalRequest = error.config as RetriableRequestConfig | undefined;
+
+        if (error.response?.status !== 401 || !originalRequest || originalRequest._retry) {
+            return Promise.reject(error);
+        }
+
+        if (isRefreshing) {
+            return new Promise<string>((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+            }).then((token) => {
+                setAuthorizationHeader(originalRequest, token);
+                return axiosInstance(originalRequest);
+            });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+            const newToken = await refreshAccessToken();
+
+            processQueue(null, newToken);
+            setAuthorizationHeader(originalRequest, newToken);
             return axiosInstance(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        //TODO
-        const { data } = await axiosInstance.post("/auth/refresh", {}, {
-            withCredentials: true
-        });
-
-        const newToken = data.access_token;
-        setJWTToken(newToken)
-        //TODO
-        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-
-        processQueue(null, newToken);
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        // Redirect to login or emit an event
-
-        removeJWTToken()
-        //TODO: perform redirect with router
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
+        } catch (refreshError) {
+            processQueue(refreshError);
+            removeJWTToken();
+            return Promise.reject(refreshError);
+        } finally {
+            isRefreshing = false;
+        }
     }
-
-    return Promise.reject(error);
-  }
 );
 
 axiosInstance.interceptors.request.use((config) => {
-    // const token =
-    //     "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMjMiLCJuYW1lIjoidXNlcjEyMyIsImlhdCI6MTc3OTQ1ODcxNiwiZXhwIjoxNzgyNzgxMjAwfQ.c9k2U8M360aC6wVyr_HNThnHNYqaHCUADX9YelwiEktbucgwR1XhnTsao9r76rfC";
-    const token = getJWTToken()
+    const token = getJWTToken();
     if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
     }
 
     return config;
 });
 
-axiosInstance.interceptors.response.use(undefined, (error: AxiosError) => {
-    if (!isAxiosError(error)) {
-        return;
-    }
+const createApiUrl = (path: string) => `${API_BASE_URL}/${path.replace(/^\/+/, "")}`;
+const createFractalImageUrl = (name: string) => createApiUrl(`/fractals/images/${encodeURIComponent(name)}`);
+const createFractalEventsUrl = (id: number) => createApiUrl(`/fractals/gen/${id}/events`);
 
-    if (error.response?.status === 401) {
-        console.warn("401 Unauthorized");
+const fractalsApi = new FractalsApi(undefined, API_BASE_URL, axiosInstance);
+const usersApi = new UsersApi(undefined, API_BASE_URL, axiosInstance);
 
-    }
-
-    return Promise.reject(error);
-});
-
-const fractalsApi = new FractalsApi(undefined, BASE_URL, axiosInstance);
-const usersApi = new UsersApi(undefined, BASE_URL, axiosInstance)
-export { fractalsApi, usersApi };
+export {
+    API_BASE_URL,
+    axiosInstance,
+    createApiUrl,
+    createFractalEventsUrl,
+    createFractalImageUrl,
+    fractalsApi,
+    usersApi,
+};

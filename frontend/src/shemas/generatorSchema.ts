@@ -1,23 +1,10 @@
 import type { FractalRequest } from "@/api/generated";
 import * as yup from "yup";
+import type { Shape } from "./common";
 
-export type ConditionalSchema<T> = T extends string
-    ? yup.StringSchema
-    : T extends number
-      ? yup.NumberSchema
-      : T extends boolean
-        ? yup.BooleanSchema
-        : T extends Record<any, any>
-          ? yup.AnyObjectSchema
-          : T extends Array<any>
-            ? yup.ArraySchema<any, any>
-            : yup.AnySchema;
 
-export type Shape<Fields> = {
-    [Key in keyof Fields]: ConditionalSchema<Fields[Key]>;
-};
 
-const formSchema = yup.object<Shape<FractalRequest>>({
+const generatorSchema = yup.object<Shape<FractalRequest>>({
     affine_params: yup.array(
         yup.object({
             color: yup.string(),
@@ -41,4 +28,4 @@ const formSchema = yup.object<Shape<FractalRequest>>({
     iteration_count: yup.number().integer().positive().max(100000000),
     symmetry_level: yup.number().integer().positive().max(20),
 });
-export {formSchema}
+export {generatorSchema as formSchema}
