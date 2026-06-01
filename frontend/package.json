@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run gen-api && vite",
-    "build": "npm run gen-api && vue-tsc -b && vite build",
+    "build": "vue-tsc -b && vite build",
     "preview": "npm run gen-api && vite preview",
     "gen-api": "openapi-generator-cli generate -i ../openapi.yaml -g typescript-axios -o src/api/generated"
   },

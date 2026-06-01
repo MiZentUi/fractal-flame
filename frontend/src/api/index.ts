@@ -2,7 +2,7 @@ import axios, { isAxiosError, type AxiosRequestConfig } from "axios";
 import { FractalsApi, UsersApi, type AccessToken } from "./generated";
 import { getJWTToken, removeJWTToken, setJWTToken } from "@/utils/useJWT";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api/v1").replace(/\/+$/, "");
+const API_BASE_URL = (import.meta as ImportMeta).env?.VITE_API_URL ?? "http://localhost:8080/api";
 const REFRESH_COOKIE_PLACEHOLDER = "refresh_token";
 
 type RetriableRequestConfig = AxiosRequestConfig & {
@@ -112,7 +112,7 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 const createApiUrl = (path: string) => `${API_BASE_URL}/${path.replace(/^\/+/, "")}`;
-const createFractalImageUrl = (name: string) => createApiUrl(`/fractals/images/${encodeURIComponent(name)}`);
+const createFractalImageUrl = (name: string) => createApiUrl(`/fractals/images/${name}`);
 const createFractalEventsUrl = (id: number) => createApiUrl(`/fractals/gen/${id}/events`);
 
 const fractalsApi = new FractalsApi(undefined, API_BASE_URL, axiosInstance);

@@ -4,7 +4,6 @@ import Pagination from "./Pagination.vue";
 import FractalView from "./FractalView.vue";
 import { createFractalImageUrl } from "@/api";
 import type { FractalsResponse, UserResponse } from "@/api/generated";
-import { ref } from "vue";
 const model = defineModel<number>();
 
 const { fractals, users } = defineProps<{
@@ -27,6 +26,7 @@ const { fractals, users } = defineProps<{
                         <FractalView class="self-center" :href="createFractalImageUrl(fractal.image)"></FractalView>
                         <span v-if="users" class="absolute bottom-1 left-2">
                             By: {{ users.get(fractal.id)?.username || "REDACTED" }}
+
                         </span>
                     </CardContent>
                 </Card>

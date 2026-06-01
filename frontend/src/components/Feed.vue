@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import Card from "./ui/card/Card.vue";
-import CardContent from "./ui/card/CardContent.vue";
-import CardHeader from "./ui/card/CardHeader.vue";
-import Pagination from "./Pagination.vue";
-import FractalView from "./FractalView.vue";
 import { reactive, ref, watch } from "vue";
-import { createFractalImageUrl, fractalsApi, usersApi } from "@/api";
+import {  fractalsApi, usersApi } from "@/api";
 import { useScroll } from "@/utils/useScroll.ts";
 import type { UserResponse, FractalsResponse } from "@/api/generated/api.ts";
 import MultiFractalView from "./MultiFractalView.vue";

@@ -156,7 +156,7 @@ watch(page, fetchPage);
     <div class="pb-10 w-300 m-auto mt-20 space-y-4">
         <Card class="border">
             <CardContent class="grid gap-6 p-4 lg:grid-cols-[auto_1fr] lg:items-start">
-                <div class="space-y-3">
+                <div class="space-y-3 flex flex-col">
                     <Avatar class="size-30 border bg-primary-foreground" shape="square">
                         <AvatarFallback class="text-2xl">
                             <UserIcon />
