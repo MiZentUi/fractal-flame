@@ -59,7 +59,7 @@ services:
       - 8080:8080
     env_file: .env
     environment:
-      GENERATOR_URL: localhost:9090
+      GENERATOR_URL: generator:9090
       IAM_URL: iam:50051
     healthcheck:
       test: "curl -f http://localhost:8080/actuator/health"

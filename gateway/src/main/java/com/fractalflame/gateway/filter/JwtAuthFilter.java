@@ -12,7 +12,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.fractalflame.gateway.service.JwtService;
 
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             if (!jwtService.validateToken(jwt)) {
-                throw new RuntimeException("Token is expired!");
+                throw new JwtException("Token is expired!");
             }
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();

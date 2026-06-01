@@ -1,5 +1,6 @@
 package com.fractalflame.gateway.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.fractalflame.gateway.exception.SseException;
 import com.fractalflame.gateway.mapper.FractalMapper;
 import com.fractalflame.gateway.mapper.TaskMapper;
 import com.fractalflame.gateway.model.FractalRequest;
@@ -70,18 +72,21 @@ public class FractalsService {
                         log.atInfo().addKeyValue("fractal_id", value.getFractalId()).log("emitter complete");
 
                         emitter.send(SseEmitter.event()
-                                .name("complete"));
+                                .name("complete")
+                                .data("generation complete"));
 
                         emitter.complete();
                     }
                 } catch (Exception e) {
-                    emitter.completeWithError(e);
+                    sendError(e);
+                    emitter.completeWithError(new SseException(e));
                 }
             }
 
             @Override
             public void onError(Throwable t) {
-                emitter.completeWithError(t);
+                sendError(t);
+                emitter.completeWithError(new SseException(t));
             }
 
             @Override
@@ -90,9 +95,20 @@ public class FractalsService {
                     emitter.send(SseEmitter.event()
                             .name("complete"));
                 } catch (Exception e) {
-                    emitter.completeWithError(e);
+                    sendError(e);
+                    emitter.completeWithError(new SseException(e));
                 }
                 emitter.complete();
+            }
+
+            private void sendError(Throwable throwable) {
+                try {
+                    emitter.send(SseEmitter.event()
+                            .name("error")
+                            .data(throwable.getMessage()));
+                } catch (IOException ex) {
+                    // dropped connection
+                }
             }
 
         });

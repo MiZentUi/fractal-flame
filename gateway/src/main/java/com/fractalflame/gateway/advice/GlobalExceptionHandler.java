@@ -2,16 +2,19 @@ package com.fractalflame.gateway.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.fractalflame.gateway.exception.SseException;
 import com.fractalflame.gateway.model.ApiStatusResponse;
 
 import io.grpc.StatusRuntimeException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(StatusRuntimeException.class)
@@ -37,9 +40,26 @@ public class GlobalExceptionHandler {
                 httpStatus);
     }
 
-    @ExceptionHandler({ SignatureException.class, ExpiredJwtException.class })
+    @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiStatusResponse> handleSigning(Exception exception) {
         var status = HttpStatus.UNAUTHORIZED;
+        return new ResponseEntity<>(
+                ApiStatusResponse.builder()
+                        .code(status.value())
+                        .status(status.name())
+                        .message(exception.getMessage())
+                        .build(),
+                status);
+    }
+
+    @ExceptionHandler(SseException.class)
+    public void handleSse(Exception exception) {
+        log.atInfo().addKeyValue("message", exception.getMessage()).log("sse exception");
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ApiStatusResponse> handleNotFound(Exception exception) {
+        var status = HttpStatus.NOT_FOUND;
         return new ResponseEntity<>(
                 ApiStatusResponse.builder()
                         .code(status.value())
