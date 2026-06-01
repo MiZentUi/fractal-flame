@@ -79,7 +79,7 @@ public class UsersController implements UsersApi {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/api/v1/refresh")
-                .maxAge(Duration.ofDays(7))
+                .maxAge(Duration.ofDays(15))
                 .build();
     }
 }
