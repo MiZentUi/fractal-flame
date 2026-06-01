@@ -41,7 +41,7 @@ const (
 func Run() {
 	err := config.Setup()
 	if err != nil {
-		panic("Failed to setup config")
+		panic("Failed to setup config: " + err.Error())
 	}
 
 	logger.Init(config.App().Logger.Level(), config.App().Logger.AsJSON())
