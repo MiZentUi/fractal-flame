@@ -2,6 +2,7 @@ package com.fractalflame.gateway.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -62,6 +63,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ NoResourceFoundException.class, MissingRequestCookieException.class })
     public ResponseEntity<ApiStatusResponse> handleNotFound(Exception exception) {
         var status = HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(
+                ApiStatusResponse.builder()
+                        .code(status.value())
+                        .status(status.name())
+                        .message(exception.getMessage())
+                        .build(),
+                status);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiStatusResponse> handleNotAcceptable(Exception exception) {
+        var status = HttpStatus.NOT_ACCEPTABLE;
         return new ResponseEntity<>(
                 ApiStatusResponse.builder()
                         .code(status.value())
