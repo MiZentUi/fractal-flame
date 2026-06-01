@@ -6,13 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { usersApi } from "@/api";
+import { useLogin } from "@/utils/useLogin";
 // import { ApiError } from "@/lib/api";
 // import { useAuthStore } from "@/stores/auth";
 
 // const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const loading = ref(false);
+
+const {login, isLoading} = useLogin()
+
 const form = reactive({
     name: "",
     email: "",
@@ -39,34 +43,25 @@ function validateForm() {
     if (!name) errors.name = "Name is required.";
     else if (name.length > 255) errors.name = "Name is too long.";
 
-    if (!email) errors.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Enter a valid email address.";
-    else if (email.length > 255) errors.email = "Email is too long.";
-
     if (!form.password) errors.password = "Password is required.";
     else if (form.password.length < 6) errors.password = "Password must be at least 6 characters.";
     else if (form.password.length > 255) errors.password = "Password is too long.";
 
     return !errors.name && !errors.email && !errors.password;
 }
-
 async function submit() {
-    if (!validateForm()) return;
+    if (!validateForm()){ console.error("E"); return;}
 
-    loading.value = true;
     try {
-        //   await auth.login(form.email.trim(), form.password);
+        console.log(await login(form.name, form.password));
         toast.success("Logged in successfully");
 
-        // const redirect =
-        //   typeof route.query.redirect === "string" ? route.query.redirect : null;
-        // await router.push(
-        //   redirect ??
-        //     (auth.isAdmin.value ? { name: "admin-books" } : { name: "account" }),
-        // );
+
+        await router.push(
+          {name: "home"}
+        );
     } catch (error) {
         const message = error instanceof Error ? error.message : "Authentication failed";
-
         // if (
         //   mode.value === "login" &&
         //   error instanceof ApiError &&
@@ -79,10 +74,10 @@ async function submit() {
         // }
 
         toast.error(message);
-    } finally {
-        loading.value = false;
     }
 }
+
+
 </script>
 
 <template>
@@ -96,16 +91,16 @@ async function submit() {
                 <CardContent>
                     <form class="space-y-4" novalidate @submit.prevent="submit">
                         <div class="space-y-2">
-                            <Label for="email">Email</Label>
+                            <Label for="name">Username</Label>
                             <Input
-                                id="email"
-                                v-model="form.email"
-                                type="email"
-                                autocomplete="email"
-                                :aria-invalid="Boolean(errors.email)"
+                                id="name"
+                                v-model="form.name"
+                                type="username"
+                                autocomplete="username"
+                                :aria-invalid="Boolean(errors.name)"
                             />
-                            <p v-if="errors.email" class="text-sm text-red-600">
-                                {{ errors.email }}
+                            <p v-if="errors.name" class="text-sm text-red-600">
+                                {{ errors.name }}
                             </p>
                         </div>
                         <div class="space-y-2">
@@ -122,8 +117,8 @@ async function submit() {
                             </p>
                         </div>
 
-                        <Button variant="outline" type="submit" class="w-full" :disabled="loading">
-                            {{ loading ? "Please wait..." : "LOGIN" }}
+                        <Button variant="outline" type="submit" class="w-full" :disabled="isLoading">
+                            {{ isLoading ? "Please wait..." : "LOGIN" }}
                         </Button>
                         <RouterLink :to="{ name: 'register' }">
                             <Button type="button" variant="outline" class="w-full"> Need an account? REGISTER </Button>
