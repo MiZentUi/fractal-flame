@@ -136,6 +136,20 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      args:
+        - API_URL=${API_URL}
+    env_file: .env
+    ports:
+      - 80:80
+    depends_on:
+      gateway:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   db-generator-data:
   minio-storage-generator:
