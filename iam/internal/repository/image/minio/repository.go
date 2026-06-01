@@ -46,7 +46,7 @@ func (r *repository) Save(ctx context.Context, image []byte) (string, error) {
 	reader := bytes.NewReader(image)
 	size := len(image)
 
-	_, err := r.client.PutObject(ctx, record.ImageBucketName, name, reader, int64(size), minio.PutObjectOptions{ContentType: "image/png"})
+	_, err := r.client.PutObject(ctx, record.ImageBucketName, name, reader, int64(size), minio.PutObjectOptions{ContentType: "application/octet-stream"})
 	if err != nil {
 		slog.Error("Failed to put image in minio storage", "err", err)
 
