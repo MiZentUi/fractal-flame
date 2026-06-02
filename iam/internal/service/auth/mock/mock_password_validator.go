@@ -13,7 +13,8 @@ import (
 func NewPasswordValidatorMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *PasswordValidatorMock {
+},
+) *PasswordValidatorMock {
 	mock := &PasswordValidatorMock{}
 	mock.Mock.Test(t)
 

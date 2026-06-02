@@ -15,7 +15,8 @@ import (
 func NewImageRepositoryMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *ImageRepositoryMock {
+},
+) *ImageRepositoryMock {
 	mock := &ImageRepositoryMock{}
 	mock.Mock.Test(t)
 
@@ -73,7 +74,7 @@ type ImageRepositoryMock_FindByName_Call struct {
 // FindByName is a helper method to define mock.On call
 //   - ctx context.Context
 //   - name string
-func (_e *ImageRepositoryMock_Expecter) FindByName(ctx interface{}, name interface{}) *ImageRepositoryMock_FindByName_Call {
+func (_e *ImageRepositoryMock_Expecter) FindByName(ctx, name interface{}) *ImageRepositoryMock_FindByName_Call {
 	return &ImageRepositoryMock_FindByName_Call{Call: _e.mock.On("FindByName", ctx, name)}
 }
 

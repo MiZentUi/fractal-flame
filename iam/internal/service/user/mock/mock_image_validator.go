@@ -13,7 +13,8 @@ import (
 func NewImageValidatorMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *ImageValidatorMock {
+},
+) *ImageValidatorMock {
 	mock := &ImageValidatorMock{}
 	mock.Mock.Test(t)
 

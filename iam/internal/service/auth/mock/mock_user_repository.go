@@ -7,8 +7,9 @@ package mock
 import (
 	"context"
 
-	"github.com/mizentui/fractal-flame/iam/internal/model"
 	mock "github.com/stretchr/testify/mock"
+
+	"github.com/mizentui/fractal-flame/iam/internal/model"
 )
 
 // NewUserRepositoryMock creates a new instance of UserRepositoryMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -16,7 +17,8 @@ import (
 func NewUserRepositoryMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *UserRepositoryMock {
+},
+) *UserRepositoryMock {
 	mock := &UserRepositoryMock{}
 	mock.Mock.Test(t)
 
@@ -72,7 +74,7 @@ type UserRepositoryMock_FindByID_Call struct {
 // FindByID is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int64
-func (_e *UserRepositoryMock_Expecter) FindByID(ctx interface{}, id interface{}) *UserRepositoryMock_FindByID_Call {
+func (_e *UserRepositoryMock_Expecter) FindByID(ctx, id interface{}) *UserRepositoryMock_FindByID_Call {
 	return &UserRepositoryMock_FindByID_Call{Call: _e.mock.On("FindByID", ctx, id)}
 }
 
@@ -138,7 +140,7 @@ type UserRepositoryMock_FindByUsername_Call struct {
 // FindByUsername is a helper method to define mock.On call
 //   - ctx context.Context
 //   - username string
-func (_e *UserRepositoryMock_Expecter) FindByUsername(ctx interface{}, username interface{}) *UserRepositoryMock_FindByUsername_Call {
+func (_e *UserRepositoryMock_Expecter) FindByUsername(ctx, username interface{}) *UserRepositoryMock_FindByUsername_Call {
 	return &UserRepositoryMock_FindByUsername_Call{Call: _e.mock.On("FindByUsername", ctx, username)}
 }
 
@@ -171,7 +173,7 @@ func (_c *UserRepositoryMock_FindByUsername_Call) RunAndReturn(run func(ctx cont
 }
 
 // Save provides a mock function for the type UserRepositoryMock
-func (_mock *UserRepositoryMock) Save(ctx context.Context, username string, password string) (int64, error) {
+func (_mock *UserRepositoryMock) Save(ctx context.Context, username, password string) (int64, error) {
 	ret := _mock.Called(ctx, username, password)
 
 	if len(ret) == 0 {
@@ -205,11 +207,11 @@ type UserRepositoryMock_Save_Call struct {
 //   - ctx context.Context
 //   - username string
 //   - password string
-func (_e *UserRepositoryMock_Expecter) Save(ctx interface{}, username interface{}, password interface{}) *UserRepositoryMock_Save_Call {
+func (_e *UserRepositoryMock_Expecter) Save(ctx, username, password interface{}) *UserRepositoryMock_Save_Call {
 	return &UserRepositoryMock_Save_Call{Call: _e.mock.On("Save", ctx, username, password)}
 }
 
-func (_c *UserRepositoryMock_Save_Call) Run(run func(ctx context.Context, username string, password string)) *UserRepositoryMock_Save_Call {
+func (_c *UserRepositoryMock_Save_Call) Run(run func(ctx context.Context, username, password string)) *UserRepositoryMock_Save_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -237,7 +239,7 @@ func (_c *UserRepositoryMock_Save_Call) Return(n int64, err error) *UserReposito
 	return _c
 }
 
-func (_c *UserRepositoryMock_Save_Call) RunAndReturn(run func(ctx context.Context, username string, password string) (int64, error)) *UserRepositoryMock_Save_Call {
+func (_c *UserRepositoryMock_Save_Call) RunAndReturn(run func(ctx context.Context, username, password string) (int64, error)) *UserRepositoryMock_Save_Call {
 	_c.Call.Return(run)
 	return _c
 }

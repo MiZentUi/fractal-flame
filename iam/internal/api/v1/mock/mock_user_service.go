@@ -7,8 +7,9 @@ package mock
 import (
 	"context"
 
-	"github.com/mizentui/fractal-flame/iam/internal/model"
 	mock "github.com/stretchr/testify/mock"
+
+	"github.com/mizentui/fractal-flame/iam/internal/model"
 )
 
 // NewUserServiceMock creates a new instance of UserServiceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -16,7 +17,8 @@ import (
 func NewUserServiceMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *UserServiceMock {
+},
+) *UserServiceMock {
 	mock := &UserServiceMock{}
 	mock.Mock.Test(t)
 
@@ -72,7 +74,7 @@ type UserServiceMock_GetUser_Call struct {
 // GetUser is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int64
-func (_e *UserServiceMock_Expecter) GetUser(ctx interface{}, id interface{}) *UserServiceMock_GetUser_Call {
+func (_e *UserServiceMock_Expecter) GetUser(ctx, id interface{}) *UserServiceMock_GetUser_Call {
 	return &UserServiceMock_GetUser_Call{Call: _e.mock.On("GetUser", ctx, id)}
 }
 
@@ -105,7 +107,7 @@ func (_c *UserServiceMock_GetUser_Call) RunAndReturn(run func(ctx context.Contex
 }
 
 // UpdateUser provides a mock function for the type UserServiceMock
-func (_mock *UserServiceMock) UpdateUser(ctx context.Context, id int64, username string, password string, image string) (model.User, error) {
+func (_mock *UserServiceMock) UpdateUser(ctx context.Context, id int64, username, password, image string) (model.User, error) {
 	ret := _mock.Called(ctx, id, username, password, image)
 
 	if len(ret) == 0 {
@@ -141,11 +143,11 @@ type UserServiceMock_UpdateUser_Call struct {
 //   - username string
 //   - password string
 //   - image string
-func (_e *UserServiceMock_Expecter) UpdateUser(ctx interface{}, id interface{}, username interface{}, password interface{}, image interface{}) *UserServiceMock_UpdateUser_Call {
+func (_e *UserServiceMock_Expecter) UpdateUser(ctx, id, username, password, image interface{}) *UserServiceMock_UpdateUser_Call {
 	return &UserServiceMock_UpdateUser_Call{Call: _e.mock.On("UpdateUser", ctx, id, username, password, image)}
 }
 
-func (_c *UserServiceMock_UpdateUser_Call) Run(run func(ctx context.Context, id int64, username string, password string, image string)) *UserServiceMock_UpdateUser_Call {
+func (_c *UserServiceMock_UpdateUser_Call) Run(run func(ctx context.Context, id int64, username, password, image string)) *UserServiceMock_UpdateUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -183,7 +185,7 @@ func (_c *UserServiceMock_UpdateUser_Call) Return(user model.User, err error) *U
 	return _c
 }
 
-func (_c *UserServiceMock_UpdateUser_Call) RunAndReturn(run func(ctx context.Context, id int64, username string, password string, image string) (model.User, error)) *UserServiceMock_UpdateUser_Call {
+func (_c *UserServiceMock_UpdateUser_Call) RunAndReturn(run func(ctx context.Context, id int64, username, password, image string) (model.User, error)) *UserServiceMock_UpdateUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

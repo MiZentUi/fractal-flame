@@ -684,6 +684,7 @@ var (
 		(*wrapperspb.StringValue)(nil), // 12: google.protobuf.StringValue
 	}
 )
+
 var file_v1_iam_proto_depIdxs = []int32{
 	6,  // 0: iam.v1.GetUserResponse.user:type_name -> iam.v1.User
 	12, // 1: iam.v1.UpdateUserRequest.username:type_name -> google.protobuf.StringValue

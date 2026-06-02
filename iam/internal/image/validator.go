@@ -4,7 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"log/slog"
+
+	_ "golang.org/x/image/webp"
 
 	errs "github.com/mizentui/fractal-flame/iam/internal/error"
 )
