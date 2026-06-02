@@ -5,8 +5,9 @@
 package mock
 
 import (
-	"github.com/mizentui/fractal-flame/iam/internal/model"
 	mock "github.com/stretchr/testify/mock"
+
+	"github.com/mizentui/fractal-flame/iam/internal/model"
 )
 
 // NewTokenManagerMock creates a new instance of TokenManagerMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -14,7 +15,8 @@ import (
 func NewTokenManagerMock(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *TokenManagerMock {
+},
+) *TokenManagerMock {
 	mock := &TokenManagerMock{}
 	mock.Mock.Test(t)
 
