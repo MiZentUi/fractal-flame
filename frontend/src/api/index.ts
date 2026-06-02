@@ -22,7 +22,7 @@ const refreshAxiosInstance = axios.create({
     withCredentials: true,
 });
 
-// Track whether a refresh is already in progress to avoid parallel refresh calls
+
 let isRefreshing = false;
 let failedQueue: FailedRequest[] = [];
 
@@ -114,7 +114,7 @@ axiosInstance.interceptors.request.use((config) => {
 const createApiUrl = (path: string) => `${API_BASE_URL}/${path.replace(/^\/+/, "")}`;
 const createFractalImageUrl = (name: string) => createApiUrl(`/fractals/images/${name}`);
 const createFractalEventsUrl = (id: number) => createApiUrl(`/fractals/gen/${id}/events`);
-
+const createUserImageUrl = (name: string) => createApiUrl(`/users/images/${name}`);
 const fractalsApi = new FractalsApi(undefined, API_BASE_URL, axiosInstance);
 const usersApi = new UsersApi(undefined, API_BASE_URL, axiosInstance);
 
@@ -124,6 +124,7 @@ export {
     createApiUrl,
     createFractalEventsUrl,
     createFractalImageUrl,
+    createUserImageUrl,
     fractalsApi,
     usersApi,
 };

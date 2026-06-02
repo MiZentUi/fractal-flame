@@ -42,9 +42,9 @@ const removeV = (i : number) => {
 </script>
 
 <template>
-    <Card class="w-86" :class="field.errors.value.length > 0 ? 'border-accent' : ''">
+    <Card class="w-90" :class="field.errors.value.length > 0 ? 'border-accent' : ''">
         <CardHeader> Affine transforms </CardHeader>
-        <CardContent class="flex flex-col gap-6 overflow-y-auto max-h-62  ">
+        <CardContent class="flex flex-col gap-6 overflow-y-auto max-h-62 w-88 pr-4">
             <AffineSelector
                 v-model="field.value"
                 v-for="(field, i) in fields"

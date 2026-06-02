@@ -33,7 +33,6 @@ const handleLoninError = (e: unknown) => {
     switch (response.status) {
         case "NOT_FOUND":
         case "INVALID_ARGUMENT":
-            setFieldError("username", "Invalid uesername or password");
             setFieldError("password", "Invalid uesername or password");;
             break;
         default:
@@ -64,7 +63,7 @@ async function submit() {
                     <CardDescription> Enter your credentials to continue. </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form class="space-y-4" novalidate @submit.prevent="submit">
+                    <form class="space-y-4 flex flex-col" novalidate @submit.prevent="submit">
                         <div class="space-y-2">
                             <Label for="name">Username</Label>
                             <FormInput field-name="username" id="name" autocomplete="username" />
