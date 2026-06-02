@@ -384,16 +384,7 @@ func (m *RefreshRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetRefreshToken()) > 72 {
-		err := RefreshRequestValidationError{
-			field:  "RefreshToken",
-			reason: "value length must be at most 72 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for RefreshToken
 
 	if len(errors) > 0 {
 		return RefreshRequestMultiError(errors)
