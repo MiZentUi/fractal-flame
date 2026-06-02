@@ -14,7 +14,7 @@ const { fractals, users } = defineProps<{
 </script>
 
 <template>
-    <section class="bg-primary-foreground flex flex-col w-full z-40 p-0">
+    <section v-viewer="{ toolbar: false, title: false }" class="bg-primary-foreground flex flex-col w-full z-40 p-0">
         <Card class="w-300 m-auto">
             <CardHeader class="text-2xl"> {{ header }}</CardHeader>
             <CardContent class="grid gap-4 p-4 grid-cols-[1fr_1fr_1fr_1fr] items-center justify-items-center">

@@ -38,7 +38,6 @@ const login = async (username: string, password: string) => {
 };
 
 const logout = async () => {
-    Cookies.set("eee", "ddd");
     Cookies.remove("refresh_token");
     //TODO: add refresh token removal logic
     removeJWTToken();
