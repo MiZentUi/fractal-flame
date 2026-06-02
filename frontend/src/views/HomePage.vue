@@ -105,6 +105,7 @@ onUnmounted(() => {
             :alt="altText"
             class="h-screen fixed top-0 left-0 z-[-9] w-full"
             :href="base64Image ? `data:image/png;base64, ${base64Image}` : undefined"
+            :noOpen="false"
         />
         <LeftSidebar />
         <RightSidebar />

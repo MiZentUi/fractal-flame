@@ -14,7 +14,7 @@ const { fractals, users } = defineProps<{
 </script>
 
 <template>
-    <section class="bg-primary-foreground flex flex-col w-full z-40 p-0">
+    <section v-viewer="{ toolbar: false, title: false }" class="bg-primary-foreground flex flex-col w-full z-40 p-0">
         <Card class="w-300 m-auto">
             <CardHeader class="text-2xl"> {{ header }}</CardHeader>
             <CardContent class="grid gap-4 p-4 grid-cols-[1fr_1fr_1fr_1fr] items-center justify-items-center">
@@ -23,7 +23,7 @@ const { fractals, users } = defineProps<{
                     v-for="fractal in fractals.items"
                 >
                     <CardContent class="flex items-center justify-center p-0 h-full">
-                        <FractalView class="self-center" :href="createFractalImageUrl(fractal.image)"></FractalView>
+                        <FractalView class="self-center cursor-pointer" :href="createFractalImageUrl(fractal.image)"></FractalView>
                         <span v-if="users" class="absolute bottom-1 left-2">
                             By: {{ users.get(fractal.id)?.username || "REDACTED" }}
 

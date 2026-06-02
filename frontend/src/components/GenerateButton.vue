@@ -12,7 +12,7 @@ const text = computed(() => {
             return "CANCEL";
         }
         if (showProgress) {
-            return progress.toFixed(2);
+            return (progress * 100 ).toFixed(0) + "%";
         }
         return "GENERATE";
 });

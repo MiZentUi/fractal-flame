@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "../views/HomePage.vue";
-import LoginView from "@/views/LoginView.vue";
-import RegisterView from "@/views/RegisterView.vue";
-import AccountView from "@/views/AccountView.vue";
 import { useLogin } from "@/utils/useLogin.ts";
 const {isLogedin} = useLogin()
 
@@ -11,7 +7,7 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            component: HomePage,
+            component: () => import("@/views/HomePage.vue"),
             name: "home",
             meta: {
                 showFeed: true
@@ -19,7 +15,7 @@ const router = createRouter({
         },
         {
             path: "/login",
-            component: LoginView,
+            component: () => import("@/views/LoginView.vue"),
             name: "login",
             meta: {
                 noAuth: true
@@ -27,7 +23,7 @@ const router = createRouter({
         },
         {
             path: "/register",
-            component: RegisterView,
+            component: () => import("@/views/RegisterView.vue"),
             name: "register",
             meta: {
                 noAuth: true
@@ -35,7 +31,7 @@ const router = createRouter({
         },
         {
             path: "/account",
-            component: AccountView,
+            component: () => import("@/views/AccountView.vue"),
             name: "account",
             meta: {
                 requiresAuth: true

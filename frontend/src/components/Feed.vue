@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
-import {  fractalsApi, usersApi } from "@/api";
+import { fractalsApi, usersApi } from "@/api";
 import { useScroll } from "@/utils/useScroll.ts";
 import type { UserResponse, FractalsResponse } from "@/api/generated/api.ts";
 import MultiFractalView from "./MultiFractalView.vue";
@@ -38,5 +38,4 @@ fetchPage(1);
         :style="{ backgroundColor: 'rgba(0,0,0,' + scrollProgress + ')' }"
         class="h-[calc(100vh-var(--footer-height)-var(--header-height))]"
     />
-
 </template>
