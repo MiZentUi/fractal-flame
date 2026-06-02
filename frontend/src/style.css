@@ -91,7 +91,7 @@
 
 @layer base {
     * {
-        @apply border-border outline-ring/50 scrollbar-thin scrollbar-track-background scrollbar-thumb-muted selection:bg-primary selection:text-primary-foreground;
+        @apply border-border outline-ring/50 scrollbar-thin scrollbar-track-background scrollbar-thumb-muted selection:bg-primary selection:text-primary-foreground scrollbar-gutter-stable;
     }
     body {
         @apply bg-background text-foreground;

@@ -8,10 +8,9 @@ import { useField } from "vee-validate";
 import FormInput from "./FormInput.vue";
 
 const { fieldName } = defineProps<Props>();
-const colorField = useField(`${fieldName}.color`)
+const colorField = useField(`${fieldName}.color`);
 const emit = defineEmits<{ remove: [] }>();
 const inputStyles = "w-12 h-fit p-0.5 pb-0 pt-0 text-center placeholder:text-center";
-
 </script>
 
 <template>
@@ -37,19 +36,32 @@ const inputStyles = "w-12 h-fit p-0.5 pb-0 pt-0 text-center placeholder:text-cen
                 x
             </Button>
         </div>
-        <div class="font-stretch-50%">
+        <div class="font-stretch-50% flex justify-between">
             <span> x = </span>
-            <span><FormInput :field-name="`${fieldName}.a`" :class="inputStyles" placeholder="A" /></span><span>*x + </span>
-            <span><FormInput :field-name="`${fieldName}.b`" :class="inputStyles" placeholder="B" /></span>
-            <span>*y + </span>
-            <span><FormInput :field-name="`${fieldName}.c`" :class="inputStyles" placeholder="C" /></span>
+            <span>
+                <FormInput :field-name="`${fieldName}.a`" :class="inputStyles" placeholder="A" />
+                <span>*x + </span>
+            </span>
+
+            <span>
+                <FormInput :field-name="`${fieldName}.b`" :class="inputStyles" placeholder="B" />
+                <span>*y + </span>
+            </span>
+            <FormInput :field-name="`${fieldName}.c`" :class="inputStyles" placeholder="C" />
         </div>
 
-        <div class="font-stretch-50%">
+        <div class="font-stretch-50% flex justify-between">
             <span> y = </span>
-            <span><FormInput :field-name="`${fieldName}.d`" :class="inputStyles" placeholder="D" /></span><span>*x + </span>
-            <span><FormInput :field-name="`${fieldName}.e`" :class="inputStyles" placeholder="E" /></span>
-            <span>*y + </span>
+            <span>
+                <FormInput :field-name="`${fieldName}.d`" :class="inputStyles" placeholder="D" />
+                <span>*x + </span>
+            </span>
+
+            <span>
+                <FormInput :field-name="`${fieldName}.e`" :class="inputStyles" placeholder="E" />
+                <span>*y + </span>
+            </span>
+
             <span><FormInput :field-name="`${fieldName}.f`" :class="inputStyles" placeholder="F" /></span>
         </div>
     </div>

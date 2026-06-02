@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useSidebar } from '@/components/ui/sidebar'
 import {Button } from '@/components/ui/button'
-import { watch, ref } from 'vue';
+import { computed } from 'vue';
 
 const { open, toggleSidebar } = useSidebar()
-const innerText = ref("⏴⏵")
-watch(open, (val) => {
-    innerText.value = val ? "⏵⏴" : "⏴⏵"
-})
+const innerText = computed(() => open.value ? "⏴⏵" : "⏵⏴")
+
 
 
 </script>
