@@ -5,10 +5,14 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { fractalsApi } from "@/api";
 import MultipleFunctionSelector from "../form/MultipleFunctionSelector.vue";
 import MultipleAffineSelector from "../form/MultipleAffineSelector.vue";
+import { toast } from "vue-sonner";
+import type { AxiosError } from "axios";
 
 const functions = ref<string[]>([]);
 
-fractalsApi.getFunctions().then((res) => (functions.value = res.data));
+fractalsApi.getFunctions().then((res) => (functions.value = res.data)).catch((err : AxiosError) => {
+    toast.error(err.message)
+});
 
 </script>
 
