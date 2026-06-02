@@ -23,7 +23,8 @@ func MappingError() grpc.UnaryServerInterceptor {
 			switch {
 			case errors.Is(err, errs.ErrWeakPassword), errors.Is(err, errs.ErrInvalidCredentials),
 				errors.Is(err, errs.ErrInvalidCtxValue), errors.Is(err, errs.ErrInvalidUserID),
-				errors.Is(err, errs.ErrNothingToUpdate), errors.Is(err, errs.ErrInvalidImageName):
+				errors.Is(err, errs.ErrNothingToUpdate), errors.Is(err, errs.ErrInvalidImageName),
+				errors.Is(err, errs.ErrInvalidImage):
 				return nil, status.Error(codes.InvalidArgument, err.Error())
 			case errors.Is(err, errs.ErrUserAlreadyExists):
 				return nil, status.Error(codes.AlreadyExists, err.Error())

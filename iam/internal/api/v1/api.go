@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/mizentui/fractal-flame/iam/internal/api/v1/dto"
 	"github.com/mizentui/fractal-flame/iam/internal/auth"
@@ -43,6 +44,8 @@ func New(auth AuthService, user UserService, image ImageService) *api {
 
 func (a *api) Register(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.RegisterResponse, error) {
 	if req.ValidateAll() != nil {
+		slog.Warn("Invalid credentials", "err", errs.ErrInvalidCredentials)
+
 		return nil, errs.ErrInvalidCredentials
 	}
 
@@ -56,6 +59,8 @@ func (a *api) Register(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.Regi
 
 func (a *api) Login(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.LoginResponse, error) {
 	if req.ValidateAll() != nil {
+		slog.Warn("Invalid credentials", "err", errs.ErrInvalidCredentials)
+
 		return nil, errs.ErrInvalidCredentials
 	}
 
@@ -69,6 +74,8 @@ func (a *api) Login(ctx context.Context, req *iamv1.AuthRequest) (*iamv1.LoginRe
 
 func (a *api) Refresh(ctx context.Context, req *iamv1.RefreshRequest) (*iamv1.RefreshResponse, error) {
 	if req.ValidateAll() != nil {
+		slog.Warn("Invalid refresh token", "err", errs.ErrInvalidToken)
+
 		return nil, errs.ErrInvalidToken
 	}
 
@@ -82,6 +89,8 @@ func (a *api) Refresh(ctx context.Context, req *iamv1.RefreshRequest) (*iamv1.Re
 
 func (a *api) GetUser(ctx context.Context, req *iamv1.GetUserRequest) (*iamv1.GetUserResponse, error) {
 	if req.ValidateAll() != nil {
+		slog.Warn("Invalid user id", "user_id", req.UserId, "err", errs.ErrInvalidUserID)
+
 		return nil, errs.ErrInvalidUserID
 	}
 
@@ -108,7 +117,9 @@ func (a *api) UpdateUser(ctx context.Context, req *iamv1.UpdateUserRequest) (*ia
 }
 
 func (a *api) GetImage(ctx context.Context, req *iamv1.GetImageRequest) (*iamv1.GetImageResponse, error) {
-	if req.Name == "" {
+	if req.Validate() != nil {
+		slog.Warn("Invalid image name", "name", req.Name, "err", errs.ErrInvalidImageName)
+
 		return nil, errs.ErrInvalidImageName
 	}
 

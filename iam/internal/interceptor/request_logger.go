@@ -21,12 +21,12 @@ func RequestLogger() grpc.UnaryServerInterceptor {
 
 		resp, err = handler(ctx, req)
 		if err != nil {
-			slog.Debug("IAM service method finished with error", "method", info.FullMethod, "took", time.Since(start))
+			slog.Debug("IAM service method finished with error", "method", info.FullMethod, "took", time.Since(start).String())
 
 			return nil, err
 		}
 
-		slog.Debug("IAM service successfully finished", "method", info.FullMethod, "took", time.Since(start))
+		slog.Debug("IAM service successfully finished", "method", info.FullMethod, "took", time.Since(start).Abs().String())
 
 		return resp, nil
 	}
