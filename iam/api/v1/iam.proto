@@ -34,7 +34,7 @@ message LoginResponse {
 }
 
 message RefreshRequest {
-  string refresh_token = 1 [(validate.rules).string.max_len = 72];
+  string refresh_token = 1;
 }
 
 message RefreshResponse {

@@ -42,7 +42,7 @@ func (v *validator) Validate(img []byte) error {
 	}
 
 	if cfg.Width > v.width || cfg.Height > v.height {
-		slog.Error("Invalid image width or height", "err", errs.ErrInvalidImage)
+		slog.Error("Invalid image width or height", "width", v.width, "height", v.height, "err", errs.ErrInvalidImage)
 
 		return errs.ErrInvalidImage
 	}
