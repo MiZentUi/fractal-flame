@@ -1,10 +1,8 @@
 FROM openapitools/openapi-generator-cli:latest AS generator
 
-# WORKDIR /app
 COPY openapi.yaml .
 COPY . .
 
-# Generate your code (Example: Go server stub)
 RUN /usr/local/bin/docker-entrypoint.sh generate \
     -i openapi.yaml \
      -g typescript-axios -o src/api/generated

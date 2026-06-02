@@ -7,8 +7,8 @@ import { toast } from "vue-sonner";
 import { useScroll } from "@/utils/useScroll";
 import Avatar from "./ui/avatar/Avatar.vue";
 import AvatarImage from "./ui/avatar/AvatarImage.vue";
-import { BASE_PATH } from "@/api/generated/base";
 import AvatarFallback from "./ui/avatar/AvatarFallback.vue";
+import { createUserImageUrl } from "@/api";
 
 const router = useRouter();
 const { isLogedin, logout, user } = useLogin();
@@ -42,7 +42,7 @@ const _logout = () => {
                         <Avatar class="border bg-primary-foreground hover:bg-accent" shape="square">
                             <AvatarImage
                                 v-if="user?.image"
-                                :src="`${BASE_PATH}/users/images${user?.image}`"
+                                :src="createUserImageUrl(user?.image)"
                             ></AvatarImage>
                             <AvatarFallback>
                                 <UserIcon></UserIcon>

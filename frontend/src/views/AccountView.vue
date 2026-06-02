@@ -5,12 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/utils/useLogin";
-import { BASE_PATH } from "@/api/generated/base";
 import { ImagePlus, KeyRound, Save, UserIcon } from "lucide-vue-next";
 import MultiFractalView from "@/components/MultiFractalView.vue";
 import type { ApiStatusResponse, FractalsResponse, UserRequest } from "@/api/generated";
 import { computed, ref, watch } from "vue";
-import { fractalsApi, usersApi } from "@/api";
+import { createUserImageUrl, fractalsApi, usersApi } from "@/api";
 import { toast } from "vue-sonner";
 import type { AxiosError } from "axios";
 import { useForm } from "vee-validate";
@@ -56,7 +55,7 @@ const fetchPage = async (num: number) => {
 
 const avatarSrc = computed(() => {
     if (imagePreview.value) return imagePreview.value;
-    if (user.value?.image) return `${BASE_PATH}/users/images${user.value.image}`;
+    if (user.value?.image) return createUserImageUrl(user.value.image);
     return undefined;
 });
 
