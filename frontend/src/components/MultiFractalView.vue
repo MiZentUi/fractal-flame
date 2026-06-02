@@ -23,7 +23,7 @@ const { fractals, users } = defineProps<{
                     v-for="fractal in fractals.items"
                 >
                     <CardContent class="flex items-center justify-center p-0 h-full">
-                        <FractalView class="self-center" :href="createFractalImageUrl(fractal.image)"></FractalView>
+                        <FractalView class="self-center cursor-pointer" :href="createFractalImageUrl(fractal.image)"></FractalView>
                         <span v-if="users" class="absolute bottom-1 left-2">
                             By: {{ users.get(fractal.id)?.username || "REDACTED" }}
 
