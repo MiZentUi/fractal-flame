@@ -6,7 +6,7 @@ import FunctionSelector from "./FunctionSelector.vue";
 import { Button } from "@/components/ui/button";
 import { useField, useFieldArray } from "vee-validate";
 import type { Function } from "@/api/generated/api.ts";
-
+import Tip from "../Tip.vue";
 interface Props {
     functionNames: string[];
     fieldName: string;
@@ -28,7 +28,14 @@ const removeV = (i: number) => {
 
 <template>
     <Card :class="field.errors.value.length > 0 ? 'border-accent' : ''">
-        <CardHeader> Functions </CardHeader>
+        <CardHeader>
+            <Tip>
+                <template #trigger> Functions </template>
+                <template #content>
+                    Choose from a menu of warp effects. Each changes the fractal’s shape in a unique way.
+                </template>
+            </Tip>
+        </CardHeader>
         <CardContent class="flex flex-col gap-4 overflow-y-auto max-h-38 w-90">
             <FunctionSelector
                 :function-names="functionNames"

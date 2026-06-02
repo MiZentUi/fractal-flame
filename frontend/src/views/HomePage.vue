@@ -85,9 +85,14 @@ const subbmit = async () => {
         }
         return;
     }
-    const resp = await fractalsApi.generation(values, {withCredentials: true});
+    try {
+        const resp = await fractalsApi.generation(values, {withCredentials: true});
     progress.value = 0;
     connectToImageEventStream(createFractalEventsUrl(resp.data.fractal_id));
+    }
+    catch (e) {
+        toast.error(String(e))
+    }
 };
 
 onUnmounted(() => {

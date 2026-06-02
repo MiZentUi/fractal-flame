@@ -7,11 +7,12 @@ import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 
-import AffineSelector  from "@/components/form/AffineSelector.vue";
+import AffineSelector from "@/components/form/AffineSelector.vue";
 import { Button } from "@/components/ui/button";
 import { randColor } from "@/utils/color";
 import { useField, useFieldArray } from "vee-validate";
 import type { AffineParams } from "@/api/generated";
+import Tip from "../Tip.vue";
 
 const randParam = () => Number((Math.random() * 2 - 1).toFixed(2));
 
@@ -35,15 +36,22 @@ const pushNew = () => {
     push(randomAffine());
     field.validate();
 };
-const removeV = (i : number) => {
+const removeV = (i: number) => {
     remove(i);
     field.validate();
-}
+};
 </script>
 
 <template>
     <Card class="w-90" :class="field.errors.value.length > 0 ? 'border-accent' : ''">
-        <CardHeader> Affine transforms </CardHeader>
+        <CardHeader>
+            <Tip>
+                <template #trigger> Affine transforms </template>
+                <template #content>
+                    Basic moves: stretch, rotate, slide, or skew parts of the image. Each transform also has a weight and a color.
+                </template>
+            </Tip>
+        </CardHeader>
         <CardContent class="flex flex-col gap-6 overflow-y-auto max-h-62 w-88 pr-4">
             <AffineSelector
                 v-model="field.value"
