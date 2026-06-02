@@ -1,6 +1,7 @@
 package com.fractalflame.generator.handler;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.grpc.server.exception.GrpcExceptionHandler;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import com.google.rpc.Status;
 
 import io.grpc.StatusException;
 import io.grpc.protobuf.StatusProto;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.ValidationException;
 
 @Component
@@ -24,8 +26,10 @@ public class GlobalGrpcExceptionHandler implements GrpcExceptionHandler {
             case EntityNotFoundException e -> Code.NOT_FOUND;
             case BlobNotFoundException e -> Code.NOT_FOUND;
             case TaskNotFoundException e -> Code.NOT_FOUND;
+            case JwtException e -> Code.UNAUTHENTICATED;
             case ValidationException e -> Code.INVALID_ARGUMENT;
             case FractalParametersException e -> Code.INVALID_ARGUMENT;
+            case PropertyReferenceException e -> Code.INVALID_ARGUMENT;
             default -> Code.INTERNAL;
         };
 

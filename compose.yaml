@@ -3,15 +3,15 @@ services:
     image: postgres:18-alpine
     ports:
       - 5432:5432
-    env_file:
-      .env
     environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: generator
     restart: unless-stopped
     volumes:
       - db-generator-data:/var/lib/postgresql
     healthcheck:
-      test: "pg_isready -U ${POSTGRES_USER} -d generator"
+      test: "pg_isready -U ${DB_USER} -d generator"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,10 +23,9 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
-    env_file:
-      .env
+    env_file: .env
     volumes:
-     - minio-storage-generator:/data
+      - minio-storage-generator:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -41,8 +40,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 9090:9090
-    env_file:
-      .env
+    env_file: .env
     environment:
       POSTGRES_URL: db-generator:5432
       MINIO_URL: http://storage-generator:9000
@@ -51,12 +49,6 @@ services:
         condition: service_healthy
       storage-generator:
         condition: service_healthy
-    healthcheck:
-      test: "curl -f http://localhost:8080/actuator/health"
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
 
   gateway:
     image: gateway
@@ -65,10 +57,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8080:8080
-    env_file:
-      .env
+    env_file: .env
     environment:
       GENERATOR_URL: generator:9090
+      IAM_URL: iam:50051
     healthcheck:
       test: "curl -f http://localhost:8080/actuator/health"
       interval: 10s
@@ -76,6 +68,90 @@ services:
       retries: 3
       start_period: 5s
 
+  db-iam:
+    container_name: db-iam-service
+    image: postgres:18-alpine3.23
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - iam-db-data:/var/lib/postgresql
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  migrate-iam:
+    container_name: migrate-iam
+    build:
+      context: iam
+      dockerfile: migrate.Dockerfile
+    environment:
+      GOOSE_DRIVER: ${GOOSE_DRIVER}
+      GOOSE_DBSTRING: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}
+      GOOSE_MIGRATION_DIR: ${GOOSE_MIGRATION_DIR}
+    depends_on:
+      db-iam:
+        condition: service_healthy
+    restart: on-failure
+
+  storage-iam:
+    container_name: storage-iam
+    image: minio/minio:latest
+    ports:
+      - 9002:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server --console-address ":9001" /data/
+    volumes:
+      - iam-storage-data:/data
+    healthcheck:
+      test: curl -f http://localhost:9000/minio/health/live
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  iam:
+    container_name: iam-service
+    build:
+      context: iam
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - 50051:50051
+    healthcheck:
+      test: /grpc_health_probe -addr=50051 -service=iam.v1.IAMService
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      migrate-iam:
+        condition: service_completed_successfully
+      storage-iam:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      args:
+        - API_URL=${API_URL}
+    env_file: .env
+    ports:
+      - 80:80
+    depends_on:
+      gateway:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   db-generator-data:
   minio-storage-generator:
+  iam-db-data:
+  iam-storage-data:

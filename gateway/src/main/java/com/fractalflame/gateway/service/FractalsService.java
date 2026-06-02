@@ -2,6 +2,7 @@ package com.fractalflame.gateway.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -12,23 +13,27 @@ import com.fractalflame.gateway.mapper.TaskMapper;
 import com.fractalflame.gateway.model.FractalRequest;
 import com.fractalflame.gateway.model.FractalResponse;
 import com.fractalflame.gateway.model.FractalsResponse;
+import com.fractalflame.gateway.service.observer.TaskEventsObserver;
 import com.fractalflame.generator.proto.IdRequest;
 import com.fractalflame.generator.proto.ImageRequest;
-import com.fractalflame.generator.proto.TaskState;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsBlockingStub;
 import com.fractalflame.generator.proto.FractalsGrpc.FractalsStub;
 import com.google.protobuf.Empty;
 
-import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FractalsService {
     private final FractalsBlockingStub blockingStub;
     private final FractalsStub stub;
     private final FractalMapper mapper;
     private final TaskMapper taskMapper;
+
+    @Value("${app.sse-timeout}")
+    private Long sseTimeout;
 
     public FractalsResponse getAll(Integer page, Integer count, String sort, String order, Long userId) {
         var response = blockingStub.getAll(mapper.toFractalsRequest(page, count, sort, order, userId));
@@ -47,34 +52,13 @@ public class FractalsService {
         return taskMapper.toTaskState(blockingStub.generation(mapper.fromFractalRequest(request)));
     }
 
-    public void subscribeToTask(Long id, SseEmitter emitter) {
-        stub.subscribeToTask(IdRequest.newBuilder().setId(id).build(), new StreamObserver<TaskState>() {
+    public SseEmitter subscribeToTask(Long id) {
+        var emitter = new SseEmitter(sseTimeout);
 
-            @Override
-            public void onNext(TaskState value) {
-                try {
-                    emitter.send(SseEmitter.event()
-                            .data(taskMapper.toTaskState(value)));
+        stub.subscribeToTask(IdRequest.newBuilder().setId(id).build(),
+                new TaskEventsObserver(emitter, taskMapper));
 
-                    if (Math.abs(value.getProgress() - 1) < 0.005) {
-                        emitter.complete();
-                    }
-                } catch (Exception e) {
-                    emitter.completeWithError(e);
-                }
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                emitter.completeWithError(t);
-            }
-
-            @Override
-            public void onCompleted() {
-                emitter.complete();
-            }
-
-        });
+        return emitter;
     }
 
     public List<String> getFunctions() {

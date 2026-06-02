@@ -2,12 +2,14 @@ FROM gradle:jdk21 AS build
 WORKDIR /app
 
 COPY build.gradle settings.gradle ./
-RUN --mount=type=cache,target=/home/gradle/.gradle \
-    gradle build -x test --no-daemon || true
+
+RUN --mount=type=cache,id=gateway,target=/home/gradle/.gradle \
+    gradle dependencies --no-daemon
 
 COPY openapi.yaml .openapi-generator-ignore ./
+COPY lombok.config ./
 COPY src ./src
-RUN --mount=type=cache,target=/home/gradle/.gradle \
+RUN --mount=type=cache,id=gateway,target=/home/gradle/.gradle \
     gradle clean build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine

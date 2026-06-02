@@ -42,6 +42,9 @@ public class FunctionBuilder {
     }
 
     public static FunctionModel build(String name, Double weight) {
+        if (!registry.containsKey(name)) {
+            throw new FunctionException("Function with \"" + name + "\" name not found!");
+        }
         try {
             return registry.get(name).getConstructor(Double.class).newInstance(weight);
         } catch (NoSuchMethodException

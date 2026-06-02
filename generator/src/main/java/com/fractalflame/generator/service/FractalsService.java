@@ -49,36 +49,31 @@ public class FractalsService extends FractalsImplBase {
     @Override
     @Transactional
     public void getAll(FractalsRequest request, StreamObserver<FractalsResponse> responseObserver) {
-        try {
-            var sort = request.hasSort() ? Sort.by(request.getSort()) : Sort.by("id");
-            if (request.hasOrder() && request.getOrder() == Order.DESC) {
-                sort = sort.descending();
-            }
+        var sort = request.hasSort() ? Sort.by(request.getSort()) : Sort.by("id");
+        if (request.hasOrder() && request.getOrder() == Order.DESC) {
+            sort = sort.descending();
+        }
 
-            if (request.hasCount()) {
-                var page = request.hasPage() ? request.getPage() : 1;
-                var pageRequest = PageRequest.of(page - 1, request.getCount(), sort);
-                var fractals = request.hasUserId()
-                        ? fractalsRepository.findAllByUserId(request.getUserId(), pageRequest)
-                        : fractalsRepository.findAll(pageRequest);
-                responseObserver.onNext(FractalsResponse.newBuilder()
-                        .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
-                        .setPage(page)
-                        .setPageCount(fractals.getTotalPages())
-                        .build());
-            } else {
-                var fractals = request.hasUserId()
-                        ? fractalsRepository.findAllByUserId(request.getUserId(), sort)
-                        : fractalsRepository.findAll(sort);
-                responseObserver.onNext(FractalsResponse.newBuilder()
-                        .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
-                        .setPage(1)
-                        .setPageCount(1)
-                        .build());
-            }
-        } catch (Exception e) {
-            responseObserver.onError(e);
-            return;
+        if (request.hasCount()) {
+            var page = request.hasPage() ? request.getPage() : 1;
+            var pageRequest = PageRequest.of(page - 1, request.getCount(), sort);
+            var fractals = request.hasUserId()
+                    ? fractalsRepository.findAllByUserId(request.getUserId(), pageRequest)
+                    : fractalsRepository.findAll(pageRequest);
+            responseObserver.onNext(FractalsResponse.newBuilder()
+                    .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
+                    .setPage(page)
+                    .setPageCount(fractals.getTotalPages())
+                    .build());
+        } else {
+            var fractals = request.hasUserId()
+                    ? fractalsRepository.findAllByUserId(request.getUserId(), sort)
+                    : fractalsRepository.findAll(sort);
+            responseObserver.onNext(FractalsResponse.newBuilder()
+                    .addAllFractals(fractalMapper.toFractalResponseList(IteratorUtils.toList(fractals.iterator())))
+                    .setPage(1)
+                    .setPageCount(1)
+                    .build());
         }
         responseObserver.onCompleted();
     }
@@ -86,14 +81,9 @@ public class FractalsService extends FractalsImplBase {
     @Override
     @Transactional
     public void getById(IdRequest request, StreamObserver<FractalResponse> responseObserver) {
-        try {
-            responseObserver.onNext(fractalMapper.toFractalResponse(fractalsRepository.findById(request.getId())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            String.format("Fractal with id = %s not found!", request.getId())))));
-        } catch (Exception e) {
-            responseObserver.onError(e);
-            return;
-        }
+        responseObserver.onNext(fractalMapper.toFractalResponse(fractalsRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Fractal with id = %s not found!", request.getId())))));
         responseObserver.onCompleted();
     }
 
@@ -128,16 +118,27 @@ public class FractalsService extends FractalsImplBase {
                             generatorProperties.getMaxIterations()));
         }
 
-        if (fractal.getSymmetryLevel() < 1) {
-            throw new FractalParametersException("Symmetry level should be greater than 0!");
+        if (fractal.getSymmetryLevel() > generatorProperties.getMaxSymmetryLevel()) {
+            throw new FractalParametersException(String.format("Symmetry level shouldn't be greater than %s!",
+                    generatorProperties.getMaxSymmetryLevel()));
         }
 
         if (fractal.getFunctions().isEmpty()) {
-            throw new FractalParametersException("Required almost one function!");
+            throw new FractalParametersException("Required at most one function!");
         }
 
+        var functionNames = FunctionBuilder.getFunctionsNames();
+        fractal.getFunctions().forEach(f -> {
+            if (!functionNames.contains(f.getName())) {
+                throw new FractalParametersException("Function with \"" + f.getName() + "\" name not found!");
+            }
+            if (f.getWeight() <= 0) {
+                throw new FractalParametersException("Function weight should be positive!");
+            }
+        });
+
         if (fractal.getAffineParams().isEmpty()) {
-            throw new FractalParametersException("Required almost one affine params!");
+            throw new FractalParametersException("Required at most one affine params!");
         }
 
         fractalsRepository.save(fractal);

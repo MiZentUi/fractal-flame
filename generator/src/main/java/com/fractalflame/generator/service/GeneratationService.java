@@ -20,6 +20,7 @@ import com.fractalflame.generator.repository.FractalsRepository;
 import com.fractalflame.generator.utils.GenerationTask;
 import com.fractalflame.generator.utils.Generator;
 
+import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -50,8 +51,8 @@ public class GeneratationService {
                     try {
                         var task = taskQueue.take();
                         generator.process(task);
-                        pendingTasks.remove(task.getFractal().getId());
                         sendUpdate(task);
+                        pendingTasks.remove(task.getFractal().getId());
 
                         var fractal = task.getFractal();
                         fractal.setImage(storageService.saveImage(UUID.randomUUID().toString(),
@@ -96,7 +97,14 @@ public class GeneratationService {
 
     public void subscribeToTask(Long id, StreamObserver<TaskState> responseObserver) {
         if (pendingTasks.containsKey(id)) {
-            pendingTasks.get(id).setResponseObserver(responseObserver);
+            var task = pendingTasks.get(id);
+            task.setResponseObserver(responseObserver);
+            Context.current().addListener(
+                    context -> {
+                        log.info("Subscription cancelled for task {}", id);
+                        task.setResponseObserver(null);
+                    },
+                    Runnable::run);
         } else {
             throw new TaskNotFoundException(String.format("Task with id=%s not pending!", id));
         }
@@ -106,7 +114,12 @@ public class GeneratationService {
         var responseObserver = task.getResponseObserver();
         if (responseObserver != null) {
             log.atInfo().addKeyValue("fractal_id", task.getFractal().getId()).log("send task update");
-            responseObserver.onNext(task.toTaskState());
+            try {
+                responseObserver.onNext(task.toTaskState());
+            } catch (Exception e) {
+                log.warn("Subscriber disconnected", e);
+                task.setResponseObserver(null);
+            }
         }
     }
 }
