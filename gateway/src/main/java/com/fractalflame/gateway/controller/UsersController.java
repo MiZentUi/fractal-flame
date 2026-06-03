@@ -78,7 +78,6 @@ public class UsersController implements UsersApi {
                 .httpOnly(false) // a forced measure for raw logout
                 .secure(true)
                 .sameSite("Strict")
-                .path("/api/v1/refresh")
                 .maxAge(Duration.ofDays(15))
                 .build();
     }
