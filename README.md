@@ -29,24 +29,24 @@ docker-compose up -d --build
 
 ## Gallery
 
-![Result 1](images/result1.png)
+![Result 1](docs/images/result1.png)
 
-![Result 2](images/result2.png)
+![Result 2](docs/images/result2.png)
 
-![Result 3](images/result3.png)
+![Result 3](docs/images/result3.png)
 
-![Result 4](images/result4.png)
+![Result 4](docs/images/result4.png)
 
-![Result 5](images/result5.png)
+![Result 5](docs/images/result5.png)
 
-![Result 6](images/result6.png)
+![Result 6](docs/images/result6.png)
 
-![Fractal Flame 1](images/ff1.png)
+![Fractal Flame 1](docs/images/ff1.png)
 
-![Fractal Flame 2](images/ff2.png)
+![Fractal Flame 2](docs/images/ff2.png)
 
-![Fractal Flame 3](images/ff3.png)
+![Fractal Flame 3](docs/images/ff3.png)
 
-![Fractal Flame 4](images/ff4.png)
+![Fractal Flame 4](docs/images/ff4.png)
 
-![Fractal Flame 5](images/ff5.png)
+![Fractal Flame 5](docs/images/ff5.png)
