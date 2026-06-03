@@ -6,12 +6,12 @@
 
 \input{title.tex}
 
-\setcounter{page}{2}
+\setcounter{page}{3}
 
 \newpage
 \renewcommand\contentsname{\centerline{\uppercase{Содержание}}}
+\setcounter{tocdepth}{2}
 \tableofcontents
-\thispagestyle{empty}
 
 \input{content.tex}
 
@@ -20,5 +20,7 @@
 \addcontentsline{toc}{section}{Cписок использованных источников}
 \renewcommand{\bibsection}{\section*{\centering{\uppercase{Cписок использованных источников}}}}
 \bibliography{references.bib}
+
+\input{anexxes.tex}
 
 \end{document}
