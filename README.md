@@ -40,3 +40,13 @@ docker-compose up -d --build
 ![Result 5](images/result5.png)
 
 ![Result 6](images/result6.png)
+
+![Fractal Flame 1](images/ff1.png)
+
+![Fractal Flame 2](images/ff2.png)
+
+![Fractal Flame 3](images/ff3.png)
+
+![Fractal Flame 4](images/ff4.png)
+
+![Fractal Flame 5](images/ff5.png)
