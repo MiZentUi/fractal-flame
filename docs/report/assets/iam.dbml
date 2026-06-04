@@ -1,0 +1,6 @@
+Table users {
+  id int [pk, increment]
+  username varchar(50) [unique, not null]
+  password varchar(60) [not null]
+  image varchar(50)
+}

@@ -1,0 +1,23 @@
+\newpage
+
+\hyphenpenalty=0
+
+\counterwithin*{table}{equation_annex}
+\renewcommand{\thetable}{\annexAlph{equation_annex}.\arabic{table}}
+\counterwithin*{figure}{equation_annex}
+\renewcommand{\thefigure}{\annexAlph{equation_annex}.\arabic{figure}}
+
+\annex{обязательное}{Листинг программного кода}
+\label{app:code}
+
+\makeatletter
+\def\input@path{{../../generator}}
+\makeatother
+
+\lstinputlisting[language=Java, title=GeneratationService.java]{src/main/java/com/fractalflame/generator/service/GeneratationService.java}
+
+\lstinputlisting[language=Java, title=GenerationTask.java]{src/main/java/com/fractalflame/generator/utils/GenerationTask.java}
+
+\lstinputlisting[language=Java, title=Generator.java]{src/main/java/com/fractalflame/generator/utils/Generator.java}
+
+\lstinputlisting[language=Java, title=Render.java]{src/main/java/com/fractalflame/generator/utils/Render.java}
