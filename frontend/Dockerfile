@@ -12,6 +12,7 @@ WORKDIR /app
 ARG API_URL
 ENV VITE_API_URL=$API_URL
 
+
 COPY --from=generator . .
 
 RUN npm i
@@ -19,6 +20,8 @@ RUN npm run build
 
 FROM nginx
 ENV PORT=80
+ARG API_LOCAL_ADDRESS
+ENV API_LOCAL_ADDRESS=${API_LOCAL_ADDRESS}
 
 
 COPY --from=build /app/dist /usr/share/nginx/html
