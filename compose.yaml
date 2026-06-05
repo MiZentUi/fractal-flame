@@ -55,13 +55,13 @@ services:
     healthcheck:
       test: "curl -f http://localhost:8080/actuator/health"
       interval: 10s
-      timeout: 5s
-      retries: 3
+      timeout: 10s
+      retries: 5
       start_period: 5s
 
   db-iam:
     container_name: db-iam-service
-    image: postgres:18-alpine3.23
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

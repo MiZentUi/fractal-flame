@@ -16,4 +16,4 @@ app:
   sse-timeout: 300000
   jwt-signing-key: ${ACCESS_SIGNING_KEY}
   cors:
-    allowed-origins: "*"
+    allowed-origins: ${ALLOWED_ORIGINS}

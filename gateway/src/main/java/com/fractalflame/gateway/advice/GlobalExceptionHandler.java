@@ -20,79 +20,79 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(StatusRuntimeException.class)
-    public ResponseEntity<ApiStatusResponse> handleStatusRuntimeException(StatusRuntimeException exception) {
-        var status = exception.getStatus();
+        @ExceptionHandler(StatusRuntimeException.class)
+        public ResponseEntity<ApiStatusResponse> handleStatusRuntimeException(StatusRuntimeException exception) {
+                var status = exception.getStatus();
 
-        var httpStatus = switch (status.getCode()) {
-            case NOT_FOUND -> HttpStatus.NOT_FOUND;
-            case INVALID_ARGUMENT -> HttpStatus.BAD_REQUEST;
-            case UNAUTHENTICATED -> HttpStatus.UNAUTHORIZED;
-            case PERMISSION_DENIED -> HttpStatus.FORBIDDEN;
-            case DEADLINE_EXCEEDED -> HttpStatus.GATEWAY_TIMEOUT;
-            case ALREADY_EXISTS -> HttpStatus.CONFLICT;
-            default -> HttpStatus.INTERNAL_SERVER_ERROR;
-        };
+                var httpStatus = switch (status.getCode()) {
+                        case NOT_FOUND -> HttpStatus.NOT_FOUND;
+                        case INVALID_ARGUMENT -> HttpStatus.BAD_REQUEST;
+                        case UNAUTHENTICATED -> HttpStatus.UNAUTHORIZED;
+                        case PERMISSION_DENIED -> HttpStatus.FORBIDDEN;
+                        case DEADLINE_EXCEEDED -> HttpStatus.GATEWAY_TIMEOUT;
+                        case ALREADY_EXISTS -> HttpStatus.CONFLICT;
+                        default -> HttpStatus.INTERNAL_SERVER_ERROR;
+                };
 
-        return new ResponseEntity<>(
-                ApiStatusResponse.builder()
-                        .code(httpStatus.value())
-                        .status(status.getCode().name())
-                        .message(exception.getMessage())
-                        .build(),
-                httpStatus);
-    }
+                return new ResponseEntity<>(
+                                ApiStatusResponse.builder()
+                                                .code(httpStatus.value())
+                                                .status(status.getCode().name())
+                                                .message(exception.getMessage())
+                                                .build(),
+                                httpStatus);
+        }
 
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ApiStatusResponse> handleSigning(Exception exception) {
-        var status = HttpStatus.UNAUTHORIZED;
-        return new ResponseEntity<>(
-                ApiStatusResponse.builder()
-                        .code(status.value())
-                        .status(status.name())
-                        .message(exception.getMessage())
-                        .build(),
-                status);
-    }
+        @ExceptionHandler(JwtException.class)
+        public ResponseEntity<ApiStatusResponse> handleSigning(Exception exception) {
+                var status = HttpStatus.UNAUTHORIZED;
+                return new ResponseEntity<>(
+                                ApiStatusResponse.builder()
+                                                .code(status.value())
+                                                .status(status.name())
+                                                .message(exception.getMessage())
+                                                .build(),
+                                status);
+        }
 
-    @ExceptionHandler({ SseException.class, AsyncRequestNotUsableException.class })
-    public void handleSse(Exception exception) {
-        log.atInfo().addKeyValue("message", exception.getMessage()).log("sse exception");
-    }
+        @ExceptionHandler({ SseException.class, AsyncRequestNotUsableException.class })
+        public void handleSse(Exception exception) {
+                log.atInfo().addKeyValue("message", exception.getMessage()).log("sse exception");
+        }
 
-    @ExceptionHandler({ NoResourceFoundException.class, MissingRequestCookieException.class })
-    public ResponseEntity<ApiStatusResponse> handleNotFound(Exception exception) {
-        var status = HttpStatus.NOT_FOUND;
-        return new ResponseEntity<>(
-                ApiStatusResponse.builder()
-                        .code(status.value())
-                        .status(status.name())
-                        .message(exception.getMessage())
-                        .build(),
-                status);
-    }
+        @ExceptionHandler({ NoResourceFoundException.class, MissingRequestCookieException.class })
+        public ResponseEntity<ApiStatusResponse> handleNotFound(Exception exception) {
+                var status = HttpStatus.NOT_FOUND;
+                return new ResponseEntity<>(
+                                ApiStatusResponse.builder()
+                                                .code(status.value())
+                                                .status(status.name())
+                                                .message(exception.getMessage())
+                                                .build(),
+                                status);
+        }
 
-    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public ResponseEntity<ApiStatusResponse> handleNotAcceptable(Exception exception) {
-        var status = HttpStatus.NOT_ACCEPTABLE;
-        return new ResponseEntity<>(
-                ApiStatusResponse.builder()
-                        .code(status.value())
-                        .status(status.name())
-                        .message(exception.getMessage())
-                        .build(),
-                status);
-    }
+        @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+        public ResponseEntity<ApiStatusResponse> handleNotAcceptable(Exception exception) {
+                var status = HttpStatus.NOT_ACCEPTABLE;
+                return new ResponseEntity<>(
+                                ApiStatusResponse.builder()
+                                                .code(status.value())
+                                                .status(status.name())
+                                                .message(exception.getMessage())
+                                                .build(),
+                                status);
+        }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiStatusResponse> handle(Exception exception) {
-        var status = HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ResponseEntity<>(
-                ApiStatusResponse.builder()
-                        .code(status.value())
-                        .status(status.name())
-                        .message(exception.getMessage())
-                        .build(),
-                status);
-    }
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ApiStatusResponse> handle(Exception exception) {
+                var status = HttpStatus.INTERNAL_SERVER_ERROR;
+                return new ResponseEntity<>(
+                                ApiStatusResponse.builder()
+                                                .code(status.value())
+                                                .status(status.name())
+                                                .message(exception.getMessage())
+                                                .build(),
+                                status);
+        }
 }

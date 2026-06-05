@@ -1,13 +1,13 @@
-FROM openapitools/openapi-generator-cli:latest AS generator
+FROM openapitools/openapi-generator-cli:v7.22.0 AS generator
 
 COPY openapi.yaml .
 COPY . .
 
 RUN /usr/local/bin/docker-entrypoint.sh generate \
-    -i openapi.yaml \
-     -g typescript-axios -o src/api/generated
+  -i openapi.yaml \
+  -g typescript-axios -o src/api/generated
 
-FROM node:24-alpine as build
+FROM node:24-alpine AS build
 WORKDIR /app
 ARG API_URL
 ENV VITE_API_URL=$API_URL
@@ -15,10 +15,13 @@ ENV VITE_API_URL=$API_URL
 
 COPY --from=generator . .
 
-RUN npm i
+RUN apk add --no-cache ca-certificates
+RUN npm config set fetch-timeout 600000 \
+  && npm config set fetch-retries 5 \
+  && npm ci
 RUN npm run build
 
-FROM nginx
+FROM nginx:alpine
 ENV PORT=80
 ARG API_LOCAL_ADDRESS
 ENV API_LOCAL_ADDRESS=${API_LOCAL_ADDRESS}
