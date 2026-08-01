@@ -119,6 +119,8 @@ Generation can take noticeable time, so it is implemented as an asynchronous tas
 
 A Spring scheduler periodically sends updates for pending tasks. The gateway subscribes to those gRPC updates and forwards every `TaskState` to the browser through SSE. When progress reaches `1`, the gateway completes the SSE stream.
 
+For a more detailed description of the project, see the [report](docs/report/course.pdf).
+
 ## Configuration
 
 Create a `.env` file in the repository root before starting the stack.
