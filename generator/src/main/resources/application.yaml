@@ -20,8 +20,8 @@ app:
   generator:
     count: 2
     threads: 2
-    max-width: 2000
-    max-height: 2000
+    max-width: ${IMAGE_WIDTH}
+    max-height: ${IMAGE_HEIGHT}
     max-iterations: 10000000
     max-symmetry-level: 20
   jwt-signing-key: ${ACCESS_SIGNING_KEY}
